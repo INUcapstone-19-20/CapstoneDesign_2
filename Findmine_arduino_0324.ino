@@ -11,7 +11,7 @@ static bool LED_buffer[NUM_LED_COLUMNS][NUM_LED_ROWS];
 static const uint8_t btncolumnpins[NUM_BTN_COLUMNS] = {29, 28, 27, 26};
 static const uint8_t btnrowpins[NUM_BTN_ROWS]       = {22, 23, 24, 25};
 static const uint8_t ledcolumnpins[NUM_LED_COLUMNS] = {30, 31, 32, 33};
-static const uint8_t colorpins[NUM_LED_ROWS]        = {3, 6, 9, 12};
+static const uint8_t colorpins[NUM_LED_ROWS][3]     = {{2, 3, 44}, {5, 6, 7}, {8, 9, 10}, {11, 12, 45}};
 
 static int16_t temp = 0;
 static bool br_up = true;
@@ -25,7 +25,9 @@ void setup()
     pinMode(ledcolumnpins[i],OUTPUT);
     pinMode(btncolumnpins[i],OUTPUT);
     pinMode(btnrowpins[i],OUTPUT);
-    pinMode(colorpins[i],OUTPUT);
+    for(uint8_t j;j<3;j++){
+      pinMode(colorpins[i][j],OUTPUT);
+    }
     digitalWrite(ledcolumnpins[i], HIGH);
   }
 }
@@ -49,7 +51,9 @@ void loop() {
 //  }
   Serial.println("first");
   for(uint8_t i=0;i<NUM_LED_COLUMNS;i++){
-    analogWrite(colorpins[i], temp);
+    analogWrite(colorpins[i][0], 255-temp);
+    analogWrite(colorpins[i][1], temp);
+    
   }
   delay(10);
   if(br_up){
