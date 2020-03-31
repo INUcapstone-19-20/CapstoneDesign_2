@@ -48,8 +48,8 @@ class 모드선택(tk.Frame):
 
         label1 = tk.Label(self, text="[ 모드", font=controller.title_font, bg="#E0E0E0")
         label2 = tk.Label(self, text="선택 ]", font=controller.title_font, bg="#A3A3A3")
-        label1.place(x=100,y=20)
-        label2.place(x=244,y=20)
+        label1.place(relx=0.25,y=20)
+        label2.place(relx=0.51,y=20)
         
         
         
@@ -85,7 +85,7 @@ class 배틀모드(tk.Frame):
 
 if __name__ == "__main__":
     app = mineGUI()
-    app.attributes("-fullscreen", True)
-    # app.geometry("480x320")
+    # app.attributes("-fullscreen", True)
+    app.geometry("480x320")
     
     app.mainloop()
