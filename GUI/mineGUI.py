@@ -7,6 +7,7 @@ class mineGUI(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.title_font = tkfont.Font(family='NanumSquareRound', size=40, weight="bold", slant="roman")
+        self.common_font = tkfont.Font(family='NanumSquareRound', size=30, weight="bold", slant="roman")
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -40,15 +41,15 @@ class 모드선택(tk.Frame):
         # background_label.place(relwidth=1, relheight=1)
 
         button1 = tk.Button(self, bg="#E0E0E0", text="싱글", font=controller.title_font, 
-                            command=lambda: controller.show_frame("싱글모드"))
-        button2 = tk.Button(self, bg="#A3A3A3", text="배틀", font=controller.title_font,
-                            command=lambda: controller.show_frame("배틀모드"))
+                            highlightcolor="#E0E0E0",command=lambda: controller.show_frame("싱글모드"))
+        button2 = tk.Button(self, highlightcolor="#A3A3A3", bg="#A3A3A3", text="배틀", font=controller.title_font,
+                            highlightbackground="#A3A3A3",command=lambda: controller.show_frame("배틀모드"))
         button1.place(x=0,relwidth=0.5,relheight=1)
         button2.place(relx=0.5,rely=-0.5,relwidth=0.5,relheight=2)
 
-        label1 = tk.Label(self, text="[ 모드", font=controller.title_font, bg="#E0E0E0")
-        label2 = tk.Label(self, text="선택 ]", font=controller.title_font, bg="#A3A3A3")
-        label1.place(relx=0.25,y=20)
+        label1 = tk.Label(self, text="[ 모드", font=controller.common_font, bg="#E0E0E0")
+        label2 = tk.Label(self, text="선택 ]", font=controller.common_font, bg="#A3A3A3")
+        label1.place(relx=0.28,y=20)
         label2.place(relx=0.51,y=20)
         
         
@@ -59,15 +60,16 @@ class 모드선택(tk.Frame):
 class 싱글모드(tk.Frame):
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg="#ededed")
         self.controller = controller
-        label = tk.Label(self, text="지뢰찾기", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        button3 = tk.Button(self, text="[ 게임 시작 ]",
-                           command=lambda: controller.show_frame("모드선택"))
-        button4 = tk.Button(self, text="[ 게임 설정 ]",
-                           command=lambda: controller.show_frame("모드선택"))
-        button3.pack()
+        label = tk.Label(self, text="지뢰찾기", font=controller.title_font, bg="#ededed")
+        label.pack(pady=30,anchor="center")
+        button3 = tk.Button(self, text="[ 게임 시작 ]", font=controller.common_font, bg="#ededed",
+                           highlightthickness = 0, bd=0, command=lambda: controller.show_frame("모드선택"))
+        button4 = tk.Button(self, text="[ 게임 설정 ]", font=controller.common_font, bg="#ededed",
+                           highlightthickness = 0, bd=0, command=lambda: controller.show_frame("모드선택"))
+        
+        button3.pack(pady=20)
         button4.pack()
 
 
@@ -85,7 +87,7 @@ class 배틀모드(tk.Frame):
 
 if __name__ == "__main__":
     app = mineGUI()
-    # app.attributes("-fullscreen", True)
-    app.geometry("480x320")
+    app.attributes("-fullscreen", True)
+    # app.geometry("480x320")
     
     app.mainloop()
