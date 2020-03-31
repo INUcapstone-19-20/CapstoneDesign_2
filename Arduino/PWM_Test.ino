@@ -37,7 +37,7 @@ void loop() {
 //  digitalWrite(btnrowpins[2], LOW);
 //  digitalWrite(btnrowpins[3], LOW);
   
-   digitalWrite(ledcolumnpins[0], LOW);
+  digitalWrite(ledcolumnpins[0], LOW);
   digitalWrite(ledcolumnpins[1], LOW);
   digitalWrite(ledcolumnpins[2], LOW);
   digitalWrite(ledcolumnpins[3], LOW);
