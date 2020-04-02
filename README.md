@@ -1,3 +1,6 @@
+화상회의에서 보여드렸던 PCB 회로도 담긴 문서입니다!
+https://learn.sparkfun.com/tutorials/button-pad-hookup-guide?_ga=2.207712596.719811009.1585787134-440389632.1585787134
+
 # 회의록
 
 ### 20.03.30
