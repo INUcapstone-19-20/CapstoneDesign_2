@@ -1,113 +1,87 @@
-import tkinter as tk                
-from tkinter import font  as tkfont
-from tkinter import ttk
-
-class mineGUI(tk.Tk):
-
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-
-        self.title_font = tkfont.Font(family='NanumSquareRound', size=40, weight="bold", slant="roman")
-        self.common_font = tkfont.Font(family='NanumSquareRound', size=30, weight="bold", slant="roman")
-
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        self.frames = {}
-        for F in (모드선택, 싱글모드, 배틀모드):
-            page_name = F.__name__
-            frame = F(parent=container, controller=self)
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        self.show_frame("모드선택")
-
-    def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
-        frame = self.frames[page_name]
-        frame.tkraise()
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import uic
+from PyQt5.QtWidgets import QMainWindow,QStackedWidget,QWidget, QHBoxLayout, QPushButton, QLabel, QApplication
 
 
-class 모드선택(tk.Frame):
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.central_widget = QStackedWidget()
+        self.setCentralWidget(self.central_widget)
+        login_widget = LoginWidget(self)
+        login_widget.btn_single.clicked.connect(self.click_single)
+        login_widget.btn_battle.clicked.connect(self.click_battle)
+        self.central_widget.addWidget(login_widget)
 
-    def __init__(self, parent, controller):
-        
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
+    def click_single(self):
+        logged_in_widget = SingleMode(self)
+        self.central_widget.addWidget(logged_in_widget)
+        self.central_widget.setCurrentWidget(logged_in_widget)
 
-        # background_image = tk.PhotoImage(file='loading.png')
-        # background_label = tk.Label(self, image=background_image)
-        # background_label.place(relwidth=1, relheight=1)
+    def click_battle(self):
+        logged_in_widget = BattleMode(self)
+        self.central_widget.addWidget(logged_in_widget)
+        self.central_widget.setCurrentWidget(logged_in_widget)
 
-        button1 = tk.Button(self, bg="#E0E0E0", text="싱글", font=controller.title_font, 
-                            highlightcolor="#E0E0E0",command=lambda: controller.show_frame("싱글모드"))
-        button2 = tk.Button(self, highlightcolor="#AEAEAE", bg="#AEAEAE", text="배틀", font=controller.title_font,
-                            highlightbackground="#AEAEAE",command=lambda: controller.show_frame("배틀모드"))
-        button1.place(x=0,relwidth=0.5,relheight=1)
-        button2.place(relx=0.5,rely=-0.5,relwidth=0.5,relheight=2)
 
-        label1 = tk.Label(self, text="[ 모드", font=controller.common_font, bg="#E0E0E0")
-        label2 = tk.Label(self, text="선택 ]", font=controller.common_font, bg="#AEAEAE")
-        label1.place(relx=0.28,y=20)
-        label2.place(relx=0.51,y=20)
-        
-        
-        
+class LoginWidget(QWidget):
+    def __init__(self, parent=None):
+        super(LoginWidget, self).__init__(parent)
+        # self.ui = uic.loadUi("mineGUI.ui")
+        # self.ui.show()
+
+        layout = QHBoxLayout()
+        self.setFixedWidth(480)
+        self.setFixedHeight(320)
+
+        self.btn_single = QPushButton(self)
+        self.btn_single.setText("싱글")
+        self.btn_single.setFixedHeight(300)
         
 
+        self.btn_battle = QPushButton(self)
+        self.btn_battle.setText("배틀")
+        self.btn_battle.setFixedHeight(300)
 
-class 싱글모드(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg="#e0e0e0")
-        self.controller = controller
-        label = tk.Label(self, text="지뢰찾기", font=controller.title_font, bg="#e0e0e0")
-        label.pack(pady=30,anchor="center")
-        button3 = tk.Button(self, text="[ 게임 시작 ]", font=controller.common_font, bg="#e0e0e0",
-                           highlightthickness = 0, bd=0, command=lambda: controller.show_frame("모드선택"))
-        button4 = tk.Button(self, text="[ 게임 설정 ]", font=controller.common_font, bg="#e0e0e0",
-                           highlightthickness = 0, bd=0, command=lambda: controller.show_frame("모드선택"))
         
-        button3.pack(pady=20)
-        button4.pack()
+        layout.addWidget(self.btn_single)
+        layout.addWidget(self.btn_battle)
+        self.setLayout(layout)
+        # you might want to do self.button.click.connect(self.parent().login) here
 
 
-class 배틀모드(tk.Frame):
+class SingleMode(QWidget):
+    def __init__(self, parent=None):
+        super(SingleMode, self).__init__(parent)
+        layout = QHBoxLayout()
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent,bg="#e0e0e0")
-        img1 = tk.PhotoImage(file="res/reddice_default.png")
-        img1 = img1.zoom(16)
-        img1 = img1.subsample(32)
+        self.label = QLabel(self)
+        self.label.setText("지뢰찾기")
+        self.label.setFont(QtGui.QFont("NanumSquareRound", 36))
+        self.label.setGeometry(QtCore.QRect(170, 0, 200, 100))
 
-        img2 = tk.PhotoImage(file="res/bluedice_default.png")
-        img2 = img2.zoom(16)
-        img2 = img2.subsample(32)
+        # layout.addWidget(self.label)
+        self.setLayout(layout)
 
-        # style = ttk.Style()
-        # style.theme_use()
-        # style.configure('Custom.myButton', bordercolor="red")
 
-        self.controller = controller
-        label = tk.Label(self, text="[ 순서 정하기 ]",bg="#e0e0e0", font=controller.common_font)
-        label.pack(side="top", fill="x", pady=20)
-        red_button = tk.Button(self, text="red",highlightthickness = 0, bd = 0, image=img1,
-                           command=lambda: controller.show_frame("모드선택"))
-        red_button.image = img1
-        red_button.place(relx=0.17, rely=0.35)
+class BattleMode(QWidget):
+    def __init__(self, parent=None):
+        super(BattleMode, self).__init__(parent)
+        layout = QHBoxLayout()
 
-        blue_button = tk.Button(self, text="red",highlightthickness = 0, bd = 0, image=img2,
-                           command=lambda: controller.show_frame("모드선택"))
-        blue_button.image = img2
-        blue_button.place(relx=0.57, rely=0.35)
-        
-        
+        self.lb_battle = QLabel(self)
+        self.lb_battle.setText("순서 정하기")
+        self.lb_battle.setFont(QtGui.QFont("NanumSquareRound", 36))
+        self.lb_battle.setGeometry(QtCore.QRect(170, 0, 200, 100))
 
-if __name__ == "__main__":
-    app = mineGUI()
-    app.attributes("-fullscreen", True)
-    # app.geometry("480x320")
-    
-    app.mainloop()
+        # layout.addWidget(self.label)
+        self.setLayout(layout)
+
+
+
+if __name__ == '__main__':
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec_()
