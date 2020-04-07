@@ -111,7 +111,6 @@ static void scan()
           Serial.print("Key Down ");
           Serial.println((current * NUM_BTN_ROWS) + j);
 
-          // Do whatever you want to with the button press here:
           // toggle the current LED state
           LED_buffer[current][j] = !LED_buffer[current][j];
         }
@@ -127,13 +126,10 @@ static void scan()
         {
           Serial.print("Key Up ");
           Serial.println((current * NUM_BTN_ROWS) + j);
-
-          // If you want to do something when a key is released, do it here:
-
         }
       }
     }
-  }// for j = 0 to 3;
+  }
 
   delay(1);
 
