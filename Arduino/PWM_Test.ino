@@ -109,7 +109,7 @@ static void scan()
   }
   
   // pause a moment
-  delay(1);
+  delay(10);
   
   // Read the button inputs
   for (j = 0; j < NUM_BTN_ROWS; j++)
@@ -147,7 +147,7 @@ static void scan()
     }
   }
 
-  delay(1);
+  delay(10);
 
   digitalWrite(btncolumnpins[current], HIGH);
   digitalWrite(ledcolumnpins[current], HIGH);
