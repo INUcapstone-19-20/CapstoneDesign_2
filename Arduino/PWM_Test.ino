@@ -19,6 +19,11 @@ static const uint8_t ledrowpins[NUM_LED_ROWS][NUM_COLORS] = { {2, 3, 4},      //
                                                               {8, 9, 10},     // RED3, GREEN3, BLUE3
                                                               {11, 12, 13} };  // RED4, GREEN4, BLUE4
 
+static const uint8_t rgbvalues[NUM_LED_COLUMNS][NUM_LED_ROWS] = {{255, 0, 0},  // row1
+                                                                 {0, 255, 0},  // row2
+                                                                 {0, 0, 255},  // row3
+                                                                 {255 , 255, 255}}; // row4
+
 static int8_t debounce_count[NUM_BTN_COLUMNS][NUM_BTN_ROWS];
 
 static void setuppins()
@@ -84,11 +89,12 @@ static void scan()
   // output LED row values
   for (i = 0; i < NUM_LED_ROWS; i++)
   {
-    if (LED_buffer[current][i])
+    for (j = 0; j < NUM_COLORS; j++)
     {
-      analogWrite(ledrowpins[i][0], 255);
-      analogWrite(ledrowpins[i][1], 0);
-      analogWrite(ledrowpins[i][2], 0);
+      if (LED_buffer[current][i])
+      {
+        analogWrite(ledrowpins[i][j], rgbvalues[i][j]);
+      }
     }
   }
 
