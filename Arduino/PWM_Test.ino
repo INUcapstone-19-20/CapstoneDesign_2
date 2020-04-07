@@ -8,7 +8,7 @@
 #define MAX_DEBOUNCE (3)
 
 // Global variables
-static bool LED_pressed[NUM_LED_ROWS][NUM_BTN_COLUMNS];
+static bool LED_pressed[NUM_BTN_ROWS][NUM_BTN_COLUMNS];
 
 static const uint8_t btncolumnpins[NUM_BTN_COLUMNS] = {29, 28, 27, 26};   // SWT-GND 1,2,3,4
 static const uint8_t btnrowpins[NUM_BTN_ROWS]       = {22, 23, 24, 25};   // SWTICH 1,2,3,4
@@ -23,7 +23,7 @@ static const uint8_t rgbvalues[NUM_LED_ROWS][NUM_COLORS] = {{255, 0, 0},  // row
                                                                  {0, 255, 0},  // row2
                                                                  {0, 0, 255},  // row3
                                                                  {255 ,255, 255}}; // row4
-static int8_t debounce_count[NUM_LED_ROWS][NUM_BTN_COLUMNS];
+static int8_t debounce_count[NUM_BTN_ROWS][NUM_BTN_COLUMNS];
 
 static void setuppins()
 {
