@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>320</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="btn_single">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>-5</y>
+      <width>241</width>
+      <height>334</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>48</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(224, 224, 224);
+color: rgb(0, 0, 0);
+border: none;</string>
+    </property>
+    <property name="text">
+     <string>싱글</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_battle">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>-5</y>
+      <width>241</width>
+      <height>334</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>48</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(174, 174, 174);
+color: rgb(0, 0, 0);
+border: none;</string>
+    </property>
+    <property name="text">
+     <string>배틀</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_modeSelect">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>480</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>36</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>[ 모드 선택 ]</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <zorder>btn_battle</zorder>
+   <zorder>btn_single</zorder>
+   <zorder>lb_modeSelect</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
