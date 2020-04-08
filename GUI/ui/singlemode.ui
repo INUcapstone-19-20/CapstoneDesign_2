@@ -21,17 +21,18 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>50</y>
+      <y>45</y>
       <width>480</width>
-      <height>54</height>
+      <height>70</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
       <pointsize>54</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
+      <kerning>true</kerning>
      </font>
     </property>
     <property name="styleSheet">
@@ -47,23 +48,26 @@
    <widget class="QPushButton" name="btn_singlesetting">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>200</y>
-      <width>240</width>
-      <height>40</height>
+      <x>110</x>
+      <y>195</y>
+      <width>260</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
       <pointsize>36</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
-border:none;</string>
+border:0px;</string>
     </property>
     <property name="text">
      <string>[  게임 설정  ]</string>
@@ -72,23 +76,27 @@ border:none;</string>
    <widget class="QPushButton" name="btn_singlestart">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>140</y>
-      <width>240</width>
-      <height>40</height>
+      <x>110</x>
+      <y>135</y>
+      <width>260</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
       <pointsize>36</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
-border:none;</string>
+border : 0px;
+</string>
     </property>
     <property name="text">
      <string>[  게임 시작  ]</string>

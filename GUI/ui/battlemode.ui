@@ -34,6 +34,9 @@
       <bold>true</bold>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(224, 224, 224);
 
@@ -60,6 +63,9 @@ border: none;</string>
       <bold>true</bold>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(174, 174, 174);
 border: none;</string>
@@ -72,7 +78,7 @@ border: none;</string>
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>10</y>
       <width>480</width>
       <height>71</height>
      </rect>
@@ -80,9 +86,9 @@ border: none;</string>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
-      <pointsize>36</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>32</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="styleSheet">
