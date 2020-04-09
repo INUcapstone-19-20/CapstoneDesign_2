@@ -59,7 +59,7 @@ class SingleMode(QWidget):
         self.label = QLabel(self)
         self.label.setText("지뢰찾기")
         self.label.setFont(QtGui.QFont("NanumSquareRound", 28))
-        self.label.setGeometry(QtCore.QRect(170, 0, 200, 100))
+        self.label.setGeometry(QtCore.QRect(150, 0, 200, 100))
 
         # layout.addWidget(self.label)
         self.setLayout(layout)
@@ -73,7 +73,7 @@ class BattleMode(QWidget):
         self.lb_battle = QLabel(self)
         self.lb_battle.setText("순서 정하기")
         self.lb_battle.setFont(QtGui.QFont("NanumSquareRound", 28))
-        self.lb_battle.setGeometry(QtCore.QRect(170, 0, 200, 100))
+        self.lb_battle.setGeometry(QtCore.QRect(150, 0, 200, 100))
 
         # layout.addWidget(self.label)
         self.setLayout(layout)
