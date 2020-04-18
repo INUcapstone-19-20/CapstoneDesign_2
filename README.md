@@ -1,8 +1,31 @@
-진행상황 발표 시간에 보여드렸던 PCB 회로도 담긴 문서입니다!
-
-https://learn.sparkfun.com/tutorials/button-pad-hookup-guide?_ga=2.207712596.719811009.1585787134-440389632.1585787134
 
 # 회의록
+### 20.04.18
+
+[GUI]
+
+04.22 까지 완성
+
+[버튼패드]
+
+Adafruit NeoTrellis RGB Driver PCB for 4x4 Keypad
+
+https://www.adafruit.com/product/3954 제품 신청 완료
+
+
+매뉴얼 숙지
+
+https://learn.adafruit.com/adafruit-neotrellis
+
+
+Arduino Code 분석하기
+
+https://github.com/adafruit/Adafruit_Seesaw/tree/master/examples/NeoTrellis/basic
+
+https://github.com/adafruit/Adafruit_Seesaw/blob/master/examples/NeoTrellis/ripples/ripples.ino
+
+***
+
 ### 20.04.11
 [파트분배]
 
