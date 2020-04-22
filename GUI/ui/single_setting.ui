@@ -44,7 +44,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_count">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -71,7 +71,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_timer">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -101,9 +101,9 @@
    <widget class="QPushButton" name="btn_settingback">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>15</y>
-      <width>80</width>
+      <x>15</x>
+      <y>25</y>
+      <width>60</width>
       <height>40</height>
      </rect>
     </property>
@@ -117,7 +117,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="lb_count">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -145,10 +145,10 @@
    <widget class="QPushButton" name="btn_countup">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>105</y>
-      <width>40</width>
-      <height>40</height>
+      <x>265</x>
+      <y>112</y>
+      <width>25</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -161,10 +161,10 @@
    <widget class="QPushButton" name="btn_countdown">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>107</y>
-      <width>40</width>
-      <height>40</height>
+      <x>430</x>
+      <y>112</y>
+      <width>25</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -174,7 +174,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="lb_time">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -202,10 +202,10 @@
    <widget class="QPushButton" name="btn_timerdown">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>177</y>
-      <width>40</width>
-      <height>40</height>
+      <x>430</x>
+      <y>182</y>
+      <width>25</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -218,10 +218,10 @@
    <widget class="QPushButton" name="btn_timerup">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>175</y>
-      <width>40</width>
-      <height>40</height>
+      <x>265</x>
+      <y>182</y>
+      <width>25</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="focusPolicy">

@@ -17,7 +17,7 @@
    <string notr="true">background-color: rgb(217, 217, 217);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="lb_count">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -44,7 +44,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_timer">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -71,7 +71,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="lb_count">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -96,7 +96,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="lb_time">
     <property name="geometry">
      <rect>
       <x>300</x>
