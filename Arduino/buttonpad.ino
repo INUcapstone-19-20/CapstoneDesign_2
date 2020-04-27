@@ -29,16 +29,16 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 // pass this matrix to the multitrellis constructor with matrix's size.
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 
-// players' colors.
+// players' color array.
 static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
                                     0x6363FF, 0x0000FF, 0xFFFFFF, 0x0000FF,     // - - * -
                                     0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
                                     0xC6C6FF, 0x6363FF, 0x6363FF, 0x6363FF }    // - - - -    ( * is mine) 
 static uint32_t red_colors[16];
 
-static uint8_t red_turn, blue turn;
+static uint8_t red_turn, blue turn, firsttime;
 
-// Input a value 0 to 255 to get a 32-bit color value.
+// Input a value 0 to 255 to get a color value.
 uint32_t Wheel(byte WheelPos) {
   if(WheelPos < 85) {
    /* uint32_t Color(uint8_t r, uint8_t g, uint8_t b) : Convert R, G, B into packed 32-bit RGB color. */
@@ -78,7 +78,7 @@ TrellisCallback red_ON(keyEvent evt){
       trellis.show();
       red_turn--;
       if(red_turn == 0){ // 턴 == 0 되면 루프 중단하고 라즈베리or파이썬에 신호 보내는 코드?
-        firsttime = 1;
+        firsttime = 1; // toggle turn state
         // 잠시 루프 중단하고 신호 보내기
       }
     }
@@ -94,7 +94,7 @@ TrellisCallback blue_ON(keyEvent evt){
       trellis.show();
       blue_turn--;
       if(blue_turn == 0){ // 턴 == 0 되면 루프 중단하고 라즈베리or파이썬에 신호 보내는 코드?
-        firsttime = 1;
+        firsttime = 1; // toggle turn state
         // 잠시 루프 중단하고 신호 보내기
       }
     }
@@ -117,10 +117,12 @@ void setup() {
     blue_colors[i] = 전달값
     red_colors[i] = 전달값
   }
+  firsttime = 1 // set turn state
 
   /* the array can be addressed as x,y or with the key number */
+  // starting effect
   for(int i=0; i<Y_DIM*X_DIM; i++){
-      trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255))); // Wheel() is return 32-bit RGB color.
+      trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255))); // Wheel() return 24-bit RGB value.
       trellis.show();
       delay(50);
   }
@@ -138,12 +140,12 @@ void setup() {
       trellis.activateKey(x, y, SEESAW_KEYPAD_EDGE_RISING, true);
       trellis.activateKey(x, y, SEESAW_KEYPAD_EDGE_FALLING, true);
 
-
+      // LED off for all neopixels.
       /*
        setPixelColor(x, y, color) : set the color of a neopixel at a key by index or number.
        color: the color to set the pixel. This is a 24 bit RGB value.
       */
-      trellis.setPixelColor(x, y, 0x000000); //addressed with x,y
+      trellis.setPixelColor(x, y, 0x000000);
 
 
       // call show for all connected neotrellis boards to show all neopixels.
