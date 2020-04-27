@@ -2,7 +2,7 @@
 # 회의록
 ### 20.04.26
 
-Adafruit Arduino code (bascie) 분석 - 라이브러리 함수 숙지
+Adafruit Arduino code (basic) 분석 - 라이브러리 함수 숙지
 
 ### 향후계획
 
