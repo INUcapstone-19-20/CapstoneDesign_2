@@ -4,7 +4,7 @@
 
 Adafruit Arduino code (bascie) 분석 - 라이브러리 함수 숙지
 
-# 향후 계획
+### 향후계획
 
 [GUI] - 이예은
 
@@ -24,6 +24,8 @@ Adafruit 패드가 오기전에 기존에 있던 Sparkfun 패드를 이용해
 
 Adafruit 패드가 왔을 때 바로 실행해볼 Testcode 작성
 - 1행 4열이 지뢰라고 간주하고 나머지 LED에 지뢰로부터의 거리에 따른 색이 켜지도록 구현
+
+***
 
 ### 20.04.18
 
