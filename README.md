@@ -4,7 +4,7 @@
 
 Adafruit Arduino code (bascie) 분석 - 라이브러리 함수 숙지
 
-## 향후 계획
+# 향후 계획
 
 [GUI] - 이예은
 
