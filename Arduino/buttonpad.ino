@@ -182,7 +182,7 @@ void loop() {
   /* read(): read all events currently stored in the seesaw fifo and call any callbacks.
    1. Get the number of events currently in the fifo
    2. Read all keyEvents into the passed buffer
-   3. call any callbacks associated  with the key. (In this code, blink associated with keys.)
+   3. call any callbacks associated  with the key. (In this code, red_ON and blue_ON associated with keys.)
   */
   trellis.read();
   delay(20);
