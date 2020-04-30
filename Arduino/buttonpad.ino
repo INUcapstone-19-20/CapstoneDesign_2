@@ -53,7 +53,7 @@ uint32_t Wheel(byte WheelPos) {
 void showMine(uint8_t keynum, String color) {
     // keynum -> x,y 좌표로 변경
     if(color == "red") {
-        // 모든 키에 red_ON 등록
+        // 모든 setPixelColor를 red로 설정
         // 지뢰 버튼 주변 좌표 계산
         // 첫번째 영역 on
         // 딜레이
@@ -63,7 +63,7 @@ void showMine(uint8_t keynum, String color) {
         // 딜레이
     }
     else { // color == blue
-        // 모든 키에 red_ON 등록
+        // 모든 setPixelColor를 blue로 설정
         // 지뢰 버튼 주변 좌표 계산
         // 첫번째 영역 on
         // 딜레이
