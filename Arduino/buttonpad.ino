@@ -4,7 +4,7 @@
 #define X_DIM 4 // number of columns of keys
 
 // create a matrix of neotrellis boards
-Adafruit_NeoTrellis t_array[YDIM/4][X_DIM/4] = {
+Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 
     { Adafruit_NeoTrellis(0x2E) }
 
@@ -14,7 +14,7 @@ Adafruit_NeoTrellis t_array[YDIM/4][X_DIM/4] = {
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 
 // mine button color
-const static uint32_t mine[3] = {}
+const static uint32_t mine[3] = {};
 
 // set players' color
 static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
@@ -50,7 +50,7 @@ uint32_t Wheel(byte WheelPos) {
 }
 
 // mine LED effect
-void showMine(uint8_t keynum, String color) {
+void showMine(uint16_t keynum, String color) {
     // keynum -> x,y 좌표로 변경
     if(color == "red") {
         // 모든 setPixelColor를 red로 설정
@@ -81,10 +81,10 @@ TrellisCallback red_ON(keyEvent evt) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // pressed key is mine
             if(evt.bit.NUM == red_mine) {
-                showmine(evt.bit.NUM, "red");
+                showMine(evt.bit.NUM, "red");
             } 
             else if(evt.bit.NUM == blue_mine) {
-                showmine(evt.bit.NUM, "blue");
+                showMine(evt.bit.NUM, "blue");
             }
             else {
                 trellis.setPixelColor(evt.bit.NUM, red_colors[evt.bit.NUM]);
@@ -107,10 +107,10 @@ TrellisCallback blue_ON(keyEvent evt) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // pressed key is mine
             if(evt.bit.NUM == red_mine) {
-                showmine(evt.bit.NUM, "red");
+                showMine(evt.bit.NUM, "red");
             } 
             else if(evt.bit.NUM == blue_mine) {
-                showmine(evt.bit.NUM, "blue");
+                showMine(evt.bit.NUM, "blue");
             }
             else {
                 trellis.setPixelColor(evt.bit.NUM, blue_colors[evt.bit.NUM]);
@@ -150,7 +150,7 @@ void setup() {
     
     // starting effect
     for(int i=0; i<Y_DIM*X_DIM; i++) {
-        trellis.setPixelColor(i, Wheel(i, map(i, 0, X_DIM*Y_DIM, 0, 255)));
+        trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
         trellis.show();
         delay(50);
     }
@@ -190,6 +190,6 @@ void loop() {
         }
     }
 
-    trellis.read()
+    trellis.read();
     delay(20);
 }
