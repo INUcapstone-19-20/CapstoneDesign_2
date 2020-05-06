@@ -95,14 +95,8 @@ void showMine(uint16_t minekey, String color) {
         }
         trellis.show();
         delay(50);
-
-        // 지뢰 효과
-        for(uint8_t i=0; i<X_DIM*Y_DIM; i++) {
-            trellis.setPixelColor(minekey, Wheel(map(minekey, 0, X_DIM*Y_DIM, 0, 255)));
-            trellis.show();
-        }
     }
-    else { // color == blue
+    else { // color == "blue"
         // 첫번째 영역 on
         for(uint8_t x=0; x<X_DIM; x++) {
             for(uint8_t y=0; y<Y_DIM; y++) {
@@ -138,12 +132,12 @@ void showMine(uint16_t minekey, String color) {
         }
         trellis.show();
         delay(50);
-
-        // 지뢰 효과
-        for(uint8_t i=0; i<X_DIM*Y_DIM; i++) {
-            trellis.setPixelColor(minekey, Wheel(map(minekey, 0, X_DIM*Y_DIM, 0, 255)));
-            trellis.show();
-        }
+    }
+    
+    // 지뢰 효과
+    for(uint8_t i=0; i<X_DIM*Y_DIM; i++) {
+        trellis.setPixelColor(minekey, Wheel(map(minekey, 0, X_DIM*Y_DIM, 0, 255)));
+        trellis.show();
     }
 }
 
