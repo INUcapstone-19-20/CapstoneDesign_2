@@ -54,7 +54,7 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 }
 
 // mine LED effect
-void showMine(uint8_t minekey, String color) {
+void showMine(uint16_t minekey, String color) {
     // keynumber -> x,y 좌표로 변경
     uint8_t mine_x = minekey / Y_DIM;
     uint8_t mine_y = minekey % Y_DIM;
@@ -266,6 +266,6 @@ void loop() {
         }
     }
 
-    trellis.read()
+    trellis.read();
     delay(20);
 }
