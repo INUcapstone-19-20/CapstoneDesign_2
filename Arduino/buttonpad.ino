@@ -14,7 +14,7 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 
 // mine button color
-// const static uint32_t mine_colors[3] = { 0xFF0000, 0x00FF00, 0x0000FF };
+const static uint32_t mine_colors[3] = { 0xFF0000, 0x00FF00, 0x0000FF };
 
 // set players' color
 static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
@@ -54,10 +54,10 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 }
 
 // mine LED effect
-void showMine(uint16_t minekey, String color) {
+void showMine(uint16_t mine_key, String color) {
     // keynumber -> x,y 좌표로 변경
-    uint8_t mine_x = minekey / Y_DIM;
-    uint8_t mine_y = minekey % Y_DIM;
+    uint8_t mine_x = mine_key / Y_DIM;
+    uint8_t mine_y = mine_key % Y_DIM;
 
     if(color == "red") {
         // 첫번째 영역 on
@@ -66,10 +66,10 @@ void showMine(uint16_t minekey, String color) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
                     trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
-                }            
+                    trellis.show();
+                }
             }
         }
-        trellis.show();
         delay(50);
 
         // 두번째 영역 on
@@ -78,22 +78,22 @@ void showMine(uint16_t minekey, String color) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
                     trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
-                }            
+                    trellis.show();
+                }
             }
         }
-        trellis.show();
         delay(50);
 
         // 세번째 영역 on
         for(uint8_t x=0; x<X_DIM; x++) {
             for(uint8_t y=0; y<Y_DIM; y++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
+                if(distance(mine_x, mine_y, x, y) >= 3) {
                     trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
+                    trellis.show();
                 }            
             }
         }
-        trellis.show();
         delay(50);
     }
     else { // color == "blue"
@@ -103,10 +103,10 @@ void showMine(uint16_t minekey, String color) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
                     trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
-                }            
+                    trellis.show();
+                }
             }
         }
-        trellis.show();
         delay(50);
 
         // 두번째 영역 on
@@ -115,29 +115,34 @@ void showMine(uint16_t minekey, String color) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
                     trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
-                }            
+                    trellis.show();
+                }
             }
         }
-        trellis.show();
         delay(50);
 
         // 세번째 영역 on
         for(uint8_t x=0; x<X_DIM; x++) {
             for(uint8_t y=0; y<Y_DIM; y++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
+                if(distance(mine_x, mine_y, x, y) >= 3) {
                     trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
-                }            
+                    trellis.show();
+                }
             }
         }
-        trellis.show();
         delay(50);
     }
-    
+
     // 지뢰 효과
-    for(uint8_t i=0; i<X_DIM*Y_DIM; i++) {
-        trellis.setPixelColor(minekey, Wheel(map(minekey, 0, X_DIM*Y_DIM, 0, 255)));
+    uint8_t i = 0;
+    while (1)
+    {
+        trellis.setPixelColor(mine_key, mine_colors[i]);
         trellis.show();
+        if(i > 2) i = 0;
+        else i++;
+        // 종료 조건 추가
     }
 }
 
@@ -146,11 +151,11 @@ TrellisCallback red_ON(keyEvent evt) {
     if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // pressed key is mine
-            if(evt.bit.NUM == red_mine) {
+            if(evt.bit.NUM == red_mine) { // 빨간 플레이어 패배(본인 지뢰 클릭)
                 showMine(evt.bit.NUM, "red");
                 // 파이썬에 게임 종료 메시지 전송
             } 
-            else if(evt.bit.NUM == blue_mine) {
+            else if(evt.bit.NUM == blue_mine) { // 빨간 플레이어 승리
                 showMine(evt.bit.NUM, "blue");
                 // 파이썬에 게임 종료 메시지 전송
             }
@@ -174,11 +179,11 @@ TrellisCallback blue_ON(keyEvent evt) {
     if(blue_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // pressed key is mine
-            if(evt.bit.NUM == red_mine) {
+            if(evt.bit.NUM == red_mine) { // 파란 플레이어 승리
                 showMine(evt.bit.NUM, "red");
                 // 파이썬에 게임 종료 메시지 전송
             } 
-            else if(evt.bit.NUM == blue_mine) {
+            else if(evt.bit.NUM == blue_mine) { // 파란 플레이어 패배(본인 지뢰 클릭)
                 showMine(evt.bit.NUM, "blue");
                 // 파이썬에 게임 종료 메시지 전송
             }
