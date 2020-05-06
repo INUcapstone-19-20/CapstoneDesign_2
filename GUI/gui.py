@@ -1,7 +1,8 @@
-import sys, math, random, threading
+import sys, math, random, threading, serial
 import PyQt5.QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from functools import partial
 
@@ -13,8 +14,15 @@ time = 40
 # Battle Mode
 # temp = 1
 # cycle = 0
+
 red_turn = 0
 blue_turn = 0
+
+#serial port
+ser = serial.Serial(
+    port='/dev/ttyACM0',
+    baudrate=115200
+)
 
 # connect UI
 screen1 = uic.loadUiType("ui/start.ui")[0]
@@ -25,8 +33,8 @@ screen8 = uic.loadUiType("ui/single_win.ui")[0]
 screen9 = uic.loadUiType("ui/single_loose.ui")[0]
 screen10 = uic.loadUiType("ui/Replay_Game.ui")[0]
 screen11 = uic.loadUiType("ui/battlemode.ui")[0]
-screen15 = uic.loadUiType("ui/redturn.ui")[0]
-screen19 = uic.loadUiType("ui/blueturn.ui")[0]
+screen15 = uic.loadUiType("ui/red.ui")[0]
+screen19 = uic.loadUiType("ui/blue.ui")[0]
 screen20 = uic.loadUiType("ui/Result.ui")[0]
 screen21 = uic.loadUiType("ui/single_default.ui")[0]
 screen23 = uic.loadUiType("ui/blue_loose.ui")[0]
@@ -49,8 +57,8 @@ def ChangeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
 
-    # before.main.showFullScreen()
-    before.main.show()
+    before.main.showFullScreen()
+    # before.main.show()
     before.close()
 
 class Start(QMainWindow, screen1):
@@ -66,7 +74,7 @@ class ModeSelect(QMainWindow, screen2):
         self.setupUi(self)
         # Button connect
         self.btn_single.clicked.connect(partial(ChangeScreen, self, 3))
-        self.btn_battle.clicked.connect(partial(ChangeScreen, self, 11))
+        self.btn_battle.clicked.connect(partial(ChangeScreen, self, 19))
 
 
 class SingleMode(QMainWindow, screen3):
@@ -100,9 +108,15 @@ class Single_Setting(QMainWindow, screen4):
         self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
         self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
         self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
+<<<<<<< HEAD
+        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px')
+
+
+=======
         self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
         
         
+>>>>>>> e3b2dfbd33d86e9724803eb386f8ee6a65e81e16
     def setLabel(self):
         time_minute = math.floor(self.temp_time / 60)
         time_second = self.temp_time % 60
@@ -280,7 +294,13 @@ class Redturn(QMainWindow, screen15):
         super().__init__()
         self.setupUi(self)
 
-        self.btn_redturn.setStyleSheet('image:url(res/reddice_default.png); boarder:0px;')
+        self.btn_red.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
+        self.btn_red.clicked.connect(self.turnChange)
+
+    def turnChange(self):
+        ChangeScreen(self, 19)
+        color = 'b'
+        ser.write(color.encode())
 
         self.btn_redturn.clicked.connect(self.throwRed)
     
@@ -327,7 +347,13 @@ class Blueturn(QMainWindow, screen19):
         super().__init__()
         self.setupUi(self)
 
-        self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); boarder:0px;')
+        self.btn_blue.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
+        self.btn_blue.clicked.connect(self.turnChange)
+
+    def turnChange(self):
+        ChangeScreen(self, 15)
+        color = 'r'
+        ser.write(color.encode())
 
 
 class Result(QMainWindow, screen20):
@@ -373,7 +399,8 @@ class Red_Loose(QMainWindow, screen24):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setOverrideCursor(Qt.BlankCursor)
     ex = ModeSelect()
-    # ex.showFullScreen()
-    ex.show()
+    ex.showFullScreen()
+    # ex.show()
     sys.exit(app.exec_())
