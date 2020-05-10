@@ -295,6 +295,23 @@ uint8_t b_turns[6] = {1, 0, 1, 0, 1, 0};
 uint8_t it = 0;
 
 void loop() {
+
+    if(Serial.available()){
+        ch = Serial.readString();
+    }
+    // serial 받은 값에 "red"가 포함되면
+    if(ch.indexOf("red") >= 0) {
+        number = ch.substring(3,ch.length());
+        // 빨강 지뢰 재설정
+        red_mine = number.toInt();
+    }
+
+    else if(ch.indexOf("blue") >= 0) {
+        number = ch.substring(4,ch.length());
+        blue_mine = number.toInt();
+    }
+    setColor();
+    
     // 테스트용
     if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
         //red전달값 > blue전달값 ? red_turn = red전달값 : blue_turn = blue전달값;
