@@ -14,18 +14,21 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 
 // mine button color
-const static uint32_t mine_colors[3] = { 0xFF0000, 0x00FF00, 0x0000FF };
+const static uint32_t mine_colors[3] = { 0xC5F255, 0x0FA453, 0x33AC25 };
 
 // set players' color
-static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
-                                    0x6363FF, 0x0000FF, 0xFFFFFF, 0x0000FF,     // - - * -
-                                    0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
-                                    0xC6C6FF, 0x6363FF, 0x6363FF, 0x6363FF };   // - - - -    ( * is mine) 
-
-static uint32_t red_colors[16] = { 0xFFC6C6, 0xFFC6C6, 0xFFC6C6, 0xFFC6C6,      // - - - -
-                                    0xFF6363, 0xFF6363, 0xFF6363, 0xFFC6C6,     // - - - -
-                                    0xFF0000, 0xFF0000, 0xFF0000, 0xFF6363,     // - - - -
-                                    0xFF0000, 0xFFFFFF, 0xFF0000, 0xFF6363 };   // - * - -    ( * is mine) 
+static uint32_t blue_colorcode[3] = { 0x0000FF, 0x6363FF, 0xC6c6FF };
+static uint32_t red_colorcode[3] = { 0xFF0000, 0xFF6363, 0xFFC6C6 };
+static uint32_t blue_colors[16], red_colors[16];
+//static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
+//                                    0x6363FF, 0x0000FF, 0x000000, 0x0000FF,     // - - * -
+//                                    0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
+//                                    0xC6C6FF, 0x6363FF, 0x6363FF, 0x6363FF };   // - - - -    ( * is mine) 
+//
+//static uint32_t red_colors[16] = { 0xFFC6C6, 0xFFC6C6, 0xFFC6C6, 0xFFC6C6,      // - - - -
+//                                    0xFF6363, 0xFF6363, 0xFF6363, 0xFFC6C6,     // - - - -
+//                                    0xFF0000, 0xFF0000, 0xFF0000, 0xFF6363,     // - - - -
+//                                    0xFF0000, 0x000000, 0xFF0000, 0xFF6363 };   // - * - -    ( * is mine) 
 
 static uint8_t red_mine, blue_mine; // location of mine
 
@@ -50,88 +53,89 @@ uint32_t Wheel(byte WheelPos) {
 }
 
 double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
-    return abs(sqrt(pow(x1 - x2) + pow(y1 - y2)));
+    return abs(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)));
 }
 
 // mine LED effect
 void showMine(uint16_t mine_key, String color) {
     // keynumber -> x,y 좌표로 변경
-    uint8_t mine_x = mine_key / Y_DIM;
-    uint8_t mine_y = mine_key % Y_DIM;
+    uint8_t mine_x = mine_key % Y_DIM;
+    uint8_t mine_y = mine_key / Y_DIM;
 
     if(color == "red") {
         // 첫번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
-                if(x == mine_x && y == mine_y) continue;
+        uint8_t x = 0, y = 0;
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
+                if(x == mine_x && y == mine_y) continue;                    
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
-                    trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
+                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
                     trellis.show();
                 }
             }
         }
-        delay(50);
+        delay(500);
 
         // 두번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
-                    trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
+                if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
+                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
                     trellis.show();
                 }
             }
         }
-        delay(50);
+        delay(500);
 
         // 세번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 3) {
-                    trellis.setPixelColor(x, y, red_colors[x * Y_DIM + y]);
+                if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
+                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
                     trellis.show();
                 }            
             }
         }
-        delay(50);
+        delay(500);
     }
     else { // color == "blue"
         // 첫번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
-                    trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
+                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
                     trellis.show();
                 }
             }
         }
-        delay(50);
+        delay(500);
 
         // 두번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 2 && distance(mine_x, mine_y, x, y) <= sqrt(5)) {
-                    trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
+                if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
+                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
                     trellis.show();
                 }
             }
         }
-        delay(50);
+        delay(500);
 
         // 세번째 영역 on
-        for(uint8_t x=0; x<X_DIM; x++) {
-            for(uint8_t y=0; y<Y_DIM; y++) {
+        for(uint8_t y=0; y<Y_DIM; y++) {
+            for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= 3) {
-                    trellis.setPixelColor(x, y, blue_colors[x * Y_DIM + y]);
+                if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
+                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
                     trellis.show();
                 }
             }
         }
-        delay(50);
+        delay(500);
     }
 
     // 지뢰 효과
@@ -140,6 +144,7 @@ void showMine(uint16_t mine_key, String color) {
     {
         trellis.setPixelColor(mine_key, mine_colors[i]);
         trellis.show();
+        delay(500);
         if(i > 2) i = 0;
         else i++;
         // 종료 조건 추가
@@ -204,21 +209,43 @@ TrellisCallback blue_ON(keyEvent evt) {
 
 void setup() {
     Serial.begin(115200);
-
+    
     if(!trellis.begin()) {
         Serial.println("failed to begin trellis");
         while(1);
     }
 
-    // set colors and location of mine
-    // for(int i=0; i<Y_DIM*X_DIM; i++) {
-    //     blue_colors[i] =
-    //     red_colors[i] =
-    // }
-    // blue_mine =
-    // red_mine =
-    blue_mine = 13;
-    red_mine = 6;
+    // set location of mine
+    // blue_mine = 전달값
+    // red_mine = 전달값
+    blue_mine = 6;
+    red_mine = 13;
+
+    // set color array
+    uint8_t b_mine_x = blue_mine % Y_DIM;
+    uint8_t b_mine_y = blue_mine / Y_DIM;
+    for(uint8_t y=0; y<Y_DIM; y++) {
+      for(uint8_t x=0; x<X_DIM; x++) {
+        if(distance(b_mine_x, b_mine_y, x, y) <= sqrt(2)) 
+          blue_colors[y * Y_DIM + x] = blue_colorcode[0];
+        if(distance(b_mine_x, b_mine_y, x, y) > sqrt(2) && distance(b_mine_x, b_mine_y, x, y) <= sqrt(8)) 
+          blue_colors[y * Y_DIM + x] = blue_colorcode[1];
+        if(distance(b_mine_x, b_mine_y, x, y) > sqrt(8)) 
+          blue_colors[y * Y_DIM + x] = blue_colorcode[2];
+      }
+    }
+    uint8_t r_mine_x = red_mine % Y_DIM;
+    uint8_t r_mine_y = red_mine / Y_DIM;
+    for(uint8_t y=0; y<Y_DIM; y++) {
+      for(uint8_t x=0; x<X_DIM; x++) {
+        if(distance(r_mine_x, r_mine_y, x, y) <= sqrt(2)) 
+          red_colors[y * Y_DIM + x] = red_colorcode[0];
+        if(distance(r_mine_x, r_mine_y, x, y) > sqrt(2) && distance(r_mine_x, r_mine_y, x, y) <= sqrt(8)) 
+          red_colors[y * Y_DIM + x] = red_colorcode[1];
+        if(distance(r_mine_x, r_mine_y, x, y) > sqrt(8)) 
+          red_colors[y * Y_DIM + x] = red_colorcode[2];
+      }
+    }
     
     // set turn state
     firstturn = true;
@@ -243,8 +270,8 @@ void setup() {
 }
 
 // 테스트용 임시 변수
-uint8_t r_turns[6] = {2, 3, 1, 2, 0, 1};
-uint8_t b_turns[6] = {3, 2, 2, 1, 1, 2};
+uint8_t r_turns[6] = {0, 1, 0, 1, 0, 1};
+uint8_t b_turns[6] = {1, 0, 1, 0, 1, 0};
 uint8_t it = 0;
 
 void loop() {
@@ -264,7 +291,7 @@ void loop() {
             trellis.registerCallback(i, blue_ON);
         }
     }
-
+    
     trellis.read();
     delay(20);
 }
