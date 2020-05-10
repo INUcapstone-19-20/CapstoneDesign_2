@@ -17,7 +17,7 @@ Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 const static uint32_t mine_colors[3] = { 0xC5F255, 0x0FA453, 0x33AC25 };
 
 // set players' color
-static uint32_t blue_colorcode[3] = { 0x0000FF, 0x6363FF, 0xC6c6FF };
+static uint32_t blue_colorcode[3] = { 0x0000FF, 0x6363FF, 0xC6C6FF };
 static uint32_t red_colorcode[3] = { 0xFF0000, 0xFF6363, 0xFFC6C6 };
 static uint32_t blue_colors[16], red_colors[16];
 //static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
