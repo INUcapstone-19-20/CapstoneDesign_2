@@ -1,5 +1,13 @@
 import random
 import math
+import serial
+
+
+ser = serial.Serial(
+    port='/dev/tty.ACM0',
+    baudrate=115200,
+)
+
 
 #DiceResult = 0                                           # 주사위 결과치
 #TurnNum = DiceResult                                     # 턴 횟수
@@ -7,14 +15,15 @@ import math
 #numPixels = 16
 BUTTONPAD_ROW_NUM = 4                                       # 키패드 행 갯수
 BUTTONPAD_COL_NUM = 4                                       # 키패드 열 갯수
-red_turn = 1                                             # 빨강 플레이어 턴                   
-blue_turn = 0                                            # 파랑 플레이어 턴  
+red_turn = 0                                             # 빨강 플레이어 턴                   
+blue_turn = 1                                            # 파랑 플레이어 턴  
 
 # 버튼패드                                   
 BUTTONPAD = [  [0, 1, 2, 3],                                           
-            [4, 5, 6, 7],
-            [8, 9, 10, 11],
-            [12, 13, 14, 15]]
+               [4, 5, 6, 7],
+               [8, 9, 10, 11],
+               [12, 13, 14, 15]]
+               
 print('버튼패드 배열')
 for i in BUTTONPAD :
     for j in i:
@@ -23,12 +32,12 @@ for i in BUTTONPAD :
 print('')                                     
 
 # 지뢰와의 거리에 따른 LED 색_거리 짧은 순
-Red = ['빨1','빨2','빨3']                   #[0xFFC6C6, 0xFF6363, 0xFF0000]
-Blue = ['파1','파2','파3']                  #[0xC6C6FF, 0x6363FF, 0x0000FF]
+Red = ['16711680','16737123','16762566']                
+Blue = ['255','6513663','13027071']                
 
 # 플레이어 별 패드색 배열 선언
-RBUTTONPAD_COLOR = [['0' for col in range(BUTTONPAD_COL_NUM)] for row in range(BUTTONPAD_ROW_NUM)]       # 0 for ~
-BBUTTONPAD_COLOR = [['0' for col in range(BUTTONPAD_COL_NUM)] for row in range(BUTTONPAD_ROW_NUM)]       # 0 for ~
+RBUTTONPAD_COLOR = [['0' for col in range(BUTTONPAD_COL_NUM)] for row in range(BUTTONPAD_ROW_NUM)]       
+BBUTTONPAD_COLOR = [['0' for col in range(BUTTONPAD_COL_NUM)] for row in range(BUTTONPAD_ROW_NUM)]      
 
 print('빨강플레이어 패드색 배열 선언')
 for i in RBUTTONPAD_COLOR :
@@ -82,9 +91,9 @@ if red_turn :
                     RBUTTONPAD_COLOR[r][c] = Red[2]
             # 지뢰인 곳
             elif (r == RMine_ROW and c == RMine_COL):
-                RBUTTONPAD_COLOR[r][c] = '빨뢰'
+                RBUTTONPAD_COLOR[r][c] = '16777215'
             elif (r == BMine_ROW and c == BMine_COL):
-                RBUTTONPAD_COLOR[r][c] = '파뢰'
+                RBUTTONPAD_COLOR[r][c] = '16777215'
 elif blue_turn :                                                # 맨위에서 red_turn = 0, blue_turn = 1 하면 구현됌
     for r in range(0, BUTTONPAD_ROW_NUM):
         for c in range(0, BUTTONPAD_COL_NUM):
@@ -99,20 +108,25 @@ elif blue_turn :                                                # 맨위에서 r
                     BBUTTONPAD_COLOR[r][c] = Blue[2]
             # 지뢰인 곳
             elif (r == RMine_ROW and c == RMine_COL):
-                BBUTTONPAD_COLOR[r][c] = '빨뢰'
+                BBUTTONPAD_COLOR[r][c] = '16777215'
             elif (r == BMine_ROW and c == BMine_COL):
-                BBUTTONPAD_COLOR[r][c] = '파뢰'
+                BBUTTONPAD_COLOR[r][c] = '16777215'
+
+# 아두이노로 전송
+test = [0,1,2,3]
+ser.write(test, len(test))
+
 
 print('빨강플레이어 패드 색')
 for i in RBUTTONPAD_COLOR :
     for j in i:
-        print("%5s"%j, end = ' ')             #print("%9d"%j, end=' ')
+        print("%8s"%j, end = ' ')             #print("%9d"%j, end=' ')
     print()
 print('')
 
 print('파랑플레이어 패드 색')
 for i in BBUTTONPAD_COLOR :
     for j in i:
-        print("%5s"%j, end = ' ')             #print("%9d"%j, end=' ')
+        print("%8s"%j, end = ' ')             #print("%9d"%j, end=' ')
     print()
 print('')
