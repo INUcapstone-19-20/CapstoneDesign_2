@@ -293,6 +293,7 @@ void setup() {
 uint8_t r_turns[6] = {0, 1, 0, 1, 0, 1};
 uint8_t b_turns[6] = {1, 0, 1, 0, 1, 0};
 uint8_t it = 0;
+String ch, number;
 
 void loop() {
 
