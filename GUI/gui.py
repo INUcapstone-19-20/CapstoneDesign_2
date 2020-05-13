@@ -1,4 +1,4 @@
-import sys, math, random, threading, serial
+import sys, math, random, threading
 import PyQt5.QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt5.QtGui import QIcon
@@ -19,10 +19,10 @@ red_turn = 0
 blue_turn = 0
 
 #serial port
-ser = serial.Serial(
-    port='/dev/ttyACM0',
-    baudrate=115200
-)
+# ser = serial.Serial(
+#     port='/dev/ttyACM0',
+#     baudrate=115200
+# )
 
 # connect UI
 screen1 = uic.loadUiType("ui/start.ui")[0]
@@ -66,7 +66,7 @@ class Start(QMainWindow, screen1):
         super().__init__()
         self.setupUi(self)
 
-        self.btn_reset.setStyleSheet('image:url(res/bomb3.png); border:0px;')
+        self.btn_bomb.setStyleSheet('image:url(res/bomb3.png); border:0px;')
         
 class ModeSelect(QMainWindow, screen2):
     def __init__(self):
@@ -74,7 +74,7 @@ class ModeSelect(QMainWindow, screen2):
         self.setupUi(self)
         # Button connect
         self.btn_single.clicked.connect(partial(ChangeScreen, self, 3))
-        self.btn_battle.clicked.connect(partial(ChangeScreen, self, 19))
+        self.btn_battle.clicked.connect(partial(ChangeScreen, self, 11))
 
 
 class SingleMode(QMainWindow, screen3):
@@ -108,15 +108,9 @@ class Single_Setting(QMainWindow, screen4):
         self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
         self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
         self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
-<<<<<<< HEAD
-        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px')
-
-
-=======
         self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
         
         
->>>>>>> e3b2dfbd33d86e9724803eb386f8ee6a65e81e16
     def setLabel(self):
         time_minute = math.floor(self.temp_time / 60)
         time_second = self.temp_time % 60
@@ -192,96 +186,98 @@ class BattleMode(QMainWindow, screen11):
         self.setupUi(self)
 
         self.btn_bluedice.clicked.connect(self.throwBlue)
-        self.btn_reddice.clicked.connect(self.throwRed)
 
         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
     def throwBlue(self):
-        self.blue_turn = random.choice([1,2,3])
-        print("blue : ", self.blue_turn)
-        self.changeBlue()
+        self.btn_bluedice.setStyleSheet('image:url(res/bluedice_random.gif); border:0px;')
 
-        self.check_blue = True
-        print("check_blue : ", self.check_blue)
-        if(self.blue_turn & self.red_turn):
-            timer = threading.Timer(3, self.checkBoth)
-            timer.start()
-            print("blue : ", self.blue_turn)
+    # def throwBlue(self):
+    #     self.blue_turn = random.choice([1,2,3])
+    #     print("blue : ", self.blue_turn)
+    #     self.changeBlue()
+
+    #     self.check_blue = True
+    #     print("check_blue : ", self.check_blue)
+    #     if(self.blue_turn & self.red_turn):
+    #         timer = threading.Timer(3, self.checkBoth)
+    #         timer.start()
+    #         print("blue : ", self.blue_turn)
 
         
 
-    def changeBlue(self):
-        timer = threading.Timer(0.03, self.changeBlue)
-        timer.start()
-        if self.sequence == 1:
-            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
-        elif self.sequence == 2:
-            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
-        elif self.sequence == 3:
-            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
-        self.sequence += 1
-        self.cycle += 1
-        if self.sequence > 3: self.sequence = 1
-        if self.cycle > 25:
-            timer.cancel()
-            self.cycle = 1
-            if self.blue_turn == 1:
-                self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
-            elif self.blue_turn == 2:
-                self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
-            elif self.blue_turn == 3:
-                self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
+    # def changeBlue(self):
+    #     timer = threading.Timer(0.03, self.changeBlue)
+    #     timer.start()
+    #     if self.sequence == 1:
+    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
+    #     elif self.sequence == 2:
+    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
+    #     elif self.sequence == 3:
+    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
+    #     self.sequence += 1
+    #     self.cycle += 1
+    #     if self.sequence > 3: self.sequence = 1
+    #     if self.cycle > 25:
+    #         timer.cancel()
+    #         self.cycle = 1
+    #         if self.blue_turn == 1:
+    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
+    #         elif self.blue_turn == 2:
+    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
+    #         elif self.blue_turn == 3:
+    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
 
-    def throwRed(self):
-        self.red_turn = random.choice([1,2,3])
-        print("red : ", self.red_turn)
-        self.changeRed()
+    # def throwRed(self):
+    #     self.red_turn = random.choice([1,2,3])
+    #     print("red : ", self.red_turn)
+    #     self.changeRed()
 
-        self.check_red = True
-        print("check_red : ", self.check_red)
-        if(self.blue_turn & self.red_turn):
-            timer = threading.Timer(3, self.checkBoth)
-            timer.start()
-            print("red : ", self.red_turn)
+    #     self.check_red = True
+    #     print("check_red : ", self.check_red)
+    #     if(self.blue_turn & self.red_turn):
+    #         timer = threading.Timer(3, self.checkBoth)
+    #         timer.start()
+    #         print("red : ", self.red_turn)
         
 
-    def changeRed(self):
-        timer = threading.Timer(0.03, self.changeRed)
-        timer.start()
-        if self.sequence == 1:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-        elif self.sequence == 2:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-        elif self.sequence == 3:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
-        self.sequence += 1
-        self.cycle += 1
-        if self.sequence > 3: self.sequence = 1
-        if self.cycle > 25:
-            timer.cancel()
-            self.cycle = 1
-            if self.red_turn == 1:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-            elif self.red_turn == 2:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-            elif self.red_turn == 3:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
+    # def changeRed(self):
+    #     timer = threading.Timer(0.03, self.changeRed)
+    #     timer.start()
+    #     if self.sequence == 1:
+    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
+    #     elif self.sequence == 2:
+    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
+    #     elif self.sequence == 3:
+    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
+    #     self.sequence += 1
+    #     self.cycle += 1
+    #     if self.sequence > 3: self.sequence = 1
+    #     if self.cycle > 25:
+    #         timer.cancel()
+    #         self.cycle = 1
+    #         if self.red_turn == 1:
+    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
+    #         elif self.red_turn == 2:
+    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
+    #         elif self.red_turn == 3:
+    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
 
-    def checkBoth(self):
-        print(self.blue_turn)
-        print(self.red_turn)
-        if self.blue_turn > self.red_turn:
-            self.btn_bluedice.move(170,110)
-            self.btn_reddice.hide()
-        elif self.blue_turn < self.red_turn:
-            self.btn_reddice.move(170,110)
-            self.btn_bluedice.hide()
-        else:
-            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
-            self.check_blue = False
-            self.check_red = False
+    # def checkBoth(self):
+    #     print(self.blue_turn)
+    #     print(self.red_turn)
+    #     if self.blue_turn > self.red_turn:
+    #         self.btn_bluedice.move(170,110)
+    #         self.btn_reddice.hide()
+    #     elif self.blue_turn < self.red_turn:
+    #         self.btn_reddice.move(170,110)
+    #         self.btn_bluedice.hide()
+    #     else:
+    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
+    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
+    #         self.check_blue = False
+    #         self.check_red = False
             
             
 
@@ -299,8 +295,6 @@ class Redturn(QMainWindow, screen15):
 
     def turnChange(self):
         ChangeScreen(self, 19)
-        color = 'b'
-        ser.write(color.encode())
 
         self.btn_redturn.clicked.connect(self.throwRed)
     
@@ -350,11 +344,6 @@ class Blueturn(QMainWindow, screen19):
         self.btn_blue.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_blue.clicked.connect(self.turnChange)
 
-    def turnChange(self):
-        ChangeScreen(self, 15)
-        color = 'r'
-        ser.write(color.encode())
-
 
 class Result(QMainWindow, screen20):
     def __init__(self):
@@ -399,7 +388,7 @@ class Red_Loose(QMainWindow, screen24):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setOverrideCursor(Qt.BlankCursor)
+    # app.setOverrideCursor(Qt.BlankCursor)
     ex = ModeSelect()
     ex.showFullScreen()
     # ex.show()
