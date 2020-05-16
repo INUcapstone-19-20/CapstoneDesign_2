@@ -1,13 +1,14 @@
 #include "Adafruit_NeoTrellis.h"
 
-#define Y_DIM 4 // number of rows of keys
-#define X_DIM 4 // number of columns of keys
+#define Y_DIM 8 // number of rows of keys
+#define X_DIM 8 // number of columns of keys
 #define COLORS 3  // number of colors
 
 // create a matrix of neotrellis boards
 Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 
-    { Adafruit_NeoTrellis(0x2E) }
+    { Adafruit_NeoTrellis(0x2E), Adafruit_NeoTrellis(0x2F) },
+    { Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) }
 
 };
 
@@ -60,28 +61,28 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 }
 
 void setColor() {
-    uint8_t b_mine_x = blue_mine % Y_DIM;
-    uint8_t b_mine_y = blue_mine / Y_DIM;
+    uint8_t b_mine_x = blue_mine % X_DIM;
+    uint8_t b_mine_y = blue_mine / X_DIM;
     for(uint8_t y=0; y<Y_DIM; y++) {
       for(uint8_t x=0; x<X_DIM; x++) {
         if(distance(b_mine_x, b_mine_y, x, y) <= sqrt(2)) 
-          blue_colors[y * Y_DIM + x] = blue_colorcode[0];
+          blue_colors[y * X_DIM + x] = blue_colorcode[0];
         if(distance(b_mine_x, b_mine_y, x, y) > sqrt(2) && distance(b_mine_x, b_mine_y, x, y) < sqrt(8)) 
-          blue_colors[y * Y_DIM + x] = blue_colorcode[1];
+          blue_colors[y * X_DIM + x] = blue_colorcode[1];
         if(distance(b_mine_x, b_mine_y, x, y) >= sqrt(8)) 
-          blue_colors[y * Y_DIM + x] = blue_colorcode[2];
+          blue_colors[y * X_DIM + x] = blue_colorcode[2];
       }
     }
-    uint8_t r_mine_x = red_mine % Y_DIM;
-    uint8_t r_mine_y = red_mine / Y_DIM;
+    uint8_t r_mine_x = red_mine % X_DIM;
+    uint8_t r_mine_y = red_mine / X_DIM;
     for(uint8_t y=0; y<Y_DIM; y++) {
       for(uint8_t x=0; x<X_DIM; x++) {
         if(distance(r_mine_x, r_mine_y, x, y) <= sqrt(2)) 
-          red_colors[y * Y_DIM + x] = red_colorcode[0];
+          red_colors[y * X_DIM + x] = red_colorcode[0];
         if(distance(r_mine_x, r_mine_y, x, y) > sqrt(2) && distance(r_mine_x, r_mine_y, x, y) < sqrt(8)) 
-          red_colors[y * Y_DIM + x] = red_colorcode[1];
+          red_colors[y * X_DIM + x] = red_colorcode[1];
         if(distance(r_mine_x, r_mine_y, x, y) >= sqrt(8)) 
-          red_colors[y * Y_DIM + x] = red_colorcode[2];
+          red_colors[y * X_DIM + x] = red_colorcode[2];
       }
     }
 }
@@ -89,17 +90,16 @@ void setColor() {
 // mine LED effect
 void showMine(uint16_t mine_key, String color) {
     // keynumber -> x,y 좌표로 변경
-    uint8_t mine_x = mine_key % Y_DIM;
-    uint8_t mine_y = mine_key / Y_DIM;
+    uint8_t mine_x = mine_key % X_DIM;
+    uint8_t mine_y = mine_key / X_DIM;
 
     if(color == "red") {
         // 첫번째 영역 on
-        uint8_t x = 0, y = 0;
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;                    
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
-                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }
             }
@@ -111,7 +111,7 @@ void showMine(uint16_t mine_key, String color) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
-                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }
             }
@@ -123,7 +123,7 @@ void showMine(uint16_t mine_key, String color) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
-                    trellis.setPixelColor(x, y, red_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }            
             }
@@ -136,7 +136,7 @@ void showMine(uint16_t mine_key, String color) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
-                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
             }
@@ -148,7 +148,7 @@ void showMine(uint16_t mine_key, String color) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
-                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
             }
@@ -160,7 +160,7 @@ void showMine(uint16_t mine_key, String color) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
                 if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
-                    trellis.setPixelColor(x, y, blue_colors[y * Y_DIM + x]);
+                    trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
             }
@@ -256,8 +256,8 @@ void setup() {
     // set location of mine
     // blue_mine = 전달값
     // red_mine = 전달값
-    blue_mine = 6;
-    red_mine = 13;
+    blue_mine = 28;
+    red_mine = 34;
 
     // set color array
     setColor();
