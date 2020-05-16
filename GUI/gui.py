@@ -1,7 +1,7 @@
 import sys, math, random, threading
 import PyQt5.QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from functools import partial
@@ -12,9 +12,6 @@ count = 10
 time = 40
 
 # Battle Mode
-# temp = 1
-# cycle = 0
-
 red_turn = 0
 blue_turn = 0
 
@@ -24,24 +21,9 @@ blue_turn = 0
 #     baudrate=115200
 # )
 
-# connect UI
-screen1 = uic.loadUiType("ui/start.ui")[0]
-screen2 = uic.loadUiType("ui/modeselect.ui")[0]
-screen3 = uic.loadUiType("ui/singlemode.ui")[0]
-screen4 = uic.loadUiType("ui/single_setting.ui")[0]
-screen8 = uic.loadUiType("ui/single_win.ui")[0]
-screen9 = uic.loadUiType("ui/single_loose.ui")[0]
-screen10 = uic.loadUiType("ui/Replay_Game.ui")[0]
-screen11 = uic.loadUiType("ui/battlemode.ui")[0]
-screen15 = uic.loadUiType("ui/red.ui")[0]
-screen19 = uic.loadUiType("ui/blue.ui")[0]
-screen20 = uic.loadUiType("ui/Result.ui")[0]
-screen21 = uic.loadUiType("ui/single_default.ui")[0]
-screen23 = uic.loadUiType("ui/blue_loose.ui")[0]
-screen24 = uic.loadUiType("ui/red_loose.ui")[0]
 
 # Screen change
-def ChangeScreen(before, screen_number):
+def changeScreen(before, screen_number):
     if(screen_number == 1): before.main = Start()
     elif(screen_number == 2): before.main = ModeSelect()
     elif(screen_number == 3): before.main = SingleMode()
@@ -56,43 +38,41 @@ def ChangeScreen(before, screen_number):
     elif(screen_number == 21): before.main = Single_Default()
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
-
-    before.main.showFullScreen()
-    # before.main.show()
+    
+    # before.main.showFullScreen()
+    before.main.show()
     before.close()
 
-class Start(QMainWindow, screen1):
+
+class Start(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
-
+        uic.loadUi("ui/start.ui", self)
         self.btn_bomb.setStyleSheet('image:url(res/bomb3.png); border:0px;')
         
-class ModeSelect(QMainWindow, screen2):
+class ModeSelect(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/modeselect.ui", self)
         # Button connect
-        self.btn_single.clicked.connect(partial(ChangeScreen, self, 3))
-        self.btn_battle.clicked.connect(partial(ChangeScreen, self, 11))
+        self.btn_single.clicked.connect(partial(changeScreen, self, 3))
+        self.btn_battle.clicked.connect(partial(changeScreen, self, 11))
 
-
-class SingleMode(QMainWindow, screen3):
+class SingleMode(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/singlemode.ui", self)
         
-        self.btn_singlesetting.clicked.connect(partial(ChangeScreen, self, 4))
-        self.btn_singlestart.clicked.connect(partial(ChangeScreen, self, 21))
+        self.btn_singlesetting.clicked.connect(partial(changeScreen, self, 4))
+        self.btn_singlestart.clicked.connect(partial(changeScreen, self, 21))
 
 
-class Single_Setting(QMainWindow, screen4):
-    temp_count = count
-    temp_time = time
-
+class Single_Setting(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/single_setting.ui", self)
+        self.temp_count = count
+        self.temp_time = time
         self.setLabel()
 
         # Button Function
@@ -101,7 +81,7 @@ class Single_Setting(QMainWindow, screen4):
         self.btn_timerup.clicked.connect(self.timeUp)
         self.btn_timerdown.clicked.connect(self.timeDown)
         self.btn_settingsave.clicked.connect(self.settingSave)
-        self.btn_settingback.clicked.connect(partial(ChangeScreen, self, 3))
+        self.btn_settingback.clicked.connect(partial(changeScreen, self, 3))
 
         # Button image
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
@@ -130,7 +110,7 @@ class Single_Setting(QMainWindow, screen4):
         self.setLabel()
 
     def countDown(self):
-        if count > 0: self.temp_count -= 1
+        if self.temp_count > 0: self.temp_count -= 1
         self.setLabel()
 
     def timeUp(self):
@@ -138,7 +118,7 @@ class Single_Setting(QMainWindow, screen4):
         self.setLabel()
 
     def timeDown(self):
-        if time > 0: self.temp_time -= 5
+        if self.temp_time > 0: self.temp_time -= 5
         self.setLabel()
         
     def settingSave(self):
@@ -146,34 +126,34 @@ class Single_Setting(QMainWindow, screen4):
         count = self.temp_count
         time = self.temp_time
 
-class Single_Win(QMainWindow, screen8):
+class Single_Win(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/single_win.ui", self)
 
-        self.btn_restart.clicked.connect(partial(ChangeScreen, self, 10))
-        self.btn_menu.clicked.connect(partial(ChangeScreen, self, 2))
+        self.btn_restart.clicked.connect(partial(changeScreen, self, 10))
+        self.btn_menu.clicked.connect(partial(changeScreen, self, 2))
 
-class Single_Loose(QMainWindow, screen9):
+class Single_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/single_loose.ui", self)
 
-        self.btn_restart2.clicked.connect(partial(ChangeScreen, self, 10))
-        self.btn_menu2.clicked.connect(partial(ChangeScreen, self, 2))
+        self.btn_restart2.clicked.connect(partial(changeScreen, self, 10))
+        self.btn_menu2.clicked.connect(partial(changeScreen, self, 2))
         
 
-class Replay_Game(QMainWindow, screen10):
+class Replay_Game(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/Replay_Game.ui", self)
 
         self.btn_reset.setStyleSheet('image:url(res/replay.png); border:0px;')
 
-        self.btn_reset.clicked.connect(partial(ChangeScreen, self, 2))
+        self.btn_reset.clicked.connect(partial(changeScreen, self, 2))
 
 
-class BattleMode(QMainWindow, screen11):
+class BattleMode(QMainWindow):
     blue_turn = 0
     red_turn = 0
     check_blue = False
@@ -183,7 +163,18 @@ class BattleMode(QMainWindow, screen11):
 
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        # self.setupUi(self)
+        uic.loadUi("ui/battlemode.ui", self)
+        
+        self.playLabel = QLabel(self)
+        self.playLabel.resize(150, 150)
+        self.playLabel.move(60, 110)
+
+        movie = QMovie("res/bluedice_random.gif")
+        self.playLabel.setMovie(movie)
+        movie.start()
+        self.playLabel.setScaledContents(True)
+        self.playLabel.hide()
 
         self.btn_bluedice.clicked.connect(self.throwBlue)
 
@@ -191,172 +182,43 @@ class BattleMode(QMainWindow, screen11):
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
     def throwBlue(self):
-        self.btn_bluedice.setStyleSheet('image:url(res/bluedice_random.gif); border:0px;')
-
-    # def throwBlue(self):
-    #     self.blue_turn = random.choice([1,2,3])
-    #     print("blue : ", self.blue_turn)
-    #     self.changeBlue()
-
-    #     self.check_blue = True
-    #     print("check_blue : ", self.check_blue)
-    #     if(self.blue_turn & self.red_turn):
-    #         timer = threading.Timer(3, self.checkBoth)
-    #         timer.start()
-    #         print("blue : ", self.blue_turn)
-
-        
-
-    # def changeBlue(self):
-    #     timer = threading.Timer(0.03, self.changeBlue)
-    #     timer.start()
-    #     if self.sequence == 1:
-    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
-    #     elif self.sequence == 2:
-    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
-    #     elif self.sequence == 3:
-    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
-    #     self.sequence += 1
-    #     self.cycle += 1
-    #     if self.sequence > 3: self.sequence = 1
-    #     if self.cycle > 25:
-    #         timer.cancel()
-    #         self.cycle = 1
-    #         if self.blue_turn == 1:
-    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one.png); border:0px;')
-    #         elif self.blue_turn == 2:
-    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two.png); border:0px;')
-    #         elif self.blue_turn == 3:
-    #             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three.png); border:0px;')
-
-    # def throwRed(self):
-    #     self.red_turn = random.choice([1,2,3])
-    #     print("red : ", self.red_turn)
-    #     self.changeRed()
-
-    #     self.check_red = True
-    #     print("check_red : ", self.check_red)
-    #     if(self.blue_turn & self.red_turn):
-    #         timer = threading.Timer(3, self.checkBoth)
-    #         timer.start()
-    #         print("red : ", self.red_turn)
-        
-
-    # def changeRed(self):
-    #     timer = threading.Timer(0.03, self.changeRed)
-    #     timer.start()
-    #     if self.sequence == 1:
-    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-    #     elif self.sequence == 2:
-    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-    #     elif self.sequence == 3:
-    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
-    #     self.sequence += 1
-    #     self.cycle += 1
-    #     if self.sequence > 3: self.sequence = 1
-    #     if self.cycle > 25:
-    #         timer.cancel()
-    #         self.cycle = 1
-    #         if self.red_turn == 1:
-    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-    #         elif self.red_turn == 2:
-    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-    #         elif self.red_turn == 3:
-    #             self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
-
-    # def checkBoth(self):
-    #     print(self.blue_turn)
-    #     print(self.red_turn)
-    #     if self.blue_turn > self.red_turn:
-    #         self.btn_bluedice.move(170,110)
-    #         self.btn_reddice.hide()
-    #     elif self.blue_turn < self.red_turn:
-    #         self.btn_reddice.move(170,110)
-    #         self.btn_bluedice.hide()
-    #     else:
-    #         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
-    #         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
-    #         self.check_blue = False
-    #         self.check_red = False
+        self.playLabel.show()
             
             
 
-class Redturn(QMainWindow, screen15):
+class Redturn(QMainWindow):
     red_turn = 0
     check_red = False
     sequence = 1
     cycle = 0
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/red.ui", self)
 
         self.btn_red.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
-        self.btn_red.clicked.connect(self.turnChange)
-
-    def turnChange(self):
-        ChangeScreen(self, 19)
-
-        self.btn_redturn.clicked.connect(self.throwRed)
-    
-    def throwRed(self):
-        self.red_turn = random.choice([1,2,3])
-        print("red : ", self.red_turn)
-        self.changeRed()
-
-        self.check_red = True
-        print("check_red : ", self.check_red)
-        if(self.blue_turn & self.red_turn):
-            timer = threading.Timer(3, self.checkBoth)
-            timer.start()
-            print("red : ", self.red_turn)
-        
-
-    def changeRed(self):
-        timer = threading.Timer(0.03, self.changeRed)
-        timer.start()
-        if self.sequence == 1:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-        elif self.sequence == 2:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-        elif self.sequence == 3:
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
-        self.sequence += 1
-        self.cycle += 1
-        if self.sequence > 3: self.sequence = 1
-        if self.cycle > 25:
-            timer.cancel()
-            self.cycle = 1
-            if self.red_turn == 1:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_one.png); border:0px;')
-            elif self.red_turn == 2:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_two.png); border:0px;')
-            elif self.red_turn == 3:
-                self.btn_reddice.setStyleSheet('image:url(res/reddice_three.png); border:0px;')
 
 
 
-
-class Blueturn(QMainWindow, screen19):
+class Blueturn(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/blue.ui", self)
 
         self.btn_blue.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
-        self.btn_blue.clicked.connect(self.turnChange)
 
 
-class Result(QMainWindow, screen20):
+class Result(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/Result.ui", self)
 
-        self.btn_restart.clicked.connect(partial(ChangeScreen, self, 11))
-        self.btn_new.clicked.connect(partial(ChangeScreen, self, 2))
+        self.btn_restart.clicked.connect(partial(changeScreen, self, 11))
+        self.btn_new.clicked.connect(partial(changeScreen, self, 2))
 
-class Single_Default(QMainWindow, screen21):
+class Single_Default(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/single_default.ui", self)
 
         time_minute = math.floor(time / 60)
         time_second = time % 60
@@ -371,25 +233,26 @@ class Single_Default(QMainWindow, screen21):
         self.lb_count.setText(str(count))
         self.lb_time.setText(str_minute + ":" + str_second)
 
-class Blue_Loose(QMainWindow, screen23):
+class Blue_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi("ui/blue_loose.ui", self)
 
-        self.btn_bbom.clicked.connect(partial(ChangeScreen, self, 20))
+        self.btn_bbom.clicked.connect(partial(changeScreen, self, 20))
 
-class Red_Loose(QMainWindow, screen24):
+class Red_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        screen24 = uic.loadUi("ui/red_loose.ui", self)
 
-        self.btn_rbom.clicked.connect(partial(ChangeScreen, self, 20))
+        self.btn_rbom.clicked.connect(partial(changeScreen, self, 20))
+
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # app.setOverrideCursor(Qt.BlankCursor)
     ex = ModeSelect()
-    ex.showFullScreen()
-    # ex.show()
+    # ex.showFullScreen()
+    ex.show()
     sys.exit(app.exec_())
