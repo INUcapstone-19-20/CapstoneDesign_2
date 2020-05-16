@@ -1,16 +1,20 @@
 #include "Adafruit_NeoTrellis.h"
 
-#define Y_DIM 8 // number of rows of keys
-#define X_DIM 8 // number of columns of keys
+#define Y_DIM 12 // number of rows of keys
+#define X_DIM 12 // number of columns of keys
 #define COLORS 3  // number of colors
 
 // create a matrix of neotrellis boards
 Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-
-    { Adafruit_NeoTrellis(0x2E), Adafruit_NeoTrellis(0x2F) },
-    { Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) }
-
+    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
+    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
+    { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
 };
+
+//Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+//    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33)},
+//    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) }
+//};
 
 // pass this matrix to the multitrellis constructor
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
@@ -256,7 +260,7 @@ void setup() {
     // set location of mine
     // blue_mine = 전달값
     // red_mine = 전달값
-    blue_mine = 28;
+    blue_mine = 89;
     red_mine = 34;
 
     // set color array
@@ -290,28 +294,28 @@ void setup() {
 }
 
 // 테스트용 임시 변수
-uint8_t r_turns[6] = {0, 1, 0, 1, 0, 1};
-uint8_t b_turns[6] = {1, 0, 1, 0, 1, 0};
+uint8_t r_turns[6] = {0, 10, 0, 10, 0, 10};
+uint8_t b_turns[6] = {10, 0, 10, 0, 10, 0};
 uint8_t it = 0;
 String ch, number;
 
 void loop() {
 
-    if(Serial.available()){
-        ch = Serial.readString();
-    }
-    // serial 받은 값에 "red"가 포함되면
-    if(ch.indexOf("red") >= 0) {
-        number = ch.substring(3,ch.length());
-        // 빨강 지뢰 재설정
-        red_mine = number.toInt();
-    }
-
-    else if(ch.indexOf("blue") >= 0) {
-        number = ch.substring(4,ch.length());
-        blue_mine = number.toInt();
-    }
-    setColor();
+//    if(Serial.available()){
+//        ch = Serial.readString();
+//    }
+//    // serial 받은 값에 "red"가 포함되면
+//    if(ch.indexOf("red") >= 0) {
+//        number = ch.substring(3,ch.length());
+//        // 빨강 지뢰 재설정
+//        red_mine = number.toInt();
+//    }
+//
+//    else if(ch.indexOf("blue") >= 0) {
+//        number = ch.substring(4,ch.length());
+//        blue_mine = number.toInt();
+//    }
+//    setColor();
     
     // 테스트용
     if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
