@@ -1,15 +1,16 @@
 import sys, math, random, threading
+import time
 import PyQt5.QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 from PyQt5 import uic
 from functools import partial
 
 
 # Single Mode
 count = 10
-time = 40
+timer = 40
 
 # Battle Mode
 red_turn = 0
@@ -21,6 +22,19 @@ blue_turn = 0
 #     baudrate=115200
 # )
 
+class Thread(QThread):
+    cntChanged = pyqtSignal(int)
+
+    def run(self):        
+        cnt = 0
+        while cnt < 30:
+            self.countChanged.emit(cnt % 4)
+            cnt += 1
+            time.sleep(0.03)
+
+        result = random.randint(0,4)
+        self.countChanged.emit(result)
+            
 
 # Screen change
 def changeScreen(before, screen_number):
@@ -72,7 +86,7 @@ class Single_Setting(QMainWindow):
         super().__init__()
         uic.loadUi("ui/single_setting.ui", self)
         self.temp_count = count
-        self.temp_time = time
+        self.temp_time = timer
         self.setLabel()
 
         # Button Function
@@ -122,9 +136,9 @@ class Single_Setting(QMainWindow):
         self.setLabel()
         
     def settingSave(self):
-        global count, time
+        global count, timer
         count = self.temp_count
-        time = self.temp_time
+        timer = self.temp_time
 
 class Single_Win(QMainWindow):
     def __init__(self):
@@ -154,36 +168,57 @@ class Replay_Game(QMainWindow):
 
 
 class BattleMode(QMainWindow):
-    blue_turn = 0
-    red_turn = 0
-    check_blue = False
-    check_red = False
-    sequence = 1
-    cycle = 0
-
     def __init__(self):
         super().__init__()
-        # self.setupUi(self)
         uic.loadUi("ui/battlemode.ui", self)
         
         self.playLabel = QLabel(self)
-        self.playLabel.resize(150, 150)
-        self.playLabel.move(60, 110)
+        self.playLabel.resize(120, 120)
+        self.playLabel.move(75, 125)
 
-        movie = QMovie("res/bluedice_random.gif")
+        movie = QMovie("res/bluedice_random(pass.gif")
         self.playLabel.setMovie(movie)
         movie.start()
         self.playLabel.setScaledContents(True)
         self.playLabel.hide()
-
+        
+    
         self.btn_bluedice.clicked.connect(self.throwBlue)
+        self.btn_reddice.clicked.connect(self.throwRed)
 
         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
-    def throwBlue(self):
-        self.playLabel.show()
+    def setBlue(self, value):
+        if(value == 0):
+            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_pass.png); border:0px;')
+        elif(value == 1):
+            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one1.png); border:0px;')
+        elif(value == 2):
+            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two2.png); border:0px;')
+        elif(value == 3):
+            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
             
+    def throwBlue(self):
+        self.th = Thread()
+        self.th.countChanged.connect(self.setBlue)
+        self.th.start()
+
+    def setRed(self, value):
+        if(value == 0):
+            self.btn_reddice.setStyleSheet('image:url(res/reddice_pass.png); border:0px;')
+        elif(value == 1):
+            self.btn_reddice.setStyleSheet('image:url(res/reddice_one1.png); border:0px;')
+        elif(value == 2):
+            self.btn_reddice.setStyleSheet('image:url(res/reddice_two2.png); border:0px;')
+        elif(value == 3):
+            self.btn_reddice.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
+
+    def throwRed(self):
+        self.th = Thread()
+        self.th.countChanged.connect(self.setRed)
+        self.th.start()
+
             
 
 class Redturn(QMainWindow):
@@ -220,8 +255,8 @@ class Single_Default(QMainWindow):
         super().__init__()
         uic.loadUi("ui/single_default.ui", self)
 
-        time_minute = math.floor(time / 60)
-        time_second = time % 60
+        time_minute = math.floor(timer / 60)
+        time_second = timer % 60
         str_minute = ""
         str_second = ""
 
