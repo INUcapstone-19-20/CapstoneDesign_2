@@ -24,16 +24,16 @@ blue_turn = 0
 
 class Thread(QThread):
     cntChanged = pyqtSignal(int)
-
+    result = pyqtSignal(int)
     def run(self):        
         cnt = 0
         while cnt < 30:
-            self.countChanged.emit(cnt % 4)
+            self.cntChanged.emit(cnt % 4)
             cnt += 1
             time.sleep(0.03)
 
-        result = random.randint(0,4)
-        self.countChanged.emit(result)
+        rand = random.randint(0,3)
+        self.result.emit(rand)
             
 
 # Screen change
@@ -163,7 +163,6 @@ class Replay_Game(QMainWindow):
         uic.loadUi("ui/Replay_Game.ui", self)
 
         self.btn_reset.setStyleSheet('image:url(res/replay.png); border:0px;')
-
         self.btn_reset.clicked.connect(partial(changeScreen, self, 2))
 
 
@@ -172,22 +171,41 @@ class BattleMode(QMainWindow):
         super().__init__()
         uic.loadUi("ui/battlemode.ui", self)
         
-        self.playLabel = QLabel(self)
-        self.playLabel.resize(120, 120)
-        self.playLabel.move(75, 125)
+        self.check_blue = False
+        self.check_red = False
 
-        movie = QMovie("res/bluedice_random(pass.gif")
-        self.playLabel.setMovie(movie)
-        movie.start()
-        self.playLabel.setScaledContents(True)
-        self.playLabel.hide()
+        # self.playLabel = QLabel(self)
+        # self.playLabel.resize(120, 120)
+        # self.playLabel.move(75, 125)
+
+        # movie = QMovie("res/bluedice_random(pass.gif")
+        # self.playLabel.setMovie(movie)
+        # movie.start()
+        # self.playLabel.setScaledContents(True)
+        # self.playLabel.hide()
         
-    
         self.btn_bluedice.clicked.connect(self.throwBlue)
         self.btn_reddice.clicked.connect(self.throwRed)
 
         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
+
+    def compareDice(self):
+        print("compare!")
+        global blue_turn, red_turn
+        
+        if blue_turn == red_turn:
+            self.check_blue = False
+            self.check_red = False
+            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
+            self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
+        elif blue_turn > red_turn:
+            self.btn_bluedice.move(160, 110)
+            self.btn_reddice.hide()
+        elif red_turn > blue_turn:
+            self.btn_reddice.move(160, 110)
+            self.btn_bluedice.hide()
+        
 
     def setBlue(self, value):
         if(value == 0):
@@ -199,9 +217,22 @@ class BattleMode(QMainWindow):
         elif(value == 3):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
             
+    def finishBlue(self, value):
+        global blue_turn
+        blue_turn = value
+        self.setBlue(blue_turn)
+        print(blue_turn)
+        self.check_blue = True
+        if self.check_blue & self.check_red:
+            self.th = Thread()
+            self.th.finished.connect(self.compareDice)
+            self.th.start()
+
     def throwBlue(self):
+        global blue_turn
         self.th = Thread()
-        self.th.countChanged.connect(self.setBlue)
+        self.th.cntChanged.connect(self.setBlue)
+        self.th.result.connect(self.finishBlue)
         self.th.start()
 
     def setRed(self, value):
@@ -214,9 +245,21 @@ class BattleMode(QMainWindow):
         elif(value == 3):
             self.btn_reddice.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
 
+    def finishRed(self, value):
+        global red_turn
+        red_turn = value
+        self.setRed(red_turn)
+        print(red_turn)
+        self.check_red = True
+        if self.check_blue & self.check_red:
+            self.th = Thread()
+            self.th.finished.connect(self.compareDice)
+            self.th.start()
+
     def throwRed(self):
         self.th = Thread()
-        self.th.countChanged.connect(self.setRed)
+        self.th.cntChanged.connect(self.setRed)
+        self.th.result.connect(self.finishRed)
         self.th.start()
 
             
