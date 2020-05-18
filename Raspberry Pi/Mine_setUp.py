@@ -8,7 +8,7 @@ ser = serial.Serial(
 
 BUTTONPAD_NUM = 144
 start = 1
-mineCiper = 3             # 지뢰 자릿숫 (4x4 : 1, 8x8 : 2, 12x12 :3)
+mineCiper = 3             # 지뢰 자릿숫 (4x4 : 1, 8x8 : 2, 12x12 :3) -> 일단 3으로 쭉
 
 def Mine_ToArduino (red_mine, blue_mine) :
     MineTrans = "Mine" + red_mine + blue_mine

@@ -343,7 +343,6 @@ void loop() {
     Serial.print(sig);
     Serial.print("\t");
     
-//    String check = sig.substring(0,4);
     sig.substring(0,4).toCharArray(check,5);
     Serial.print("check : ");
     Serial.print(check);
@@ -353,8 +352,8 @@ void loop() {
     
     if (temp == "Mine")
     {
-        if (sig.length()==10){
-            
+        if (sig.length()==10)
+        {
             sig.substring(4,7).toCharArray(red,4);
             sig.substring(7,10).toCharArray(blue,4);
             red_mine = atoi(red);
@@ -365,19 +364,19 @@ void loop() {
             Serial.print("\t");
             Serial.print("blue : ");
             Serial.print(blue_mine);
-            
-            
             sig = "";
         }
-        else {
+        else 
+        {
             sig = "";
         }
     }
     else if (temp == "Turn")
     {
-        if (sig.length()==5){
+        if (sig.length()==5)
+        {
             sig.substring(4,5).toCharArray(turnT,2);
-            
+        
             Serial.print("\t");
             Serial.print("turnT : ");
             Serial.print(turnT);
@@ -387,14 +386,19 @@ void loop() {
             Serial.print("\t");
             Serial.print("turn : ");
             Serial.print(turn);
+            sig = "";
+        }
+        else 
+        {
+            sig = "";
         }
     }
-    else {
+    else
+    {
       sig = "";
     }
-    
     Serial.println();
-    sig = "";
+
     // 테스트용
     // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
     //     //red전달값 > blue전달값 ? red_turn = red전달값 : blue_turn = blue전달값;
