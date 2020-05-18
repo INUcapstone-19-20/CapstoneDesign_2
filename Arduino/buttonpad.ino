@@ -202,7 +202,7 @@ TrellisCallback red_ON(keyEvent evt) {
 //    if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // ToRaspberry
-            Serial.print("Click");
+            Serial.println("Click");
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -369,8 +369,7 @@ void loop() {
             
             sig = "";
         }
-        else if (sig.length()>10){
-//            Serial.println("Come On!");
+        else {
             sig = "";
         }
     }
@@ -395,7 +394,7 @@ void loop() {
     }
     
     Serial.println();
-
+    sig = "";
     // 테스트용
     // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
     //     //red전달값 > blue전달값 ? red_turn = red전달값 : blue_turn = blue전달값;
