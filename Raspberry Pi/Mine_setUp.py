@@ -28,7 +28,7 @@ def mine_ToArduino (red_mine, blue_mine) :
     # 아두이노로 전달
     ser.write(MineTrans)
 
-# 지뢰 지정 랜덤함수
+# 지뢰 설정 랜덤함수
 def set_Mine ():
     # 빨강플레이어의 지뢰
     red_mine = random.randint(0,BUTTONPAD_NUM-1)
@@ -46,7 +46,7 @@ def set_Mine ():
     # print('')
 
     # 아두이노로 전달
-    Mine_ToArduino(red_mine, blue_mine)
+    mine_ToArduino(red_mine, blue_mine)
 
 
 

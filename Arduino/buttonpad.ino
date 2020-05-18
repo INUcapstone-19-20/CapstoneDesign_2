@@ -42,18 +42,22 @@ static uint32_t blue_colors[Y_DIM*X_DIM], red_colors[Y_DIM*X_DIM];
 
 static uint8_t red_mine, blue_mine; // location of mine
 
-static uint8_t red_turn, blue_turn; // number of turns
-static boolean firstturn;
-static char turn;
+//static uint8_t red_turn, blue_turn; // number of turns
+//static boolean firstturn;
 
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
+// 시리얼 수신 변수
 static String sig = "";
-static String temp;
+//static String temp;
+
+// 시리얼 수신 시 문자열 슬라이싱 용 변수_문자열의 끝은 NULL
 static char check[5];
 static char red[4];
 static char blue[4];
 static char turnT[2];
+
+static char turn;
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -201,8 +205,7 @@ void showMine(uint16_t mine_key, String color) {
 TrellisCallback red_ON(keyEvent evt) {
 //    if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
-            // ToRaspberry
-            Serial.println("Click");
+            Serial.println("Click");          // 버튼 클릭시 Raspberrypi에 전달하기 위해 출력
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -235,8 +238,7 @@ TrellisCallback red_ON(keyEvent evt) {
 TrellisCallback blue_ON(keyEvent evt) {
 //    if(blue_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
-            // ToRaspberry
-            Serial.println("Click");
+            Serial.println("Click");          // 버튼 클릭시 Raspberrypi에 전달하기 위해 출력
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -276,11 +278,11 @@ void setup() {
     // set location of mine
     // blue_mine = 전달값
     // red_mine = 전달값
-    blue_mine = 0;
-    red_mine = 8;
+    // blue_mine = 0;
+    // red_mine = 8;
 
     // set color array
-    setColor();
+    // setColor();
     
     // set turn state
     //firstturn = true;
@@ -310,10 +312,10 @@ void setup() {
 }
 
 // 테스트용 임시 변수
-uint8_t r_turns[6] = {0, 10, 0, 10, 0, 10};
-uint8_t b_turns[6] = {10, 0, 10, 0, 10, 0};
-uint8_t it = 0;
-String ch, number;
+// uint8_t r_turns[6] = {0, 10, 0, 10, 0, 10};
+// uint8_t b_turns[6] = {10, 0, 10, 0, 10, 0};
+// uint8_t it = 0;
+// String ch, number;
 
 void loop() {
 
@@ -335,67 +337,95 @@ void loop() {
     
     while(Serial.available())
     {
+        // 시리얼 읽어서 문자열로 저장
         char wait = Serial.read();
         sig.concat(wait);
-        temp = sig;
     }
+    // 테스트
     Serial.print("sig : ");
     Serial.print(sig);
     Serial.print("\t");
     
-    sig.substring(0,4).toCharArray(check,5);
+    // 문자열 슬라이싱 (Mine or Turn)
+    sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
+
+    // 테스트
     Serial.print("check : ");
     Serial.print(check);
     Serial.print("\t");
 
+    // 문자열 string으로 저장
     String temp = check;
     
+    // 지뢰 설정 시리얼을 수신한 경우
     if (temp == "Mine")
     {
         if (sig.length()==10)
         {
-            sig.substring(4,7).toCharArray(red,4);
-            sig.substring(7,10).toCharArray(blue,4);
+            sig.substring(4,7).toCharArray(red,4);          // red_mine
+            sig.substring(7,10).toCharArray(blue,4);        // blue_mine
+            // int로 변환
             red_mine = atoi(red);
             blue_mine = atoi(blue);
 
+            // 테스트
             Serial.print("red : ");
             Serial.print(red_mine);
             Serial.print("\t");
             Serial.print("blue : ");
             Serial.print(blue_mine);
+
+            // set color array
+            setColor();
+
+            // 초기화
             sig = "";
+            temp = "";
         }
+        // 시리얼이 잘못 수신된 경우
         else 
         {
+            // 초기화
             sig = "";
+            temp = "";
         }
     }
+    // 턴에 대한 정보를 수신한 경우
     else if (temp == "Turn")
     {
         if (sig.length()==5)
         {
             sig.substring(4,5).toCharArray(turnT,2);
-        
+
+            // 테스트
             Serial.print("\t");
             Serial.print("turnT : ");
             Serial.print(turnT);
             
+            // 턴 저장
             turn = turnT[0];
-//            turn = turnT;
+
+            // 테스트
             Serial.print("\t");
             Serial.print("turn : ");
             Serial.print(turn);
+
+            // 초기화
             sig = "";
+            temp = "";
         }
         else 
         {
+            // 초기화
             sig = "";
+            temp = "";
         }
     }
     else
     {
-      sig = "";
+        // 초기화
+        sig = "";
+        temp = "";
     }
     Serial.println();
 
@@ -408,15 +438,16 @@ void loop() {
     // }// end 테스트용
     
     // register a callback for all keys
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
+    for(int i=0; i<Y_DIM*X_DIM; i++) 
+    {
         if (turn == 'R')
         //if(red_turn > 0) { // 차례가 아니면 0
         {
             trellis.registerCallback(i, red_ON);
         }
-        else if(turn == 'B'){
+        else if(turn == 'B')
         //else if(blue_turn > 0) {
-            //Serial.println("Come On!!!!!!!");
+        {
             trellis.registerCallback(i, blue_ON);
         }
     }
