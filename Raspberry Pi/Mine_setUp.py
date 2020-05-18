@@ -6,27 +6,29 @@ ser = serial.Serial(
     baudrate=115200,
 )
 
-BUTTONPAD_NUM = 144
-start = 1
-mineCiper = 3             # 지뢰 자릿숫 (4x4 : 1, 8x8 : 2, 12x12 :3) -> 일단 3으로 쭉
+BUTTONPAD_NUM = 64        # 총 버튼 갯수
+mineCiper = 3             # 지뢰 자릿수
 
-def Mine_ToArduino (red_mine, blue_mine) :
-    MineTrans = "Mine" + red_mine + blue_mine
-    print('MineTrans :', MineTrans)
-    MineTrans = MineTrans.encode('utf-8')
-    print('MineTrans(utf-8) :', MineTrans)
-
-    # 아두이노로 전송
-    ser.write(MineTrans)
-
-def Turn_ToArduino (turn) :
-    TurnTrans = "Turn" + turn
+# 어떤 플레이어 턴인지 아두이노로 전달하기 위한 함수
+def turn_ToArduino (turn) :
+    TurnTrans = "Turn" + turn                       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Turn 삽입
     TurnTrans = TurnTrans.encode('utf-8')
-    print('TurnTrans :', TurnTrans)
+    #print('TurnTrans :', TurnTrans)
 
-    # 아두이노로 전송
+    # 아두이노로 전달
     ser.write(TurnTrans)
 
+# 지뢰 위치에 대한 정보를 아두이노로 전달하기 위한 함수
+def mine_ToArduino (red_mine, blue_mine) :
+    MineTrans = "Mine" + red_mine + blue_mine       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Mine 삽입
+    #print('MineTrans :', MineTrans)
+    MineTrans = MineTrans.encode('utf-8')
+    #print('MineTrans(utf-8) :', MineTrans)
+
+    # 아두이노로 전달
+    ser.write(MineTrans)
+
+# 지뢰 지정 랜덤함수
 def set_Mine ():
     # 빨강플레이어의 지뢰
     red_mine = random.randint(0,BUTTONPAD_NUM-1)
@@ -39,10 +41,11 @@ def set_Mine ():
     red_mine = str(red_mine).zfill(mineCiper)
     blue_mine = str(blue_mine).zfill(mineCiper)
     # 값 확인
-    print('red_mine :', red_mine)
-    print('blue_mine :', blue_mine)
-    print('')
+    # print('red_mine :', red_mine)
+    # print('blue_mine :', blue_mine)
+    # print('')
 
+    # 아두이노로 전달
     Mine_ToArduino(red_mine, blue_mine)
 
 

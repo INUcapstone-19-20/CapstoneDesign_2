@@ -88,8 +88,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 10): before.main = Replay_Game()
     elif(screen_number == 11):
         before.main = BattleMode()
-        Mine_setUp.Mine_ToArduino("009","012")
-        Mine_setUp.Turn_ToArduino("B")
+        Mine_setUp.mine_ToArduino("009","012")
+        Mine_setUp.turn_ToArduino("B")
     elif(screen_number == 15): before.main = Redturn()
     elif(screen_number == 19): before.main = Blueturn()
     elif(screen_number == 20): before.main = Result()
@@ -166,10 +166,10 @@ class Single_Setting(QMainWindow):
         self.lb_time.setText(str_minute + ":" + str_second)
 
     def tmp1(self):
-        Mine_setUp.Mine_ToArduino("009","012")
+        Mine_setUp.mine_ToArduino("009","012")
 
     def tmp2(self):
-        Mine_setUp.Turn_ToArduino("B")
+        Mine_setUp.turn_ToArduino("B")
 
     def countUp(self):
         self.temp_count += 1
@@ -351,7 +351,7 @@ class Redturn(QMainWindow):
         if red_turn == 0:
             changeScreen(self, 19)
         else:
-            Mine_setUp.Turn_ToArduino("R")
+            Mine_setUp.turn_ToArduino("R")
 
         # self.check_red = True
         # if self.check_blue & self.check_red:
@@ -391,7 +391,7 @@ class Blueturn(QMainWindow):
         if blue_turn == 0:
             changeScreen(self, 15)
         else:
-            Mine_setUp.Turn_ToArduino("B")
+            Mine_setUp.turn_ToArduino("B")
         # self.check_blue = True
         # if self.check_blue & self.check_red:
         #     self.th = DiceThread()
