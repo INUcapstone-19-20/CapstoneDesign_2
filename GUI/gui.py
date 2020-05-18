@@ -12,6 +12,7 @@ import Mine_setUp
 ser = serial.Serial(
     port='/dev/cu.usbmodem14201',
     baudrate=115200,
+    timeout = 1
 )
 
 countTurn = 0
@@ -24,13 +25,16 @@ def Decode(A):
 def serRead():
     if ser.readable():
         global countTurn
-        LINE = ser.readline()
-        code = Decode(LINE)
-        print("code : ", code, end='\n')
-        if code == 'Click':
-            countTurn -= 1
-            print("Click")
-        print("countTurn : ",countTurn)
+        try:    
+            LINE = ser.readline()
+            code = Decode(LINE)
+            print("code : ", code, end='\n')
+            if "Click" in code :
+                countTurn -= 1
+                print("!!!!!!!!!!!!!!!!!!!!")
+            print("countTurn : ",countTurn)
+        except serial.serialutil.SerialException:
+            time.sleep(1)
     else :
         print("읽기 실패 from_serRead_")
 
@@ -43,7 +47,7 @@ class SerThread(QThread):
     def run(self):        
         while True:
             serRead()
-            time.sleep(0.1)
+            # time.sleep(0.001)
 
 # Single Mode
 count = 10
