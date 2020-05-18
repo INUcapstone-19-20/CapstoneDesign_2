@@ -6,7 +6,30 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 from functools import partial
+import serial
+ser = serial.Serial(
+    port='/dev/tty.ACM0',
+    baudrate=115200,
+)
 
+countTurn = 0
+
+def Decode(A):
+    A = A.decode()
+    A = str(A)
+    return A
+
+def serRead():
+    if ser.readable():
+        LINE = ser.readline()
+        code = Decode(LINE)
+        if code == 'Click':
+            countTurn -= 1
+    else :
+        print("읽기 실패 from_serRead_")
+
+while (True):
+    serRead()
 
 # Single Mode
 count = 10

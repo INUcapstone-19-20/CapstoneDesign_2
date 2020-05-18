@@ -6,7 +6,7 @@ ser = serial.Serial(
     baudrate=115200,
 )
 
-BUTTONPAD_NUM = 16
+BUTTONPAD_NUM = 144
 start = 1
 
 def Mine_ToArduino (red_mine, blue_mine) :
@@ -36,9 +36,9 @@ if (start) :                                                    # start : 게임
     # 지뢰 중복 제거
     while (red_mine == blue_mine):
         blue_mine = random.randint(0,BUTTONPAD_NUM-1)
-    # 문자열 변환 후 자릿수 2자리로 통일
-    red_mine = str(red_mine).zfill(2)
-    blue_mine = str(blue_mine).zfill(2)
+    # 문자열 변환 후 자릿수 3자리로 통일
+    red_mine = str(red_mine).zfill(3)
+    blue_mine = str(blue_mine).zfill(3)
     # 값 확인
     print('red_mine :', red_mine)
     print('blue_mine :', blue_mine)

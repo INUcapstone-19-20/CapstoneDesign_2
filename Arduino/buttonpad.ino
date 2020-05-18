@@ -40,8 +40,12 @@ static uint8_t red_mine, blue_mine; // location of mine
 
 static uint8_t red_turn, blue_turn; // number of turns
 static boolean firstturn;
+static char turn;
 
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
+
+static String sig;
+static String temp;
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -189,6 +193,8 @@ void showMine(uint16_t mine_key, String color) {
 TrellisCallback red_ON(keyEvent evt) {
     if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
+            // ToRaspberry
+            Serial.print("Click");
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -221,6 +227,8 @@ TrellisCallback red_ON(keyEvent evt) {
 TrellisCallback blue_ON(keyEvent evt) {
     if(blue_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
+            // ToRaspberry
+            Serial.print("Click");
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -317,20 +325,53 @@ void loop() {
 //    }
 //    setColor();
     
+    while(Serial.available())
+    {
+        char wait = Serial.read();
+        sig.concat(wait);
+        temp = sig
+    }
+    
+    sig.substring(0,4).tocharArray(check,4);
+
+    if (check == 'Mine')
+    {
+        if (sig.length()==8){
+            sig.substring(4,7).tocharArray(red,3);
+            sig.substring(7,10).tocharArray(blue,3);
+            red_mine = atoi(red)
+            blue_mine = atoi(blue)
+            sig = "";
+        }
+        else if (sig.length()>8){
+            sig = "";
+        }
+    }
+    else if (check == 'Turn')
+    {
+        if (sig.length()==8){
+            sig.substring(4,5).tocharArray(turnT,1);
+            turn = trunT
+    }
+    
+
+
     // 테스트용
-    if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
-        //red전달값 > blue전달값 ? red_turn = red전달값 : blue_turn = blue전달값;
-        r_turns[it] > b_turns[it] ? red_turn = r_turns[it] : blue_turn = b_turns[it];
-        firstturn = !firstturn; // toggle turn state
-        it++;
-    }// end 테스트용
+    // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
+    //     //red전달값 > blue전달값 ? red_turn = red전달값 : blue_turn = blue전달값;
+    //     r_turns[it] > b_turns[it] ? red_turn = r_turns[it] : blue_turn = b_turns[it];
+    //     firstturn = !firstturn; // toggle turn state
+    //     it++;
+    // }// end 테스트용
     
     // register a callback for all keys
     for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(red_turn > 0) { // 차례가 아니면 0
+        if (turn == 'r')
+        //if(red_turn > 0) { // 차례가 아니면 0
             trellis.registerCallback(i, red_ON);
         }
-        else if(blue_turn > 0) {
+        else if(turn == 'b')
+        //else if(blue_turn > 0) {
             trellis.registerCallback(i, blue_ON);
         }
     }
