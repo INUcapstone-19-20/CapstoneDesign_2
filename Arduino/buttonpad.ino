@@ -1,20 +1,24 @@
 #include "Adafruit_NeoTrellis.h"
 
-#define Y_DIM 12 // number of rows of keys
-#define X_DIM 12 // number of columns of keys
+#define Y_DIM 4 // number of rows of keys
+#define X_DIM 4 // number of columns of keys
 #define COLORS 3  // number of colors
 
 // create a matrix of neotrellis boards
-Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
-    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
-    { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
-};
+// Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+    // { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
+    // { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
+    // { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
+// };
 
-//Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-//    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33)},
-//    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) }
-//};
+// Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+//    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32)},
+//    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E)}
+// };
+
+Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+   { Adafruit_NeoTrellis(0x31) }
+};
 
 // pass this matrix to the multitrellis constructor
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
@@ -44,8 +48,12 @@ static char turn;
 
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
-static String sig;
+static String sig = "";
 static String temp;
+static char check[5];
+static char red[4];
+static char blue[4];
+static char turnT[2];
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -191,7 +199,7 @@ void showMine(uint16_t mine_key, String color) {
 
 // define a callback for player1's key presses
 TrellisCallback red_ON(keyEvent evt) {
-    if(red_turn > 0) {
+//    if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // ToRaspberry
             Serial.print("Click");
@@ -210,25 +218,25 @@ TrellisCallback red_ON(keyEvent evt) {
                 else {
                     trellis.setPixelColor(evt.bit.NUM, red_colors[evt.bit.NUM]);
                     trellis.show();
-                    // 테스트용
-                    red_turn--;
-                    if(red_turn == 0) {
-                        firstturn = !firstturn; // toggle turn state
-                    }// end 테스트용
+//                    // 테스트용
+//                    red_turn--;
+//                    if(red_turn == 0) {
+//                        firstturn = !firstturn; // toggle turn state
+//                    }// end 테스트용
                 }                
                 // 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }
         }
-    }
+//    }
     return 0;
 }
 
 // define a callback player2's key presses
 TrellisCallback blue_ON(keyEvent evt) {
-    if(blue_turn > 0) {
+//    if(blue_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             // ToRaspberry
-            Serial.print("Click");
+            Serial.println("Click");
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -245,15 +253,15 @@ TrellisCallback blue_ON(keyEvent evt) {
                     trellis.setPixelColor(evt.bit.NUM, blue_colors[evt.bit.NUM]);
                     trellis.show();
                     // 테스트용
-                    blue_turn--;
-                    if(blue_turn == 0) {
-                        firstturn = !firstturn; // toggle turn state
-                    }// end 테스트용
+//                    blue_turn--;
+//                    if(blue_turn == 0) {
+//                        firstturn = !firstturn; // toggle turn state
+//                    }// end 테스트용
                 }
                 // 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }
         }
-    }
+//    }
     return 0;
 }
 
@@ -261,21 +269,21 @@ void setup() {
     Serial.begin(115200);
     
     if(!trellis.begin()) {
-        Serial.println("failed to begin trellis");
+//        Serial.println("failed to begin trellis");
         while(1);
     }
 
     // set location of mine
     // blue_mine = 전달값
     // red_mine = 전달값
-    blue_mine = 89;
-    red_mine = 34;
+    blue_mine = 0;
+    red_mine = 8;
 
     // set color array
     setColor();
     
     // set turn state
-    firstturn = true;
+    //firstturn = true;
 
     // initialize button state
     for(uint8_t i=0; i<Y_DIM*X_DIM; i++) {
@@ -329,32 +337,64 @@ void loop() {
     {
         char wait = Serial.read();
         sig.concat(wait);
-        temp = sig
+        temp = sig;
     }
+    Serial.print("sig : ");
+    Serial.print(sig);
+    Serial.print("\t");
     
-    sig.substring(0,4).tocharArray(check,4);
+//    String check = sig.substring(0,4);
+    sig.substring(0,4).toCharArray(check,5);
+    Serial.print("check : ");
+    Serial.print(check);
+    Serial.print("\t");
 
-    if (check == 'Mine')
+    String temp = check;
+    
+    if (temp == "Mine")
     {
-        if (sig.length()==8){
-            sig.substring(4,7).tocharArray(red,3);
-            sig.substring(7,10).tocharArray(blue,3);
-            red_mine = atoi(red)
-            blue_mine = atoi(blue)
+        if (sig.length()==10){
+            
+            sig.substring(4,7).toCharArray(red,4);
+            sig.substring(7,10).toCharArray(blue,4);
+            red_mine = atoi(red);
+            blue_mine = atoi(blue);
+
+            Serial.print("red : ");
+            Serial.print(red_mine);
+            Serial.print("\t");
+            Serial.print("blue : ");
+            Serial.print(blue_mine);
+            
+            
             sig = "";
         }
-        else if (sig.length()>8){
+        else if (sig.length()>10){
+//            Serial.println("Come On!");
             sig = "";
         }
     }
-    else if (check == 'Turn')
+    else if (temp == "Turn")
     {
-        if (sig.length()==8){
-            sig.substring(4,5).tocharArray(turnT,1);
-            turn = trunT
+        if (sig.length()==5){
+            sig.substring(4,5).toCharArray(turnT,2);
+            
+            Serial.print("\t");
+            Serial.print("turnT : ");
+            Serial.print(turnT);
+            
+            turn = turnT[0];
+//            turn = turnT;
+            Serial.print("\t");
+            Serial.print("turn : ");
+            Serial.print(turn);
+        }
+    }
+    else {
+      sig = "";
     }
     
-
+    Serial.println();
 
     // 테스트용
     // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
@@ -368,10 +408,12 @@ void loop() {
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         if (turn == 'R')
         //if(red_turn > 0) { // 차례가 아니면 0
+        {
             trellis.registerCallback(i, red_ON);
         }
-        else if(turn == 'B')
+        else if(turn == 'B'){
         //else if(blue_turn > 0) {
+            //Serial.println("Come On!!!!!!!");
             trellis.registerCallback(i, blue_ON);
         }
     }
