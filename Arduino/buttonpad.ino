@@ -366,11 +366,11 @@ void loop() {
     
     // register a callback for all keys
     for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if (turn == 'r')
+        if (turn == 'R')
         //if(red_turn > 0) { // 차례가 아니면 0
             trellis.registerCallback(i, red_ON);
         }
-        else if(turn == 'b')
+        else if(turn == 'B')
         //else if(blue_turn > 0) {
             trellis.registerCallback(i, blue_ON);
         }

@@ -46,9 +46,6 @@ if (start) :                                                    # start : 게임
 
     Mine_ToArduino(red_mine, blue_mine)
 
-    turn = 'b'
-    Turn_ToArduino(turn)
-
 
 
     
