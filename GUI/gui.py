@@ -1,14 +1,16 @@
 import sys, math, random, threading
-import time
+import time, serial
 import PyQt5.QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 from functools import partial
-import serial
+import Mine_setUp
+
+
 ser = serial.Serial(
-    port='/dev/tty.ACM0',
+    port='/dev/cu.usbmodem14201',
     baudrate=115200,
 )
 
@@ -21,15 +23,27 @@ def Decode(A):
 
 def serRead():
     if ser.readable():
+        global countTurn
         LINE = ser.readline()
         code = Decode(LINE)
+        print("code : ", code, end='\n')
         if code == 'Click':
             countTurn -= 1
+            print("Click")
+        print("countTurn : ",countTurn)
     else :
         print("읽기 실패 from_serRead_")
 
-while (True):
-    serRead()
+# while (True):
+#     serRead()
+
+
+class SerThread(QThread):
+    
+    def run(self):        
+        while True:
+            serRead()
+            time.sleep(0.1)
 
 # Single Mode
 count = 10
@@ -45,7 +59,7 @@ blue_turn = 0
 #     baudrate=115200
 # )
 
-class Thread(QThread):
+class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
     result = pyqtSignal(int)
     def run(self):        
@@ -68,7 +82,10 @@ def changeScreen(before, screen_number):
     elif(screen_number == 8): before.main = Single_Win()
     elif(screen_number == 9): before.main = Single_Loose()
     elif(screen_number == 10): before.main = Replay_Game()
-    elif(screen_number == 11): before.main = BattleMode()
+    elif(screen_number == 11):
+        before.main = BattleMode()
+        Mine_setUp.Mine_ToArduino("009","012")
+        Mine_setUp.Turn_ToArduino("B")
     elif(screen_number == 15): before.main = Redturn()
     elif(screen_number == 19): before.main = Blueturn()
     elif(screen_number == 20): before.main = Result()
@@ -113,8 +130,10 @@ class Single_Setting(QMainWindow):
         self.setLabel()
 
         # Button Function
-        self.btn_countup.clicked.connect(self.countUp)
-        self.btn_countdown.clicked.connect(self.countDown)
+        # self.btn_countup.clicked.connect(self.countUp)
+        # self.btn_countdown.clicked.connect(self.countDown)
+        self.btn_countup.clicked.connect(self.tmp1)
+        self.btn_countdown.clicked.connect(self.tmp2)
         self.btn_timerup.clicked.connect(self.timeUp)
         self.btn_timerdown.clicked.connect(self.timeDown)
         self.btn_settingsave.clicked.connect(self.settingSave)
@@ -141,6 +160,12 @@ class Single_Setting(QMainWindow):
 
         self.lb_count.setText(str(self.temp_count))
         self.lb_time.setText(str_minute + ":" + str_second)
+
+    def tmp1(self):
+        Mine_setUp.Mine_ToArduino("009","012")
+
+    def tmp2(self):
+        Mine_setUp.Turn_ToArduino("B")
 
     def countUp(self):
         self.temp_count += 1
@@ -216,6 +241,7 @@ class BattleMode(QMainWindow):
     def compareDice(self):
         print("compare!")
         global blue_turn, red_turn
+        self.th = DiceThread()
         
         if blue_turn == red_turn:
             self.check_blue = False
@@ -223,12 +249,15 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
-            self.btn_bluedice.move(160, 110)
+            self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
+            self.th.finished.connect(partial(changeScreen, self, 19))
+            self.th.start()
         elif red_turn > blue_turn:
-            self.btn_reddice.move(160, 110)
+            self.btn_reddice.move(165, 110)
             self.btn_bluedice.hide()
-        
+            self.th.finished.connect(partial(changeScreen, self, 15))
+            self.th.start()
 
     def setBlue(self, value):
         if(value == 0):
@@ -247,13 +276,13 @@ class BattleMode(QMainWindow):
         print(blue_turn)
         self.check_blue = True
         if self.check_blue & self.check_red:
-            self.th = Thread()
+            self.th = DiceThread()
             self.th.finished.connect(self.compareDice)
             self.th.start()
 
     def throwBlue(self):
         global blue_turn
-        self.th = Thread()
+        self.th = DiceThread()
         self.th.cntChanged.connect(self.setBlue)
         self.th.result.connect(self.finishBlue)
         self.th.start()
@@ -275,12 +304,12 @@ class BattleMode(QMainWindow):
         print(red_turn)
         self.check_red = True
         if self.check_blue & self.check_red:
-            self.th = Thread()
+            self.th = DiceThread()
             self.th.finished.connect(self.compareDice)
             self.th.start()
 
     def throwRed(self):
-        self.th = Thread()
+        self.th = DiceThread()
         self.th.cntChanged.connect(self.setRed)
         self.th.result.connect(self.finishRed)
         self.th.start()
@@ -288,24 +317,89 @@ class BattleMode(QMainWindow):
             
 
 class Redturn(QMainWindow):
-    red_turn = 0
-    check_red = False
-    sequence = 1
-    cycle = 0
+    # red_turn = 0
+    # check_red = False
+    # sequence = 1
+    # cycle = 0
+
     def __init__(self):
         super().__init__()
-        uic.loadUi("ui/red.ui", self)
+        uic.loadUi("ui/redturn.ui", self)
 
-        self.btn_red.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
+        self.btn_redturn.clicked.connect(self.throwRed)
+        self.btn_redturn.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
+    def setRed(self, value):
+        if(value == 0):
+            self.btn_redturn.setStyleSheet('image:url(res/reddice_pass.png); border:0px;')
+        elif(value == 1):
+            self.btn_redturn.setStyleSheet('image:url(res/reddice_one1.png); border:0px;')
+        elif(value == 2):
+            self.btn_redturn.setStyleSheet('image:url(res/reddice_two2.png); border:0px;')
+        elif(value == 3):
+            self.btn_redturn.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
 
+    def finishRed(self, value):
+        global red_turn
+        red_turn = value
+        self.setRed(red_turn)
+
+        if red_turn == 0:
+            changeScreen(self, 19)
+        else:
+            Mine_setUp.Turn_ToArduino("R")
+
+        # self.check_red = True
+        # if self.check_blue & self.check_red:
+        #     self.th = DiceThread()
+        #     self.th.finished.connect(self.compareDice)
+        #     self.th.start()
+
+    def throwRed(self):
+        self.th = DiceThread()
+        self.th.cntChanged.connect(self.setRed)
+        self.th.result.connect(self.finishRed)
+        self.th.start()
 
 class Blueturn(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("ui/blue.ui", self)
+        uic.loadUi("ui/blueturn.ui", self)
 
-        self.btn_blue.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
+        self.btn_blueturn.clicked.connect(self.throwBlue)
+        self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
+
+    def setBlue(self, value):
+        if(value == 0):
+            self.btn_blueturn.setStyleSheet('image:url(res/bluedice_pass.png); border:0px;')
+        elif(value == 1):
+            self.btn_blueturn.setStyleSheet('image:url(res/bluedice_one1.png); border:0px;')
+        elif(value == 2):
+            self.btn_blueturn.setStyleSheet('image:url(res/bluedice_two2.png); border:0px;')
+        elif(value == 3):
+            self.btn_blueturn.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
+            
+    def finishBlue(self, value):
+        global blue_turn
+        blue_turn = value
+        self.setBlue(blue_turn)
+        
+        if blue_turn == 0:
+            changeScreen(self, 15)
+        else:
+            Mine_setUp.Turn_ToArduino("B")
+        # self.check_blue = True
+        # if self.check_blue & self.check_red:
+        #     self.th = DiceThread()
+        #     self.th.finished.connect(self.compareDice)
+        #     self.th.start()
+
+    def throwBlue(self):
+        global blue_turn
+        self.th = DiceThread()
+        self.th.cntChanged.connect(self.setBlue)
+        self.th.result.connect(self.finishBlue)
+        self.th.start()
 
 
 class Result(QMainWindow):
@@ -353,6 +447,10 @@ class Red_Loose(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # app.setOverrideCursor(Qt.BlankCursor)
+
+    serth = SerThread()
+    serth.start()
+
     ex = ModeSelect()
     # ex.showFullScreen()
     ex.show()
