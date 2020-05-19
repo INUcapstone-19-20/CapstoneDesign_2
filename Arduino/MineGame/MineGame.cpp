@@ -18,6 +18,7 @@ void SingleMode::setPlayer(uint16_t mine)
     player.color1 = SINGLE1;
     player.color2 = SINGLE2;
     player.color3 = SINGLE3;
+    player.mine = mine;
     setColorArray(player);
 }
 
