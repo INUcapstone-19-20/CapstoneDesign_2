@@ -57,6 +57,7 @@ static char red[4];
 static char blue[4];
 static char turnT[2];
 
+// 턴 저장 변수
 static char turn;
 
 //  Input a value 0 to 255 to get a color value
@@ -359,11 +360,11 @@ void loop() {
     
     // 지뢰 설정 시리얼을 수신한 경우
     if (temp == "Mine")
-    {
+    {   // 의도하지않은  방지
         if (sig.length()==10)
         {
-            sig.substring(4,7).toCharArray(red,4);          // red_mine
-            sig.substring(7,10).toCharArray(blue,4);        // blue_mine
+            sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
+            sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
             // int로 변환
             red_mine = atoi(red);
             blue_mine = atoi(blue);
@@ -392,10 +393,10 @@ void loop() {
     }
     // 턴에 대한 정보를 수신한 경우
     else if (temp == "Turn")
-    {
+    {   // 의도하지않은 값 방지
         if (sig.length()==5)
         {
-            sig.substring(4,5).toCharArray(turnT,2);
+            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
 
             // 테스트
             Serial.print("\t");
@@ -403,7 +404,7 @@ void loop() {
             Serial.print(turnT);
             
             // 턴 저장
-            turn = turnT[0];
+            turn = turnT[0];        // turnT[1] = NULL
 
             // 테스트
             Serial.print("\t");
@@ -414,6 +415,7 @@ void loop() {
             sig = "";
             temp = "";
         }
+        // 시리얼이 잘못 수신된 경우
         else 
         {
             // 초기화
@@ -421,6 +423,7 @@ void loop() {
             temp = "";
         }
     }
+    // 게임진행에 필요없는 시리얼인 경우
     else
     {
         // 초기화
