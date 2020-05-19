@@ -36,6 +36,9 @@ static char turn;
 // 모드 저장 변수
 static char mode;
 
+BattleMode battlegame;
+SingleMode singlegame;
+
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
   if(WheelPos < 85) {
@@ -102,7 +105,7 @@ void loop() {
         sig.concat(wait);
     }
     
-    // 문자열 슬라이싱 (Mine or Turn)
+    // 문자열 슬라이싱 (Mode or Mine or Turn)
     sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
     // 문자열 string으로 저장
     String temp = check;
@@ -114,11 +117,9 @@ void loop() {
         String test = "BATTLE"; // 배틀모드로 테스트
         if (test == "BATTLE") {
             mode = 'B';
-            BattleMode game;    // 배틀 모드 생성
         }
         else {
             mode = 'S';
-            SingleMode game;    // 싱글 모드 생성
         } // end 테스트 코드
     } // end 게임모드 시리얼
 
@@ -141,8 +142,8 @@ void loop() {
                 Serial.print("blue : ");
                 Serial.print(blue_mine);
 
-                // 지뢰 전달
-                game = BattleMode(red_mine, blue_mine);
+                // 배틀모드 생성
+                battlegame = BattleMode(red_mine, blue_mine);
             }
 
             if(mode == 'S') {   // 싱글모드
@@ -150,10 +151,10 @@ void loop() {
                 // uint16_t mine = 
                 uint16_t mine = 8;  // 테스트 임시 지뢰 위치
 
-                // 지뢰 전달
-                game = SingleMode(mine);
+                // 싱글모드 생성
+                singlegame = SingleMode(mine);
                 // 콜백 설정
-                game.setCallback();
+                singlegame.setCallback();
             }
 
             // 초기화
@@ -193,7 +194,7 @@ void loop() {
                 Serial.print(turn);
 
                 // 턴에 따라 콜백 지정
-                game.setCallback(turn);
+                battlegame.setCallback(turn);
                 
                 // 초기화
                 sig = "";
@@ -219,5 +220,6 @@ void loop() {
     }
 
     // 게임 시작
-    game.startGame();
+    if(mode == 'S') singlegame.starGame();
+    else if(mode == 'B') battlegame.startGame();
 }
