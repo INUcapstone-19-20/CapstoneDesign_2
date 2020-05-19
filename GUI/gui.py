@@ -8,6 +8,7 @@ from PyQt5 import uic
 from functools import partial
 import Mine_setUp
 
+countTurn = 0       # 턴 수 저장 변수
 
 ser = serial.Serial(
     port='/dev/cu.usbmodem14201',
@@ -15,38 +16,46 @@ ser = serial.Serial(
     timeout = 1
 )
 
-countTurn = 0
+# 디코드 함수
+def Decode(x):
+    result = x.decode()
+    result = str(result)            # string으로 변환
+    return result
 
-def Decode(A):
-    A = A.decode()
-    A = str(A)
-    return A
-
-def serRead():
+# 버튼패드 클릭 신호 수신
+def click_FromArduino():
     if ser.readable():
-        global countTurn
         try:    
             LINE = ser.readline()
             code = Decode(LINE)
+            
+            # 값 확인
             print("code : ", code, end='\n')
+            
+            global countTurn
+            # 버튼패드를 클릭했다면
             if "Click" in code :
+                # 턴 수 감소
                 countTurn -= 1
+                
+                # 값 확인
                 print("!!!!!!!!!!!!!!!!!!!!")
             print("countTurn : ",countTurn)
+            
         except serial.serialutil.SerialException:
             time.sleep(1)
     else :
-        print("읽기 실패 from_serRead_")
+        print("읽기 실패 from_click_FromArduino_")
 
 # while (True):
-#     serRead()
+#     click_FromArduino()
 
 
 class SerThread(QThread):
     
     def run(self):        
         while True:
-            serRead()
+            click_FromArduino()
             # time.sleep(0.001)
 
 # Single Mode
