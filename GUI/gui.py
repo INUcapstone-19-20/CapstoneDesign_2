@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 from functools import partial
-import Mine_setUp
+import communication
 
 
 # Single Mode
@@ -32,9 +32,9 @@ class SerThread(QThread):
 
     def run(self): 
         while True:
-            self.onClick = Mine_setUp.click_FromArduino()
+            self.onClick = communication.click_FromArduino()
             if self.onClick == 1:
-                self.clickChanged.emit(Mine_setUp.count_turn)
+                self.clickChanged.emit(communication.count_turn)
             elif self.onClick == 99:
                 self.clickChanged.emit(99)
 
@@ -46,7 +46,7 @@ class SerThread(QThread):
 #     def run(self):
 #         global click
 #         if click:
-#             eye = str(Mine_setUp.count_turn)
+#             eye = str(communication.count_turn)
 #             stylesheet = 'image:url(res/' + self.file + eye + 'png); border:0px;'
 #             self.color.setStyleSheet(stylesheet)
 
@@ -210,7 +210,7 @@ class BattleMode(QMainWindow):
         
         self.check_blue = False
         self.check_red = False
-        Mine_setUp.set_Mine()
+        communication.set_Mine()
 
         # self.playLabel = QLabel(self)
         # self.playLabel.resize(120, 120)
@@ -240,7 +240,7 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
-            Mine_setUp.turn_ToArduino("B")
+            communication.turn_ToArduino("B")
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
             self.timer.finished.connect(self.killThread)
@@ -248,7 +248,7 @@ class BattleMode(QMainWindow):
             changeScreen(self,19)
             
         elif red_turn > blue_turn:
-            Mine_setUp.turn_ToArduino("R")
+            communication.turn_ToArduino("R")
             self.btn_reddice.move(165, 110)
             self.btn_bluedice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 15))
@@ -357,8 +357,8 @@ class Redturn(QMainWindow):
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
-            Mine_setUp.count_turn = self.eye
-            print("countturn : ",Mine_setUp.count_turn)
+            communication.count_turn = self.eye
+            print("countturn : ",communication.count_turn)
             
             # serth = SerThread()
             # serth.clickChanged.connect(self.buttonclicked)
@@ -413,10 +413,10 @@ class Blueturn(QMainWindow):
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
-            Mine_setUp.count_turn = self.eye
-            print("countturn : ", Mine_setUp.count_turn)
+            communication.count_turn = self.eye
+            print("countturn : ", communication.count_turn)
         # else:
-            # Mine_setUp.turn_ToArduino("B")
+            # communication.turn_ToArduino("B")
         # self.check_blue = True
         # if self.check_blue & self.check_red:
         #     self.th = DiceThread()
