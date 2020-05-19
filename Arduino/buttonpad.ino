@@ -113,6 +113,7 @@ void showMine(uint16_t mine_key, String color) {
     // keynumber -> x,y 좌표로 변경
     uint8_t mine_x = mine_key % X_DIM;
     uint8_t mine_y = mine_key / X_DIM;
+    Serial.println("Boom");
 
     if(color == "red") {
         // 첫번째 영역 on

@@ -1,6 +1,8 @@
-import random
 import serial
+from PyQt5.QtCore import pyqtSignal
+import random
 import time
+
 
 ser = serial.Serial(
     # port='/dev/tty.ACM0', # 라즈베리파이 포트
@@ -8,7 +10,7 @@ ser = serial.Serial(
     baudrate=115200,
 )
 
-BUTTONPAD_NUM = 64        # 총 버튼 갯수
+BUTTONPAD_NUM = 16        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
 count_turn = 0
 
@@ -21,7 +23,7 @@ def Decode(x):
 # 버튼패드 클릭 신호 수신
 def click_FromArduino():
     if ser.readable():
-        try:    
+        try: 
             global count_turn
             LINE = ser.readline()
             code = Decode(LINE)
@@ -30,14 +32,19 @@ def click_FromArduino():
             
             # 버튼패드를 클릭했다면
             if "Click" in code :
-                # 턴 수 감소
-                count_turn -= 1
-                print("count_turn : ", count_turn)
+                if count_turn > 0:
+                    count_turn -= 1
+                    print("count_turn : ",count_turn)
+                return 1
+            elif "Boom" in code :
+                return 99
             
         except serial.serialutil.SerialException:
             time.sleep(1)
     else :
         print("읽기 실패 from_click_FromArduino_")
+
+    return 0
 
 
 # 어떤 플레이어 턴인지 아두이노로 전달하기 위한 함수
