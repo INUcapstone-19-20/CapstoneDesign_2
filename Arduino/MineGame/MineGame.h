@@ -20,7 +20,7 @@ enum COLOR {
 enum DISTANCE {
     DISTANCE1 = sqrt(2),
     DISTANCE2 = sqrt(8)
-}
+};
 
 typedef struct Player {
     String ID;
