@@ -37,19 +37,11 @@ def click_FromArduino():
             if "Click" in code :
                 # 턴 수 감소
                 countTurn -= 1
-                
-                # 값 확인
-                print("!!!!!!!!!!!!!!!!!!!!")
-            print("countTurn : ",countTurn)
             
         except serial.serialutil.SerialException:
             time.sleep(1)
     else :
         print("읽기 실패 from_click_FromArduino_")
-
-# while (True):
-#     click_FromArduino()
-
 
 class SerThread(QThread):
     
