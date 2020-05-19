@@ -11,7 +11,8 @@ import Mine_setUp
 countTurn = 0       # 턴 수 저장 변수
 
 ser = serial.Serial(
-    port='/dev/cu.usbmodem14201',
+    # port='/dev/tty.ACM0', # 라즈베리파이 포트
+    port='/dev/cu.usbmodem14201', # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
