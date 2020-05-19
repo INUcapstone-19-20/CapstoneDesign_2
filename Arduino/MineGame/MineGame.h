@@ -48,6 +48,8 @@ public:
 
     void showMine(Player p);
 
+    friend class BattleMode;
+
 protected:
     uint8_t _Y_DIM, _X_DIM;
     Player player;
@@ -55,7 +57,7 @@ protected:
     uint32_t minecolor[4] = { 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF };
 }
 
-class BattleMode : public SingleMode {
+class BattleMode {
 public:
     BattleMode(uint16_t redmine, uint16_t bluemine);
     ~BattleMode() {};
