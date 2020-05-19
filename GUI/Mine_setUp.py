@@ -1,5 +1,6 @@
 import random
 import serial
+import time
 
 ser = serial.Serial(
     # port='/dev/tty.ACM0', # 라즈베리파이 포트
@@ -9,6 +10,35 @@ ser = serial.Serial(
 
 BUTTONPAD_NUM = 64        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
+count_turn = 0
+
+# 디코드 함수
+def Decode(x):
+    result = x.decode()
+    result = str(result)            # string으로 변환
+    return result
+
+# 버튼패드 클릭 신호 수신
+def click_FromArduino():
+    if ser.readable():
+        try:    
+            global count_turn
+            LINE = ser.readline()
+            code = Decode(LINE)
+            # 값 확인
+            print("code : ", code, end='\n')
+            
+            # 버튼패드를 클릭했다면
+            if "Click" in code :
+                # 턴 수 감소
+                count_turn -= 1
+                print("count_turn : ", count_turn)
+            
+        except serial.serialutil.SerialException:
+            time.sleep(1)
+    else :
+        print("읽기 실패 from_click_FromArduino_")
+
 
 # 어떤 플레이어 턴인지 아두이노로 전달하기 위한 함수
 def turn_ToArduino (turn) :
@@ -42,8 +72,8 @@ def set_Mine ():
     red_mine = str(red_mine).zfill(mineCiper)
     blue_mine = str(blue_mine).zfill(mineCiper)
     # 값 확인
-    # print('red_mine :', red_mine)
-    # print('blue_mine :', blue_mine)
+    print('red_mine :', red_mine)
+    print('blue_mine :', blue_mine)
     # print('')
 
     # 아두이노로 전달

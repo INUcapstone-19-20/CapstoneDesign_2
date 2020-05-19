@@ -342,19 +342,9 @@ void loop() {
         char wait = Serial.read();
         sig.concat(wait);
     }
-    // 테스트
-    Serial.print("sig : ");
-    Serial.print(sig);
-    Serial.print("\t");
     
     // 문자열 슬라이싱 (Mine or Turn)
     sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
-
-    // 테스트
-    Serial.print("check : ");
-    Serial.print(check);
-    Serial.print("\t");
-
     // 문자열 string으로 저장
     String temp = check;
     
@@ -390,6 +380,7 @@ void loop() {
             sig = "";
             temp = "";
         }
+        Serial.println();
     }
     // 턴에 대한 정보를 수신한 경우
     else if (temp == "Turn")
@@ -422,6 +413,7 @@ void loop() {
             sig = "";
             temp = "";
         }
+        Serial.println();
     }
     // 게임진행에 필요없는 시리얼인 경우
     else
@@ -430,7 +422,6 @@ void loop() {
         sig = "";
         temp = "";
     }
-    Serial.println();
 
     // 테스트용
     // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정

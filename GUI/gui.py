@@ -8,48 +8,6 @@ from PyQt5 import uic
 from functools import partial
 import Mine_setUp
 
-countTurn = 0       # 턴 수 저장 변수
-
-ser = serial.Serial(
-    # port='/dev/tty.ACM0', # 라즈베리파이 포트
-    port='/dev/cu.usbmodem14201', # 테스트용 노트북 포트
-    baudrate=115200,
-    timeout = 1
-)
-
-# 디코드 함수
-def Decode(x):
-    result = x.decode()
-    result = str(result)            # string으로 변환
-    return result
-
-# 버튼패드 클릭 신호 수신
-def click_FromArduino():
-    if ser.readable():
-        try:    
-            LINE = ser.readline()
-            code = Decode(LINE)
-            
-            # 값 확인
-            print("code : ", code, end='\n')
-            
-            global countTurn
-            # 버튼패드를 클릭했다면
-            if "Click" in code :
-                # 턴 수 감소
-                countTurn -= 1
-            
-        except serial.serialutil.SerialException:
-            time.sleep(1)
-    else :
-        print("읽기 실패 from_click_FromArduino_")
-
-class SerThread(QThread):
-    
-    def run(self):        
-        while True:
-            click_FromArduino()
-            # time.sleep(0.001)
 
 # Single Mode
 count = 10
@@ -64,6 +22,13 @@ blue_turn = 0
 #     port='/dev/ttyACM0',
 #     baudrate=115200
 # )
+
+class SerThread(QThread):
+    def run(self):        
+        while True:
+            Mine_setUp.click_FromArduino()
+            # time.sleep(0.001)
+
 
 class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
@@ -88,10 +53,7 @@ def changeScreen(before, screen_number):
     elif(screen_number == 8): before.main = Single_Win()
     elif(screen_number == 9): before.main = Single_Loose()
     elif(screen_number == 10): before.main = Replay_Game()
-    elif(screen_number == 11):
-        before.main = BattleMode()
-        Mine_setUp.mine_ToArduino("009","012")
-        Mine_setUp.turn_ToArduino("B")
+    elif(screen_number == 11): before.main = BattleMode()
     elif(screen_number == 15): before.main = Redturn()
     elif(screen_number == 19): before.main = Blueturn()
     elif(screen_number == 20): before.main = Result()
@@ -136,10 +98,10 @@ class Single_Setting(QMainWindow):
         self.setLabel()
 
         # Button Function
-        # self.btn_countup.clicked.connect(self.countUp)
-        # self.btn_countdown.clicked.connect(self.countDown)
-        self.btn_countup.clicked.connect(self.tmp1)
-        self.btn_countdown.clicked.connect(self.tmp2)
+        self.btn_countup.clicked.connect(self.countUp)
+        self.btn_countdown.clicked.connect(self.countDown)
+        # self.btn_countup.clicked.connect(self.tmp1)
+        # self.btn_countdown.clicked.connect(self.tmp2)
         self.btn_timerup.clicked.connect(self.timeUp)
         self.btn_timerdown.clicked.connect(self.timeDown)
         self.btn_settingsave.clicked.connect(self.settingSave)
@@ -227,6 +189,7 @@ class BattleMode(QMainWindow):
         
         self.check_blue = False
         self.check_red = False
+        Mine_setUp.set_Mine()
 
         # self.playLabel = QLabel(self)
         # self.playLabel.resize(120, 120)
@@ -255,11 +218,14 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
+            Mine_setUp.turn_ToArduino("B")
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
             self.th.finished.connect(partial(changeScreen, self, 19))
             self.th.start()
+            
         elif red_turn > blue_turn:
+            Mine_setUp.turn_ToArduino("R")
             self.btn_reddice.move(165, 110)
             self.btn_bluedice.hide()
             self.th.finished.connect(partial(changeScreen, self, 15))
@@ -346,14 +312,11 @@ class Redturn(QMainWindow):
             self.btn_redturn.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
 
     def finishRed(self, value):
-        global red_turn
-        red_turn = value
-        self.setRed(red_turn)
-
-        if red_turn == 0:
+        
+        if value == 0:
             changeScreen(self, 19)
         else:
-            Mine_setUp.turn_ToArduino("R")
+            value = red_turn
 
         # self.check_red = True
         # if self.check_blue & self.check_red:
@@ -453,10 +416,10 @@ class Red_Loose(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # app.setOverrideCursor(Qt.BlankCursor)
-
+    # 통신 시작
     serth = SerThread()
     serth.start()
-
+    # GUI 시작
     ex = ModeSelect()
     # ex.showFullScreen()
     ex.show()

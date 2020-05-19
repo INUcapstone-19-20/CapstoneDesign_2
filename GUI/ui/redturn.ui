@@ -17,7 +17,7 @@
    <string notr="true">background-color: rgb(224, 224, 224);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="btn_reddice">
+   <widget class="QPushButton" name="btn_redturn">
     <property name="geometry">
      <rect>
       <x>170</x>
