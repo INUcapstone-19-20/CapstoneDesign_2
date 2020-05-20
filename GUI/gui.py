@@ -26,29 +26,32 @@ blue_turn = 0
 class SerThread(QThread):
     clickChanged = pyqtSignal(int)
 
-    def __init__(self):
+    def __init__(self, who):
         QThread.__init__(self)
         self.onClick = 0
+        self.who = who
+        self.stop_flag = False
+
+    def stop(self):
+        self.stop_flag = True
+        print("stopflag true")
 
     def run(self): 
         while True:
+
+            if self.stop_flag:
+                print("stop!!!!!!")
+                break
+
             self.onClick = communication.click_FromArduino()
             if self.onClick == 1:
                 self.clickChanged.emit(communication.count_turn)
             elif self.onClick == 99:
                 self.clickChanged.emit(99)
+            elif self.onClick == -99:
+                self.clickChanged.emit(-99)
+            # print("onClick :" , self.onClick, "\twho :", self.who)
 
-# class ClickThread(QThread):
-#     def __init__(self, button, file):
-#         self.button = button
-#         self.file = file
-
-#     def run(self):
-#         global click
-#         if click:
-#             eye = str(communication.count_turn)
-#             stylesheet = 'image:url(res/' + self.file + eye + 'png); border:0px;'
-#             self.color.setStyleSheet(stylesheet)
 
 class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
@@ -60,15 +63,13 @@ class DiceThread(QThread):
         # self.cntChanged = pyqtSignal(int)
         # self.result = pyqtSignal(int)
 
-    def run(self):
-        print("Start DiceThread(" + str(self.limit) + ")")        
+    def run(self):      
         cnt = 0
         while cnt < self.limit:
             self.cntChanged.emit(cnt % 4)
             cnt += 1
             time.sleep(0.03)
 
-        print("Finish DiceThread(" + str(self.limit) + ")")
         rand = random.randint(0,3)
         self.result.emit(rand)
             
@@ -243,9 +244,8 @@ class BattleMode(QMainWindow):
             communication.turn_ToArduino("B")
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
-            self.timer.finished.connect(self.killThread)
+            self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
-            changeScreen(self,19)
             
         elif red_turn > blue_turn:
             communication.turn_ToArduino("R")
@@ -253,10 +253,7 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
-            # changeScreen(self,15)
     
-    def killThread(self):
-        self.timer.quit()
 
     def setBlue(self, value):
         if(value == 0):
@@ -313,7 +310,6 @@ class BattleMode(QMainWindow):
         self.th.result.connect(self.finishRed)
         self.btn_reddice.setEnabled(False)
         self.th.start()
-
             
 
 class Redturn(QMainWindow):
@@ -321,22 +317,45 @@ class Redturn(QMainWindow):
         super().__init__()
         uic.loadUi("ui/redturn.ui", self)
 
-        self.serth = SerThread()
-        self.serth.clickChanged.connect(self.buttonclicked)
+        self.eye = 100
+        self.serth = SerThread("red")
+        self.serth.clickChanged.connect(self.buttonClicked)
         self.serth.start()
-        self.eye = 0
         
         self.btn_redturn.clicked.connect(self.throwRed)
         self.btn_redturn.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
-    def buttonclicked(self,value):
+
+    def buttonClicked(self,value):
         self.filename = 'image:url(res/reddice_'
         if self.eye == 1: self.filename += 'one'
         elif self.eye == 2: self.filename += 'two'
         elif self.eye == 3: self.filename += 'three'
-        self.filename += str(value) + '.png); border:0px;'
-        print("filename : ", self.filename)
-        self.btn_redturn.setStyleSheet(self.filename)
+
+        if value == 99:
+            self.serth.stop()
+            self.serth.exit()
+            changeScreen(self, 24)
+        elif value == -99:
+            self.serth.stop()
+            self.serth.exit()
+            changeScreen(self, 23)
+        else:
+            self.filename += str(value) + '.png); border:0px;'
+            print("filename : ",value, self.filename)
+            self.btn_redturn.setStyleSheet(self.filename)
+            if value == 0:
+                communication.turn_ToArduino('B')
+                self.checkBoom()
+                self.timer = DiceThread(50)
+                self.timer.finished.connect(partial(changeScreen,self,19))
+                self.timer.start()
+                
+                
+    def checkBoom(self):
+        self.serth.stop()
+        self.serth.exit()
+        # changeScreen(self,19)
 
             
     def setRed(self, value):
@@ -349,26 +368,27 @@ class Redturn(QMainWindow):
         elif(value == 3):
             self.btn_redturn.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
 
+
     def finishRed(self, value):
         self.setRed(value)
         self.eye = value
+        print("eye :", self.eye)
         if self.eye == 0:
-            self.timer = DiceThread(80)
+            communication.turn_ToArduino('B')
+            self.checkBoom()
+            self.timer = DiceThread(50)
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
             print("countturn : ",communication.count_turn)
             
-            # serth = SerThread()
-            # serth.clickChanged.connect(self.buttonclicked)
-            # serth.start()
-            
 
     def throwRed(self):
         self.th = DiceThread()
         self.th.cntChanged.connect(self.setRed)
         self.th.result.connect(self.finishRed)
+        self.btn_redturn.setEnabled(False)
         self.th.start()
 
 
@@ -377,22 +397,45 @@ class Blueturn(QMainWindow):
         super().__init__()
         uic.loadUi("ui/blueturn.ui", self)
 
-        self.eye = 0
-        self.serth = SerThread()
-        self.serth.clickChanged.connect(self.buttonclicked)
+        self.eye = 100
+        self.serth = SerThread("blue")
+        self.serth.clickChanged.connect(self.buttonClicked)
         self.serth.start()
 
         self.btn_blueturn.clicked.connect(self.throwBlue)
         self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
 
-    def buttonclicked(self,value):
+    def buttonClicked(self,value):
         self.filename = 'image:url(res/bluedice_'
         if self.eye == 1: self.filename += 'one'
         elif self.eye == 2: self.filename += 'two'
         elif self.eye == 3: self.filename += 'three'
-        self.filename += str(value) + '.png); border:0px;'
-        print("filename : ", self.filename)
-        self.btn_blueturn.setStyleSheet(self.filename)
+
+        if value == 99:
+            self.serth.stop()
+            self.serth.exit()
+            changeScreen(self,24)
+        elif value == -99:
+            self.serth.stop()
+            self.serth.exit()
+            changeScreen(self,23)
+        else:
+            self.filename += str(value) + '.png); border:0px;'
+            print("filename : ", self.filename)
+            self.btn_blueturn.setStyleSheet(self.filename)
+            if value == 0:
+                communication.turn_ToArduino('R')
+                self.checkBoom()
+                self.timer = DiceThread(50)
+                self.timer.finished.connect(partial(changeScreen,self,15))
+                self.timer.start()
+                
+
+    def checkBoom(self):
+        self.serth.stop()
+        self.serth.exit()
+        # changeScreen(self,15)
+
 
     def setBlue(self, value):
         if(value == 0):
@@ -404,36 +447,42 @@ class Blueturn(QMainWindow):
         elif(value == 3):
             self.btn_blueturn.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
             
+
     def finishBlue(self, value):
         self.setBlue(value)
         self.eye = value
-
+        print("eye :", self.eye)
         if self.eye == 0:
+            communication.turn_ToArduino('R')
+            self.checkBoom()
             self.timer = DiceThread(50)
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
             print("countturn : ", communication.count_turn)
-        # else:
-            # communication.turn_ToArduino("B")
-        # self.check_blue = True
-        # if self.check_blue & self.check_red:
-        #     self.th = DiceThread()
-        #     self.th.finished.connect(self.compareDice)
-        #     self.th.start()
+
 
     def throwBlue(self):
         self.th = DiceThread()
         self.th.cntChanged.connect(self.setBlue)
         self.th.result.connect(self.finishBlue)
+        self.btn_blueturn.setEnabled(False)
         self.th.start()
 
 
 class Result(QMainWindow):
-    def __init__(self):
+    def __init__(self,winner):
         super().__init__()
         uic.loadUi("ui/Result.ui", self)
+
+        self.winner = winner
+        if self.winner == "Red":
+            self.lb_winner.setText("[빨강 플레이어 승리!]")
+        elif self.winner == "Blue":
+            self.lb_winner.setText("[파랑 플레이어 승리!]")
+        
+        communication.mine_ToArduino("","")
 
         self.btn_restart.clicked.connect(partial(changeScreen, self, 11))
         self.btn_new.clicked.connect(partial(changeScreen, self, 2))
@@ -461,14 +510,28 @@ class Blue_Loose(QMainWindow):
         super().__init__()
         uic.loadUi("ui/blue_loose.ui", self)
 
-        self.btn_bbom.clicked.connect(partial(changeScreen, self, 20))
+        self.btn_bbom.setStyleSheet('image:url(res/blueexplosion.png); border:0px;')
+        self.btn_bbom.clicked.connect(self.gotoResult)
+
+    def gotoResult(self):
+        self.next = Result("Red")
+        # self.next.showFullScreen()
+        self.next.show()
+        self.close()
 
 class Red_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
-        screen24 = uic.loadUi("ui/red_loose.ui", self)
+        uic.loadUi("ui/red_loose.ui", self)
 
-        self.btn_rbom.clicked.connect(partial(changeScreen, self, 20))
+        self.btn_rbom.setStyleSheet('image:url(res/redexplosion.png); border:0px;')
+        self.btn_rbom.clicked.connect(self.gotoResult)
+
+    def gotoResult(self):
+        self.next = Result("Blue")
+        # self.next.showFullScreen()
+        self.next.show()
+        self.close()
 
 # def connectDice():
 #     serth = DiceThread(10)

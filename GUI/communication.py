@@ -8,6 +8,7 @@ ser = serial.Serial(
     # port='/dev/tty.ACM0', # 라즈베리파이 포트
     port='/dev/cu.usbmodem14201', # 테스트용 노트북 포트
     baudrate=115200,
+    timeout = 1
 )
 
 BUTTONPAD_NUM = 16        # 총 버튼 갯수
@@ -23,7 +24,7 @@ def Decode(x):
 # 버튼패드 클릭 신호 수신
 def click_FromArduino():
     if ser.readable():
-        try: 
+        # try: 
             global count_turn
             LINE = ser.readline()
             code = Decode(LINE)
@@ -31,16 +32,18 @@ def click_FromArduino():
             print("code : ", code, end='\n')
             
             # 버튼패드를 클릭했다면
-            if "Click" in code :
+            if "Click" in code:
                 if count_turn > 0:
                     count_turn -= 1
                     print("count_turn : ",count_turn)
                 return 1
-            elif "Boom" in code :
-                return 99
+            elif "Boom" in code:
+                if "Red" in code:return 99
+                elif "Blue" in code:return -99
             
-        except serial.serialutil.SerialException:
-            time.sleep(1)
+        # except serial.serialutil.SerialException:
+            
+            # time.sleep(0.01)
     else :
         print("읽기 실패 from_click_FromArduino_")
 

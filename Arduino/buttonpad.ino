@@ -17,7 +17,7 @@
 // };
 
 Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-   { Adafruit_NeoTrellis(0x31) }
+   { Adafruit_NeoTrellis(0x4A) }
 };
 
 // pass this matrix to the multitrellis constructor
@@ -49,7 +49,6 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 
 // 시리얼 수신 변수
 static String sig = "";
-//static String temp;
 
 // 시리얼 수신 시 문자열 슬라이싱 용 변수_문자열의 끝은 NULL
 static char check[5];
@@ -106,6 +105,13 @@ void setColor() {
           red_colors[y * X_DIM + x] = red_colorcode[2];
       }
     }
+
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+
+        // all neopixels off
+        trellis.setPixelColor(i, 0x000000);
+        trellis.show();
+    }
 }
 
 // mine LED effect
@@ -113,7 +119,6 @@ void showMine(uint16_t mine_key, String color) {
     // keynumber -> x,y 좌표로 변경
     uint8_t mine_x = mine_key % X_DIM;
     uint8_t mine_y = mine_key / X_DIM;
-    Serial.println("Boom");
 
     if(color == "red") {
         // 첫번째 영역 on
@@ -151,6 +156,8 @@ void showMine(uint16_t mine_key, String color) {
             }
         }
         delay(500);
+
+        Serial.println("RedBoom");
     }
     else { // color == "blue"
         // 첫번째 영역 on
@@ -188,10 +195,13 @@ void showMine(uint16_t mine_key, String color) {
             }
         }
         delay(500);
+
+        Serial.println("BlueBoom");
     }
 
     // 지뢰 효과
     uint8_t i = 0;
+    String s = "";
     while (1)
     {
         trellis.setPixelColor(mine_key, mine_colors[i]);
@@ -200,6 +210,13 @@ void showMine(uint16_t mine_key, String color) {
         if(i > 4) i = 0;
         else i++;
         // 종료 조건 추가
+        
+        while(Serial.available()) {
+          // 시리얼 읽어서 문자열로 저장
+          s = Serial.readString();
+        }
+
+        if(s.substring(0,4) == "Mine") break;
     }
 }
 
@@ -337,92 +354,125 @@ void loop() {
 //    }
 //    setColor();
     
-    while(Serial.available())
-    {
-        // 시리얼 읽어서 문자열로 저장
-        char wait = Serial.read();
-        sig.concat(wait);
-    }
+   while(Serial.available())
+   {
+       // 시리얼 읽어서 문자열로 저장
+       char wait = Serial.read();
+       sig.concat(wait);
+   }
+   
+   // 문자열 슬라이싱 (Mine or Turn)
+   sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
+   // 문자열 string으로 저장
+   String temp = check;
+   
+   // 지뢰 설정 시리얼을 수신한 경우
+   if (temp == "Mine")
+   {   // 의도하지않은  방지
+       if (sig.length()==10)
+       {
+           sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
+           sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
+           // int로 변환
+           red_mine = atoi(red);
+           blue_mine = atoi(blue);
+
+           // 테스트
+           Serial.print("red : ");
+           Serial.print(red_mine);
+           Serial.print("\t");
+           Serial.print("blue : ");
+           Serial.print(blue_mine);
+
+           // set color array
+           setColor();
+
+           // 초기화
+           sig = "";
+           temp = "";
+       }
+       // 시리얼이 잘못 수신된 경우
+       else 
+       {
+           // 초기화
+           sig = "";
+           temp = "";
+       }
+       Serial.println();
+   }
+   // 턴에 대한 정보를 수신한 경우
+   else if (temp == "Turn")
+   {   // 의도하지않은 값 방지
+       if (sig.length()==5)
+       {
+           sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
+
+           // 테스트
+           Serial.print("\t");
+           Serial.print("turnT : ");
+           Serial.print(turnT);
+           
+           // 턴 저장
+           turn = turnT[0];        // turnT[1] = NULL
+
+           // 테스트
+           Serial.print("\t");
+           Serial.print("turn : ");
+           Serial.print(turn);
+
+           // 초기화
+           sig = "";
+           temp = "";
+       }
+       // 시리얼이 잘못 수신된 경우
+       else 
+       {
+           // 초기화
+           sig = "";
+           temp = "";
+       }
+       Serial.println();
+   }
+   // 게임진행에 필요없는 시리얼인 경우
+   else
+   {
+       // 초기화
+       sig = "";
+       temp = "";
+   }
+//     String sline = "";
     
-    // 문자열 슬라이싱 (Mine or Turn)
-    sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
-    // 문자열 string으로 저장
-    String temp = check;
+//     while(Serial.available())
+//     {
+//         sline = Serial.readString();
+//     }
     
-    // 지뢰 설정 시리얼을 수신한 경우
-    if (temp == "Mine")
-    {   // 의도하지않은  방지
-        if (sig.length()==10)
-        {
-            sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
-            sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
-            // int로 변환
-            red_mine = atoi(red);
-            blue_mine = atoi(blue);
+//     String temp = sline.substring(0,4);
+//     turn = '0';
+//     // 지뢰 설정 시리얼을 수신한 경우
+//     if (temp == "Mine")
+//     {   // 의도하지않은  방지
+//         if (sline.length()==10)
+//         {
+//             // int로 변환
+// //            sline.substring(4,7).toCharArray(red,4);
+// //            sline.substring(7,10).toCharArray(blue,4);
+//             red_mine = sline.substring(4, 7).toInt();
+//             blue_mine = sline.substring(7, 10).toInt();
 
-            // 테스트
-            Serial.print("red : ");
-            Serial.print(red_mine);
-            Serial.print("\t");
-            Serial.print("blue : ");
-            Serial.print(blue_mine);
-
-            // set color array
-            setColor();
-
-            // 초기화
-            sig = "";
-            temp = "";
-        }
-        // 시리얼이 잘못 수신된 경우
-        else 
-        {
-            // 초기화
-            sig = "";
-            temp = "";
-        }
-        Serial.println();
-    }
-    // 턴에 대한 정보를 수신한 경우
-    else if (temp == "Turn")
-    {   // 의도하지않은 값 방지
-        if (sig.length()==5)
-        {
-            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
-
-            // 테스트
-            Serial.print("\t");
-            Serial.print("turnT : ");
-            Serial.print(turnT);
-            
-            // 턴 저장
-            turn = turnT[0];        // turnT[1] = NULL
-
-            // 테스트
-            Serial.print("\t");
-            Serial.print("turn : ");
-            Serial.print(turn);
-
-            // 초기화
-            sig = "";
-            temp = "";
-        }
-        // 시리얼이 잘못 수신된 경우
-        else 
-        {
-            // 초기화
-            sig = "";
-            temp = "";
-        }
-        Serial.println();
-    }
-    // 게임진행에 필요없는 시리얼인 경우
-    else
-    {
-        // 초기화
-        sig = "";
-        temp = "";
-    }
+//             // set color array
+//             setColor();
+//         }
+//     }
+//     // 턴에 대한 정보를 수신한 경우
+//     else if (temp == "Turn")
+//     {   // 의도하지않은 값 방지
+//         if (sline.length()==5)
+//         {
+//             turn = sline[4];
+//         }
+//     }
+    
 
     // 테스트용
     // if(firstturn) { // 턴이 바뀌면 해당 플레이어의 턴 횟수 설정
