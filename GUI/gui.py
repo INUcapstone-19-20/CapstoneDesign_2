@@ -255,14 +255,14 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
-            communication.turn_ToArduino("B")
+            # communication.turn_ToArduino("B")
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
             
         elif red_turn > blue_turn:
-            communication.turn_ToArduino("R")
+            # communication.turn_ToArduino("R")
             self.btn_reddice.move(165, 110)
             self.btn_bluedice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 15))
@@ -355,10 +355,9 @@ class Redturn(QMainWindow):
             changeScreen(self, 23)
         else:
             self.filename += str(value) + '.png); border:0px;'
-            
             self.btn_redturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino('B')
+                communication.turn_ToArduino('L')
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -386,12 +385,13 @@ class Redturn(QMainWindow):
         self.lb_redturn.setText("빨강 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino('B')
+            communication.turn_ToArduino('L')
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
+            communication.turn_ToArduino('R')
             self.serth.start()
             print("countturn : ",communication.count_turn)
             
@@ -435,7 +435,7 @@ class Blueturn(QMainWindow):
             
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino('R')
+                communication.turn_ToArduino('L')
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -463,12 +463,13 @@ class Blueturn(QMainWindow):
         self.lb_blueturn.setText("파랑 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino('R')
+            communication.turn_ToArduino('L')
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
+            communication.turn_ToArduino('B')
             self.serth.start()
             print("countturn : ", communication.count_turn)
 

@@ -418,7 +418,7 @@ void loop() {
            Serial.print(red_mine);
            Serial.print("\t");
            Serial.print("blue : ");
-           Serial.print(blue_mine);
+           Serial.println(blue_mine);
 
            // set color array
            setColor();
@@ -434,7 +434,6 @@ void loop() {
            sig = "";
            temp = "";
        }
-       Serial.println();
    }
    // 턴에 대한 정보를 수신한 경우
    else if (temp == "Turn")
@@ -444,7 +443,6 @@ void loop() {
            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
 
            // 테스트
-           Serial.print("\t");
            Serial.print("turnT : ");
            Serial.print(turnT);
            
@@ -454,7 +452,7 @@ void loop() {
            // 테스트
            Serial.print("\t");
            Serial.print("turn : ");
-           Serial.print(turn);
+           Serial.println(turn);
 
            // 초기화
            sig = "";
@@ -467,7 +465,6 @@ void loop() {
            sig = "";
            temp = "";
        }
-       Serial.println();
    }
 //    else if (temp == "Lock")
 //    {
