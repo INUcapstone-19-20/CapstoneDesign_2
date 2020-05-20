@@ -519,8 +519,8 @@ class Blue_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Red")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
 class Red_Loose(QMainWindow):
@@ -533,8 +533,8 @@ class Red_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Blue")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
 # def connectDice():

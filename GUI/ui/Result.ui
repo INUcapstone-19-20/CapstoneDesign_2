@@ -83,7 +83,7 @@ border:none;</string>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
-      <pointsize>40</pointsize>
+      <pointsize>36</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
