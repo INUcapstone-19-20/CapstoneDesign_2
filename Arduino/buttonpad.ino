@@ -299,6 +299,13 @@ TrellisCallback blue_ON(keyEvent evt) {
     return 0;
 }
 
+TrellisCallback lock_ON(keyEvent evt) {
+        if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
+            return 0;
+        }
+    return 0;
+}
+
 void setup() {
     Serial.begin(115200);
     
@@ -333,7 +340,7 @@ void setup() {
 
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         // activate rising edge on all keys
-        //trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
 
         // all neopixels off
         trellis.setPixelColor(i, 0x000000);
@@ -342,22 +349,22 @@ void setup() {
         delay(30);
     }
 
-    lockOn();
+    //lockOn();
 }
 
-void lockOn() {
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        // deactivate rising edge on all keys
-        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, false);
-    }
-}
+// void lockOn() {
+//     for(int i=0; i<Y_DIM*X_DIM; i++) {
+//         // deactivate rising edge on all keys
+//         trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, false);
+//     }
+// }
 
-void lockOff() {
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        // activate rising edge on all keys
-        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-    }
-}
+// void lockOff() {
+//     for(int i=0; i<Y_DIM*X_DIM; i++) {
+//         // activate rising edge on all keys
+//         trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+//     }
+// }
 
 // 테스트용 임시 변수
 // uint8_t r_turns[6] = {0, 10, 0, 10, 0, 10};
@@ -524,18 +531,19 @@ void loop() {
         if (turn == 'R')
         //if(red_turn > 0) { // 차례가 아니면 0
         {
-            lockOff();
+            //lockOff();
             trellis.registerCallback(i, red_ON);
         }
         else if(turn == 'B')
         //else if(blue_turn > 0) {
         {
-            lockOff();
+            //lockOff();
             trellis.registerCallback(i, blue_ON);
         }
         else if(turn == 'L')
         {
-            lockOn();
+            //lockOn();
+            terllis.registerCallback(i, lock_ON);
         }
     }
     trellis.read();
