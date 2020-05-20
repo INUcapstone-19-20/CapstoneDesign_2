@@ -250,7 +250,8 @@ TrellisCallback red_ON(keyEvent evt) {
                     // 파이썬에 '게임 종료' 전송
                 }
                 // 누른 버튼이 지뢰가 아닐 경우
-                else {
+                else 
+                {
                     trellis.setPixelColor(evt.bit.NUM, red_colors[evt.bit.NUM]);
                     trellis.show();
                     Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
@@ -260,7 +261,6 @@ TrellisCallback red_ON(keyEvent evt) {
 //                        firstturn = !firstturn; // toggle turn state
 //                    }// end 테스트용
                 }                
-                
             }
         }
 //    }
@@ -270,7 +270,8 @@ TrellisCallback red_ON(keyEvent evt) {
 // define a callback player2's key presses
 TrellisCallback blue_ON(keyEvent evt) {
 //    if(blue_turn > 0) {
-        if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
+        if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) 
+        {
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -283,7 +284,8 @@ TrellisCallback blue_ON(keyEvent evt) {
                     // 파이썬에 '게임 종료' 전송
                 }
                 // 누른 버튼이 지뢰가 아닐 경우
-                else {
+                else 
+                {
                     trellis.setPixelColor(evt.bit.NUM, blue_colors[evt.bit.NUM]);
                     trellis.show();
                     Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
@@ -299,6 +301,7 @@ TrellisCallback blue_ON(keyEvent evt) {
     return 0;
 }
 
+// define a callback key lock
 TrellisCallback lock_ON(keyEvent evt) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
             return 0;
@@ -306,6 +309,7 @@ TrellisCallback lock_ON(keyEvent evt) {
     return 0;
 }
 
+// setup()
 void setup() {
     Serial.begin(115200);
     
@@ -396,7 +400,6 @@ void loop() {
        char wait = Serial.read();
        sig.concat(wait);
    }
-   
    // 문자열 슬라이싱 (Mine or Turn)
    sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
    // 문자열 string으로 저장
@@ -414,11 +417,11 @@ void loop() {
            blue_mine = atoi(blue);
 
            // 테스트
-           Serial.print("red : ");
-           Serial.print(red_mine);
-           Serial.print("\t");
-           Serial.print("blue : ");
-           Serial.print(blue_mine);
+        //    Serial.print("red : ");
+        //    Serial.print(red_mine);
+        //    Serial.print("\t");
+        //    Serial.print("blue : ");
+        //    Serial.println(blue_mine);
 
            // set color array
            setColor();
@@ -434,7 +437,6 @@ void loop() {
            sig = "";
            temp = "";
        }
-       Serial.println();
    }
    // 턴에 대한 정보를 수신한 경우
    else if (temp == "Turn")
@@ -444,17 +446,16 @@ void loop() {
            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
 
            // 테스트
-           Serial.print("\t");
-           Serial.print("turnT : ");
-           Serial.print(turnT);
+        //    Serial.print("turnT : ");
+        //    Serial.print(turnT);
            
-           // 턴 저장
-           turn = turnT[0];        // turnT[1] = NULL
+        //    // 턴 저장
+        //    turn = turnT[0];        // turnT[1] = NULL
 
-           // 테스트
-           Serial.print("\t");
-           Serial.print("turn : ");
-           Serial.print(turn);
+        //    // 테스트
+        //    Serial.print("\t");
+        //    Serial.print("turn : ");
+        //    Serial.println(turn);
 
            // 초기화
            sig = "";
@@ -467,7 +468,6 @@ void loop() {
            sig = "";
            temp = "";
        }
-       Serial.println();
    }
 //    else if (temp == "Lock")
 //    {
@@ -528,19 +528,19 @@ void loop() {
     // register a callback for all keys
     for(int i=0; i<Y_DIM*X_DIM; i++) 
     {
-        if (turn == 'R')
+        if (turn == 'R')        // red player turn
         //if(red_turn > 0) { // 차례가 아니면 0
         {
             //lockOff();
             trellis.registerCallback(i, red_ON);
         }
-        else if(turn == 'B')
+        else if(turn == 'B')    // blue player turn
         //else if(blue_turn > 0) {
         {
             //lockOff();
             trellis.registerCallback(i, blue_ON);
         }
-        else if(turn == 'L')
+        else if(turn == 'L')    // key lock
         {
             //lockOn();
             terllis.registerCallback(i, lock_ON);
