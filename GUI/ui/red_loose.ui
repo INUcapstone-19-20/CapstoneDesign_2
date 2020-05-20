@@ -13,13 +13,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(224, 224, 224);</string>
+  </property>
   <widget class="QPushButton" name="btn_rbom">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>130</y>
-     <width>150</width>
-     <height>150</height>
+     <x>140</x>
+     <y>100</y>
+     <width>200</width>
+     <height>200</height>
     </rect>
    </property>
    <property name="focusPolicy">
@@ -43,6 +46,9 @@
      <family>HyhwpEQ</family>
      <pointsize>28</pointsize>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(0, 0, 0)</string>
    </property>
    <property name="text">
     <string>빨강 플레이어의 지뢰가 터졌습니다</string>
