@@ -59,6 +59,15 @@ def turn_ToArduino (turn) :
     # 아두이노로 전달
     ser.write(TurnTrans)
 
+# 버튼 잠그기 함수
+# def lock_ToArduino () :
+#     lock = "Lock"                      
+#     LockTrans = lock.encode('utf-8')
+#     #print('LockTrans :', LockTrans)
+
+#     # 아두이노로 전달
+#     ser.write(LockTrans)
+
 # 지뢰 위치에 대한 정보를 아두이노로 전달하기 위한 함수
 def mine_ToArduino (red_mine, blue_mine) :
     MineTrans = "Mine" + red_mine + blue_mine       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Mine 삽입

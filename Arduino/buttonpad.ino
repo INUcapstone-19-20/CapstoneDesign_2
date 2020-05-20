@@ -333,7 +333,7 @@ void setup() {
 
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         // activate rising edge on all keys
-        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+        //trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
 
         // all neopixels off
         trellis.setPixelColor(i, 0x000000);
@@ -341,6 +341,8 @@ void setup() {
 
         delay(30);
     }
+
+    lockOn();
 }
 
 void lockOn() {
@@ -460,6 +462,13 @@ void loop() {
        }
        Serial.println();
    }
+//    else if (temp == "Lock")
+//    {
+//        if (sig.length()==4)
+//        {
+//            lockOn()
+//        }
+//    }
    // 게임진행에 필요없는 시리얼인 경우
    else
    {
@@ -515,15 +524,20 @@ void loop() {
         if (turn == 'R')
         //if(red_turn > 0) { // 차례가 아니면 0
         {
+            lockOff();
             trellis.registerCallback(i, red_ON);
         }
         else if(turn == 'B')
         //else if(blue_turn > 0) {
         {
+            lockOff();
             trellis.registerCallback(i, blue_ON);
         }
+        else if(turn == 'L')
+        {
+            lockOn();
+        }
     }
-    
     trellis.read();
     delay(20);
 }
