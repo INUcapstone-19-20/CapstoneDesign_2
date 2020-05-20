@@ -1,24 +1,27 @@
 #include "Adafruit_NeoTrellis.h"
 
-#define Y_DIM 4 // number of rows of keys
-#define X_DIM 4 // number of columns of keys
+#define Y_DIM 8 // number of rows of keys
+#define X_DIM 8 // number of columns of keys
 #define COLORS 3  // number of colors
 
 // create a matrix of neotrellis boards
+// 12 x 12
 // Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
     // { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
     // { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
     // { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
 // };
 
-// Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-//    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32)},
-//    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E)}
-// };
+// 8 x 8
+ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32)},
+    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E)}
+ };
 
-Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
-   { Adafruit_NeoTrellis(0x4A) }
-};
+// 4 x 4
+//Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
+//   { Adafruit_NeoTrellis(0x4A) }
+//};
 
 // pass this matrix to the multitrellis constructor
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
@@ -124,6 +127,7 @@ void showMine(uint16_t mine_key, String color) {
     uint8_t mine_y = mine_key / X_DIM;
 
     if(color == "red") {
+      
         // 첫번째 영역 on
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
@@ -160,9 +164,9 @@ void showMine(uint16_t mine_key, String color) {
         }
         delay(500);
 
-        Serial.println("RedBoom");
     }
     else { // color == "blue"
+        
         // 첫번째 영역 on
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
@@ -199,7 +203,7 @@ void showMine(uint16_t mine_key, String color) {
         }
         delay(500);
 
-        Serial.println("BlueBoom");
+
     }
 
     // 지뢰 효과
@@ -210,7 +214,7 @@ void showMine(uint16_t mine_key, String color) {
         trellis.setPixelColor(mine_key, mine_colors[i]);
         trellis.show();
         delay(500);
-        if(i > 4) i = 0;
+        if(i >= 3) i = 0;
         else i++;
         // 종료 조건 추가
         
@@ -219,7 +223,10 @@ void showMine(uint16_t mine_key, String color) {
           s = Serial.readString();
         }
 
-        if(s.substring(0,4) == "Mine") break;
+        if(s.substring(0,4) == "Mine") {
+            setColor();
+            break;
+        }
     }
 }
 
@@ -227,15 +234,16 @@ void showMine(uint16_t mine_key, String color) {
 TrellisCallback red_ON(keyEvent evt) {
 //    if(red_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
-            Serial.println("Click");          // 버튼 클릭시 Raspberrypi에 전달하기 위해 출력
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == red_mine) { // 빨간 플레이어 패배(본인 지뢰 클릭)
+                    Serial.println("RedBoom");
                     showMine(evt.bit.NUM, "red");
                     // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == blue_mine) { // 빨간 플레이어 승리
+                    Serial.println("BlueBoom");
                     showMine(evt.bit.NUM, "blue");
                     // 파이썬에 '게임 종료' 전송
                 }
@@ -243,13 +251,14 @@ TrellisCallback red_ON(keyEvent evt) {
                 else {
                     trellis.setPixelColor(evt.bit.NUM, red_colors[evt.bit.NUM]);
                     trellis.show();
+                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
 //                    // 테스트용
 //                    red_turn--;
 //                    if(red_turn == 0) {
 //                        firstturn = !firstturn; // toggle turn state
 //                    }// end 테스트용
                 }                
-                // 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                
             }
         }
 //    }
@@ -260,7 +269,6 @@ TrellisCallback red_ON(keyEvent evt) {
 TrellisCallback blue_ON(keyEvent evt) {
 //    if(blue_turn > 0) {
         if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
-            Serial.println("Click");          // 버튼 클릭시 Raspberrypi에 전달하기 위해 출력
             if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
@@ -276,13 +284,13 @@ TrellisCallback blue_ON(keyEvent evt) {
                 else {
                     trellis.setPixelColor(evt.bit.NUM, blue_colors[evt.bit.NUM]);
                     trellis.show();
+                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
                     // 테스트용
 //                    blue_turn--;
 //                    if(blue_turn == 0) {
 //                        firstturn = !firstturn; // toggle turn state
 //                    }// end 테스트용
                 }
-                // 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }
         }
 //    }

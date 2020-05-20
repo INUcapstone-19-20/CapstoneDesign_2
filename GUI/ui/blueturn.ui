@@ -46,7 +46,7 @@ border: none;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_battleMode">
+   <widget class="QLabel" name="lb_blueturn">
     <property name="geometry">
      <rect>
       <x>0</x>

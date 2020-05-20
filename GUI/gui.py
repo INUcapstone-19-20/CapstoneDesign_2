@@ -38,7 +38,6 @@ class SerThread(QThread):
 
     def run(self): 
         while True:
-
             if self.stop_flag:
                 print("stop!!!!!!")
                 break
@@ -48,18 +47,20 @@ class SerThread(QThread):
                 self.clickChanged.emit(communication.count_turn)
             elif self.onClick == 99:
                 self.clickChanged.emit(99)
+                break
             elif self.onClick == -99:
                 self.clickChanged.emit(-99)
-            # print("onClick :" , self.onClick, "\twho :", self.who)
+                break
 
 
 class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
     result = pyqtSignal(int)
 
-    def __init__(self, limit = 30):
+    def __init__(self, limit = 30, timing = 0.03):
         QThread.__init__(self)
         self.limit = limit
+        self.timing = timing
         # self.cntChanged = pyqtSignal(int)
         # self.result = pyqtSignal(int)
 
@@ -68,7 +69,7 @@ class DiceThread(QThread):
         while cnt < self.limit:
             self.cntChanged.emit(cnt % 4)
             cnt += 1
-            time.sleep(0.03)
+            time.sleep(self.timing)
 
         rand = random.randint(0,3)
         self.result.emit(rand)
@@ -100,7 +101,20 @@ class Start(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/start.ui", self)
-        self.btn_bomb.setStyleSheet('image:url(res/bomb3.png); border:0px;')
+        self.timer = DiceThread(12, 0.6)
+        self.timer.cntChanged.connect(self.splash)
+        self.timer.finished.connect(partial(changeScreen, self, 2))
+        self.timer.start()
+
+        self.btn_start.setStyleSheet('image:url(res/bomb3.png); border:0px;')
+
+    def splash(self, value):
+        self.text = "loading"
+        for i in range(0, value):
+            self.text += "."
+
+        self.lb_start.setText(self.text)
+
         
 class ModeSelect(QMainWindow):
     def __init__(self):
@@ -320,8 +334,7 @@ class Redturn(QMainWindow):
         self.eye = 100
         self.serth = SerThread("red")
         self.serth.clickChanged.connect(self.buttonClicked)
-        self.serth.start()
-        
+
         self.btn_redturn.clicked.connect(self.throwRed)
         self.btn_redturn.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
@@ -346,16 +359,14 @@ class Redturn(QMainWindow):
             self.btn_redturn.setStyleSheet(self.filename)
             if value == 0:
                 communication.turn_ToArduino('B')
-                self.checkBoom()
-                self.timer = DiceThread(50)
-                self.timer.finished.connect(partial(changeScreen,self,19))
+                self.timer = DiceThread(60)
+                self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
-                
                 
     def checkBoom(self):
         self.serth.stop()
         self.serth.exit()
-        # changeScreen(self,19)
+        changeScreen(self,19)
 
             
     def setRed(self, value):
@@ -372,15 +383,16 @@ class Redturn(QMainWindow):
     def finishRed(self, value):
         self.setRed(value)
         self.eye = value
-        print("eye :", self.eye)
+        self.lb_redturn.setText("빨강 플레이어 턴")
+        
         if self.eye == 0:
             communication.turn_ToArduino('B')
-            self.checkBoom()
-            self.timer = DiceThread(50)
+            self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
+            self.serth.start()
             print("countturn : ",communication.count_turn)
             
 
@@ -400,7 +412,7 @@ class Blueturn(QMainWindow):
         self.eye = 100
         self.serth = SerThread("blue")
         self.serth.clickChanged.connect(self.buttonClicked)
-        self.serth.start()
+        # self.serth.start()
 
         self.btn_blueturn.clicked.connect(self.throwBlue)
         self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
@@ -425,16 +437,14 @@ class Blueturn(QMainWindow):
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
                 communication.turn_ToArduino('R')
-                self.checkBoom()
-                self.timer = DiceThread(50)
-                self.timer.finished.connect(partial(changeScreen,self,15))
+                self.timer = DiceThread(60)
+                self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
-                
 
     def checkBoom(self):
         self.serth.stop()
         self.serth.exit()
-        # changeScreen(self,15)
+        changeScreen(self,15)
 
 
     def setBlue(self, value):
@@ -451,15 +461,16 @@ class Blueturn(QMainWindow):
     def finishBlue(self, value):
         self.setBlue(value)
         self.eye = value
-        print("eye :", self.eye)
+        self.lb_blueturn.setText("파랑 플레이어 턴")
+        
         if self.eye == 0:
             communication.turn_ToArduino('R')
-            self.checkBoom()
-            self.timer = DiceThread(50)
+            self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
+            self.serth.start()
             print("countturn : ", communication.count_turn)
 
 
@@ -547,7 +558,7 @@ if __name__ == '__main__':
     # serth.start()
 
     # GUI 시작
-    ex = ModeSelect()
+    ex = Start()
     # ex.showFullScreen()
     ex.show()
     sys.exit(app.exec_())
