@@ -33,8 +33,8 @@ const static uint32_t mine_colors[4] = { 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF 
 //static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x5A5AFF, 0xB4B4FF };
 //static uint32_t red_colorcode[COLORS] = { 0xFF0000, 0xFF5A5A, 0xFFB4B4 };
 // test
-static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x333377, 0x000022 };
-static uint32_t red_colorcode[COLORS] = { 0xFF0000, 0x770303, 0xAA5050 };
+static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x2222DD, 0x333355 };
+static uint32_t red_colorcode[COLORS] = { 0x990000, 0xDD1111, 0x772222 };
 
 static uint32_t blue_colors[Y_DIM*X_DIM], red_colors[Y_DIM*X_DIM];
 //static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
@@ -101,11 +101,11 @@ void setColor() {
     uint8_t b_mine_y = blue_mine / X_DIM;
     for(uint8_t y=0; y<Y_DIM; y++) {
       for(uint8_t x=0; x<X_DIM; x++) {
-        if(distance(b_mine_x, b_mine_y, x, y) <= sqrt(2)) 
+        if(distance(b_mine_x, b_mine_y, x, y) < sqrt(8)) 
           blue_colors[y * X_DIM + x] = blue_colorcode[0];
-        if(distance(b_mine_x, b_mine_y, x, y) > sqrt(2) && distance(b_mine_x, b_mine_y, x, y) < sqrt(8)) 
+        if(distance(b_mine_x, b_mine_y, x, y) >= sqrt(8) && distance(b_mine_x, b_mine_y, x, y) <= sqrt(20)) 
           blue_colors[y * X_DIM + x] = blue_colorcode[1];
-        if(distance(b_mine_x, b_mine_y, x, y) >= sqrt(8)) 
+        if(distance(b_mine_x, b_mine_y, x, y) > sqrt(20)) 
           blue_colors[y * X_DIM + x] = blue_colorcode[2];
       }
     }
@@ -113,11 +113,11 @@ void setColor() {
     uint8_t r_mine_y = red_mine / X_DIM;
     for(uint8_t y=0; y<Y_DIM; y++) {
       for(uint8_t x=0; x<X_DIM; x++) {
-        if(distance(r_mine_x, r_mine_y, x, y) <= sqrt(2)) 
+        if(distance(r_mine_x, r_mine_y, x, y) < sqrt(8)) 
           red_colors[y * X_DIM + x] = red_colorcode[0];
-        if(distance(r_mine_x, r_mine_y, x, y) > sqrt(2) && distance(r_mine_x, r_mine_y, x, y) < sqrt(8)) 
+        if(distance(r_mine_x, r_mine_y, x, y) >= sqrt(8) && distance(r_mine_x, r_mine_y, x, y) <= sqrt(20)) 
           red_colors[y * X_DIM + x] = red_colorcode[1];
-        if(distance(r_mine_x, r_mine_y, x, y) >= sqrt(8)) 
+        if(distance(r_mine_x, r_mine_y, x, y) > sqrt(20)) 
           red_colors[y * X_DIM + x] = red_colorcode[2];
       }
     }
@@ -136,7 +136,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;                    
-                if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
+                if(distance(mine_x, mine_y, x, y) < sqrt(8)) {
                     trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }
@@ -148,7 +148,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
+                if(distance(mine_x, mine_y, x, y) >= sqrt(8) && distance(mine_x, mine_y, x, y) <= sqrt(20)) {
                     trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }
@@ -160,7 +160,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
+                if(distance(mine_x, mine_y, x, y) > sqrt(20)) {
                     trellis.setPixelColor(x, y, red_colors[y * X_DIM + x]);
                     trellis.show();
                 }            
@@ -175,7 +175,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) <= sqrt(2)) {
+                if(distance(mine_x, mine_y, x, y) < sqrt(8)) {
                     trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
@@ -187,7 +187,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) > sqrt(2) && distance(mine_x, mine_y, x, y) < sqrt(8)) {
+                if(distance(mine_x, mine_y, x, y) >= sqrt(8) && distance(mine_x, mine_y, x, y) <= sqrt(20)) {
                     trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
@@ -199,7 +199,7 @@ void showMine(uint16_t mine_key, String color) {
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
                 if(x == mine_x && y == mine_y) continue;
-                if(distance(mine_x, mine_y, x, y) >= sqrt(8)) {
+                if(distance(mine_x, mine_y, x, y) > sqrt(20)) {
                     trellis.setPixelColor(x, y, blue_colors[y * X_DIM + x]);
                     trellis.show();
                 }
