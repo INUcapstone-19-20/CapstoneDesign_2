@@ -81,6 +81,15 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 }
 
 void setColor() {
+
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+
+        // all neopixels off
+        trellis.setPixelColor(i, 0x000000);
+        trellis.show();
+        ispressed[i] = 0;
+    }
+  
     uint8_t b_mine_x = blue_mine % X_DIM;
     uint8_t b_mine_y = blue_mine / X_DIM;
     for(uint8_t y=0; y<Y_DIM; y++) {
@@ -106,12 +115,6 @@ void setColor() {
       }
     }
 
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-
-        // all neopixels off
-        trellis.setPixelColor(i, 0x000000);
-        trellis.show();
-    }
 }
 
 // mine LED effect
