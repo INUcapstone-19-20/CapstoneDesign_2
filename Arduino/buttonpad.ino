@@ -414,11 +414,11 @@ void loop() {
            blue_mine = atoi(blue);
 
            // 테스트
-           Serial.print("red : ");
-           Serial.print(red_mine);
-           Serial.print("\t");
-           Serial.print("blue : ");
-           Serial.println(blue_mine);
+        //    Serial.print("red : ");
+        //    Serial.print(red_mine);
+        //    Serial.print("\t");
+        //    Serial.print("blue : ");
+        //    Serial.println(blue_mine);
 
            // set color array
            setColor();
@@ -443,16 +443,16 @@ void loop() {
            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
 
            // 테스트
-           Serial.print("turnT : ");
-           Serial.print(turnT);
+        //    Serial.print("turnT : ");
+        //    Serial.print(turnT);
            
-           // 턴 저장
-           turn = turnT[0];        // turnT[1] = NULL
+        //    // 턴 저장
+        //    turn = turnT[0];        // turnT[1] = NULL
 
-           // 테스트
-           Serial.print("\t");
-           Serial.print("turn : ");
-           Serial.println(turn);
+        //    // 테스트
+        //    Serial.print("\t");
+        //    Serial.print("turn : ");
+        //    Serial.println(turn);
 
            // 초기화
            sig = "";

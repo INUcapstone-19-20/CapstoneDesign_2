@@ -34,13 +34,10 @@ class SerThread(QThread):
 
     def stop(self):
         self.stop_flag = True
-        print("stopflag true")
 
     def run(self): 
         while True:
-            if self.stop_flag:
-                print("stop!!!!!!")
-                break
+            if self.stop_flag: break
 
             self.onClick = communication.click_FromArduino()
             if self.onClick == 1:
@@ -92,8 +89,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
-    # before.main.showFullScreen()
-    before.main.show()
+    before.main.showFullScreen()
+    # before.main.show()
     before.close()
 
 
@@ -283,7 +280,6 @@ class BattleMode(QMainWindow):
         global blue_turn
         blue_turn = value
         self.setBlue(blue_turn)
-        print(blue_turn)
         self.check_blue = True
         if self.check_blue & self.check_red:
             self.timer = DiceThread(50)
@@ -311,7 +307,6 @@ class BattleMode(QMainWindow):
         global red_turn
         red_turn = value
         self.setRed(red_turn)
-        print(red_turn)
         self.check_red = True
         if self.check_blue & self.check_red:
             self.timer = DiceThread(50)
@@ -393,7 +388,6 @@ class Redturn(QMainWindow):
             communication.count_turn = self.eye
             communication.turn_ToArduino('R')
             self.serth.start()
-            print("countturn : ",communication.count_turn)
             
 
     def throwRed(self):
@@ -471,7 +465,6 @@ class Blueturn(QMainWindow):
             communication.count_turn = self.eye
             communication.turn_ToArduino('B')
             self.serth.start()
-            print("countturn : ", communication.count_turn)
 
 
     def throwBlue(self):
@@ -551,14 +544,10 @@ class Red_Loose(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # app.setOverrideCursor(Qt.BlankCursor)
-
-    # connectDice()
-    # serth = SerThread()
-    # serth.start()
+    app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
     ex = Start()
-    # ex.showFullScreen()
-    ex.show()
+    ex.showFullScreen()
+    # ex.show()
     sys.exit(app.exec_())

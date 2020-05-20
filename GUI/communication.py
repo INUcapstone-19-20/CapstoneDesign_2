@@ -5,8 +5,8 @@ import time
 
 
 ser = serial.Serial(
-    port='/dev/tty.ACM0',         # 라즈베리파이 포트
-    # port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
+    # port='/dev/tty.ACM0',         # 라즈베리파이 포트
+    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
@@ -29,13 +29,13 @@ def click_FromArduino():
             LINE = ser.readline()
             code = Decode(LINE)
             # 값 확인
-            print("code : ", code, end='\n')
+            # print("code : ", code, end='\n')
             
             # 버튼패드를 클릭했다면
             if "Click" in code:
                 if count_turn > 0:
                     count_turn -= 1
-                    print("count_turn : ",count_turn)
+                    # print("count_turn : ",count_turn)
                 return 1
             elif "Boom" in code:
                 if "Red" in code: return 99
@@ -91,8 +91,8 @@ def set_Mine ():
     red_mine = str(red_mine).zfill(mineCiper)
     blue_mine = str(blue_mine).zfill(mineCiper)
     # 값 확인
-    print('red_mine :', red_mine)
-    print('blue_mine :', blue_mine)
+    # print('red_mine :', red_mine)
+    # print('blue_mine :', blue_mine)
     # print('')
 
     # 아두이노로 전달
