@@ -19,6 +19,7 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 
 // pass matrix to the multitrellis constructor
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
+Adafruit_MultiTrellis *t = trellis;
 
 // 시리얼 수신 변수
 static String sig = "";
@@ -36,6 +37,7 @@ static char turn;
 // 모드 저장 변수
 static char mode;
 
+// 게임 객체
 BattleMode battlegame;
 SingleMode singlegame;
 
@@ -142,8 +144,8 @@ void loop() {
                 Serial.print("blue : ");
                 Serial.print(blue_mine);
 
-                // 배틀모드 생성
-                battlegame = BattleMode(red_mine, blue_mine);
+                // 게임 세팅
+                battlegame.setGame(red_mine, blue_mine);
             }
 
             if(mode == 'S') {   // 싱글모드
@@ -151,8 +153,8 @@ void loop() {
                 // uint16_t mine = 
                 uint16_t mine = 8;  // 테스트 임시 지뢰 위치
 
-                // 싱글모드 생성
-                singlegame = SingleMode(mine);
+                // 게임 세팅
+                singlegame.setGame(mine);
                 // 콜백 설정
                 singlegame.setCallback();
             }
@@ -220,6 +222,6 @@ void loop() {
     }
 
     // 게임 시작
-    if(mode == 'S') singlegame.starGame();
+    if(mode == 'S') singlegame.startGame();
     else if(mode == 'B') battlegame.startGame();
 }
