@@ -395,7 +395,7 @@ void loop() {
    
    // 지뢰 설정 시리얼을 수신한 경우
    if (temp == "Mine")
-   {   // 의도하지않은  방지
+   {   // 의도하지않은 값 방지
        if (sig.length()==10)
        {
            sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱

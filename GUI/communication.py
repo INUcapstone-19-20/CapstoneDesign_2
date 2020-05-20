@@ -13,7 +13,7 @@ ser = serial.Serial(
 
 BUTTONPAD_NUM = 64        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
-count_turn = 0
+count_turn = 0            # 턴 수
 
 # 디코드 함수
 def Decode(x):
