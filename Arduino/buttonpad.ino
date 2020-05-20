@@ -30,8 +30,12 @@ Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 const static uint32_t mine_colors[4] = { 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF };
 
 // set players' color
-static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x5A5AFF, 0xB4B4FF };
-static uint32_t red_colorcode[COLORS] = { 0xFF0000, 0xFF5A5A, 0xFFB4B4 };
+//static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x5A5AFF, 0xB4B4FF };
+//static uint32_t red_colorcode[COLORS] = { 0xFF0000, 0xFF5A5A, 0xFFB4B4 };
+// test
+static uint32_t blue_colorcode[COLORS] = { 0x0000FF, 0x333377, 0x000022 };
+static uint32_t red_colorcode[COLORS] = { 0xFF0000, 0x770303, 0xAA5050 };
+
 static uint32_t blue_colors[Y_DIM*X_DIM], red_colors[Y_DIM*X_DIM];
 //static uint32_t blue_colors[16] = { 0x6363FF, 0x0000FF, 0x0000FF, 0x0000FF,     // - - - -
 //                                    0x6363FF, 0x0000FF, 0x000000, 0x0000FF,     // - - * -
@@ -127,7 +131,7 @@ void showMine(uint16_t mine_key, String color) {
     uint8_t mine_y = mine_key / X_DIM;
 
     if(color == "red") {
-      
+        Serial.println("RedBoom");
         // 첫번째 영역 on
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
@@ -166,7 +170,7 @@ void showMine(uint16_t mine_key, String color) {
 
     }
     else { // color == "blue"
-        
+        Serial.println("BlueBoom");
         // 첫번째 영역 on
         for(uint8_t y=0; y<Y_DIM; y++) {
             for(uint8_t x=0; x<X_DIM; x++) {
@@ -238,12 +242,10 @@ TrellisCallback red_ON(keyEvent evt) {
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == red_mine) { // 빨간 플레이어 패배(본인 지뢰 클릭)
-                    Serial.println("RedBoom");
                     showMine(evt.bit.NUM, "red");
                     // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == blue_mine) { // 빨간 플레이어 승리
-                    Serial.println("BlueBoom");
                     showMine(evt.bit.NUM, "blue");
                     // 파이썬에 '게임 종료' 전송
                 }
@@ -326,7 +328,7 @@ void setup() {
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
         trellis.show();
-        delay(50);
+        delay(30);
     }
 
     for(int i=0; i<Y_DIM*X_DIM; i++) {
@@ -337,7 +339,21 @@ void setup() {
         trellis.setPixelColor(i, 0x000000);
         trellis.show();
 
-        delay(50);
+        delay(30);
+    }
+}
+
+void lockOn() {
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        // deactivate rising edge on all keys
+        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, false);
+    }
+}
+
+void lockOff() {
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        // activate rising edge on all keys
+        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
     }
 }
 

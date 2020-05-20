@@ -5,13 +5,13 @@ import time
 
 
 ser = serial.Serial(
-    # port='/dev/tty.ACM0', # 라즈베리파이 포트
-    port='/dev/cu.usbmodem14201', # 테스트용 노트북 포트
+    # port='/dev/tty.ACM0',         # 라즈베리파이 포트
+    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
 
-BUTTONPAD_NUM = 16        # 총 버튼 갯수
+BUTTONPAD_NUM = 64        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
 count_turn = 0
 
@@ -38,8 +38,8 @@ def click_FromArduino():
                     print("count_turn : ",count_turn)
                 return 1
             elif "Boom" in code:
-                if "Red" in code:return 99
-                elif "Blue" in code:return -99
+                if "Red" in code: return 99
+                elif "Blue" in code: return -99
             
         # except serial.serialutil.SerialException:
             

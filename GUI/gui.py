@@ -355,7 +355,7 @@ class Redturn(QMainWindow):
             changeScreen(self, 23)
         else:
             self.filename += str(value) + '.png); border:0px;'
-            print("filename : ",value, self.filename)
+            
             self.btn_redturn.setStyleSheet(self.filename)
             if value == 0:
                 communication.turn_ToArduino('B')
@@ -412,7 +412,6 @@ class Blueturn(QMainWindow):
         self.eye = 100
         self.serth = SerThread("blue")
         self.serth.clickChanged.connect(self.buttonClicked)
-        # self.serth.start()
 
         self.btn_blueturn.clicked.connect(self.throwBlue)
         self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
@@ -433,7 +432,7 @@ class Blueturn(QMainWindow):
             changeScreen(self,23)
         else:
             self.filename += str(value) + '.png); border:0px;'
-            print("filename : ", self.filename)
+            
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
                 communication.turn_ToArduino('R')
