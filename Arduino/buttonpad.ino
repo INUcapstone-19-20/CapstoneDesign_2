@@ -86,7 +86,7 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
     return abs(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)));
 }
 
-void initButtonstate() {
+void initButtonState() {
         for(int i=0; i<Y_DIM*X_DIM; i++) {
         // all neopixels off
         trellis.setPixelColor(i, 0x000000);
@@ -102,14 +102,17 @@ void setPlayer(Player p, String id) {
             p.colorcode[0] = SINGLE1;
             p.colorcode[1] = SINGLE2;
             p.colorcode[2] = SINGLE3;
+            break;
         case "Red": 
             p.colorcode[0] = RED1;
             p.colorcode[1] = RED2;
             p.colorcode[2] = RED3;
+            break;
         case "Blue": 
             p.colorcode[0] = BLUE1;
             p.colorcode[1] = BLUE2;
             p.colorcode[2] = BLUE3;
+            break;
     }
 }
 
