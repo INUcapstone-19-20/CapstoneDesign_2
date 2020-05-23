@@ -19,8 +19,6 @@
 #define DISTANCE1 sqrt(8)
 #define DISTANCE2 sqrt(20)
 
-const static uint32_t mine_colors[4] = { 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF };
-
 typedef struct Player {
     String ID;
     uint32_t colorcode[COLORS];
@@ -176,17 +174,17 @@ void showColors(Player p) {
     delay(500);
 }
 
+// 지뢰 효과
 void showMine(uint16_t mine_key) {
-    // 지뢰 효과
     uint8_t i = 0;
     String s = "";
 
     while (1)
     {
-        trellis.setPixelColor(mine_key, mine_colors[i]);
+        trellis.setPixelColor(mine_key, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
         trellis.show();
-        delay(500);
-        if(i >= 3) i = 0;
+        delay(100);
+        if(i >= X_DIM*Y_DIM) i = 0;
         else i++;
         // 종료 조건 추가
         
