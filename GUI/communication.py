@@ -15,13 +15,21 @@ BUTTONPAD_NUM = 64        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
 count_turn = 0            # 턴 수
 
+# 모드 설정 전달
+def mode_toArduino(mode):
+    ModeTrans = "Mode" + mode
+    ModeTrans = ModeTrans.encode('utf-8')
+
+    # 아두이노로 전달
+    ser.write(ModeTrans)
+
 # 디코드 함수
 def Decode(x):
     result = x.decode()
     result = str(result)            # string으로 변환
     return result
 
-# 버튼패드 클릭 신호 수신
+# 버튼패드 클릭 신호 전달
 def click_FromArduino():
     if ser.readable():
         # try: 
@@ -50,7 +58,7 @@ def click_FromArduino():
     return 0
 
 
-# 어떤 플레이어 턴인지 아두이노로 전달하기 위한 함수
+# 어떤 플레이어 턴인지 아두이노로 전달
 def turn_ToArduino (turn) :
     TurnTrans = "Turn" + turn                       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Turn 삽입
     TurnTrans = TurnTrans.encode('utf-8')
@@ -68,7 +76,7 @@ def turn_ToArduino (turn) :
 #     # 아두이노로 전달
 #     ser.write(LockTrans)
 
-# 지뢰 위치에 대한 정보를 아두이노로 전달하기 위한 함수
+# 지뢰 위치에 대한 정보를 아두이노로 전달
 def mine_ToArduino (red_mine, blue_mine) :
     MineTrans = "Mine" + red_mine + blue_mine       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Mine 삽입
     #print('MineTrans :', MineTrans)
@@ -97,8 +105,3 @@ def set_Mine ():
 
     # 아두이노로 전달
     mine_ToArduino(red_mine, blue_mine)
-
-
-
-
-    
