@@ -61,10 +61,10 @@ static char turnT[2];
 static char modeM[2];   // 모드
 
 // 턴 저장 변수
-static char turn;
+static string turn;
 
 // 모드 저장 변수
-static char mode;
+static string mode;
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -343,26 +343,26 @@ void loop()
     // 모드 설정 시리얼을 수신한 경우
     if(temp == "Mode")
     {   // 의도하지않은 값 방지
-        if (sig.length()==5)
+        if (sig.length()==10)
         {
-            sig.substring(4,5).toCharArray(modeM,2);    // mode 부분 슬라이싱 (modeM : 'S' or 'B')
+            sig.substring(4,10).toCharArray(modeM,7);    // mode 부분 슬라이싱 (modeM : 'Single' or 'Battle')
 
             // 테스트
             //    Serial.print("modeM : ");
             //    Serial.print(modeM);
             
             // 모드 저장
-            // mode = modeM[0];        // modeM[1] = NULL
+            mode = modeM;        // modeM[1] = NULL
 
             //    // 테스트
             //    Serial.print("\t");
             //    Serial.print("mode : ");
             //    Serial.println(mode);
 
-            if(mode == "S") {
+            if(mode == "Single") {
                 setPlayer(pSingle, "Single");
             }
-            else if(mode == "B") {
+            else if(mode == "Battle") {
                 setPlayer(pRed, "Red");
                 setPlayer(pBlue, "Blue");
             }
@@ -382,9 +382,30 @@ void loop()
     // 지뢰 설정 시리얼을 수신한 경우
     else if (temp == "Mine")
     {   
-        if(mode == 'B') {
-            // 의도하지않은 값 방지
-            if (sig.length()==10)
+        // 의도하지않은 값 방지
+        if (sig.length()==10)
+        {
+            if(mode == 'Single') 
+            {
+                sig.substring(4,7).toCharArray(solo,4);     // single_mine 부분 슬라이싱
+                // int로 변환
+                uint16_t single_mine = atoi(solo);
+
+                // 테스트
+                //    Serial.print("single : ");
+                //    Serial.println(single_mine);
+                
+                pSingle.mine = single_mine;
+
+                initButtonState();
+                // set color array
+                setPlayerColors(pSingle);
+
+                // 초기화
+                sig = "";
+                temp = "";
+            }
+            if(mode == 'Battle') 
             {
                 sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
                 sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
@@ -419,49 +440,27 @@ void loop()
                 temp = "";
             }
         }
-        if(mode == 'S') {
-            if (sig.length()==5)
-            {
-                sig.substring(4,7).toCharArray(mine,4);     // single_mine 부분 슬라이싱
-                // int로 변환
-                uint16_t single_mine = atoi(mine);
-
-                // 테스트
-                //    Serial.print("single : ");
-                //    Serial.println(single_mine);
-                
-                pSingle.mine = single_mine;
-
-                initButtonState();
-                // set color array
-                setPlayerColors(pSingle);
-
-                // 초기화
-                sig = "";
-                temp = "";
-            }
-            // 시리얼이 잘못 수신된 경우
-            else 
-            {
-                // 초기화
-                sig = "";
-                temp = "";
-            }
+        else
+        {
+            // 초기화
+            sig = "";
+            temp = "";
         }
     }
     // 턴에 대한 정보를 수신한 경우
     else if (temp == "Turn")
     {   // 의도하지않은 값 방지
-        if (sig.length()==5)
+        if (sig.length()==8)
         {
-            sig.substring(4,5).toCharArray(turnT,2);    // turn 부분 슬라이싱 (trunT : 'R' or 'B')
+            // turn 부분 슬라이싱 (trunT : 'Solo' or 'Red_' or 'Blue' or 'Lock')
+            sig.substring(4,8).toCharArray(turnT,5);    
 
             // 테스트
             //    Serial.print("turnT : ");
             //    Serial.print(turnT);
             
-            //    // 턴 저장
-            //    turn = turnT[0];        // turnT[1] = NULL
+            // 턴 저장
+            turn = turnT;        
 
             //    // 테스트
             //    Serial.print("\t");
@@ -489,23 +488,23 @@ void loop()
     }
         
     // register a callback for all keys
-    if(mode == 'S') {
+    if(mode == 'Single') {
         for(int i=0; i<Y_DIM*X_DIM; i++) {
-            if(turn == 'S')
+            if(turn == 'Solo')
                 trellis.registerCallback(i, led_ON);
-            else if(turn == 'L')
+            else if(turn == 'Lock')
                 trellis.registerCallback(i, lock_ON);
         }
         trellis.read();
     }
-    else if(mode == 'B') {
+    else if(mode == 'Battle') {
         for(int i=0; i<Y_DIM*X_DIM; i++) 
         {
-            if (turn == 'R') 
+            if (turn == 'Red_') 
                 trellis.registerCallback(i, red_ON);
-            else if(turn == 'B')
+            else if(turn == 'Blue')
                 trellis.registerCallback(i, blue_ON);
-            else if(turn == 'L')    // key lock
+            else if(turn == 'Lock')    // key lock
                 terllis.registerCallback(i, lock_ON);
         }
         trellis.read();
