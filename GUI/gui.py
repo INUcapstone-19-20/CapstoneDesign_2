@@ -54,17 +54,18 @@ class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
     result = pyqtSignal(int)
 
-    def __init__(self, limit = 30, timing = 0.03):
+    def __init__(self, limit = 30, timing = 0.03, noPass = 4):
         QThread.__init__(self)
         self.limit = limit
         self.timing = timing
+        self.noPass = noPass
         # self.cntChanged = pyqtSignal(int)
         # self.result = pyqtSignal(int)
 
     def run(self):      
         cnt = 0
         while cnt < self.limit:
-            self.cntChanged.emit(cnt % 4)
+            self.cntChanged.emit(cnt % self.noPass)
             cnt += 1
             time.sleep(self.timing)
 
@@ -222,7 +223,7 @@ class BattleMode(QMainWindow):
         
         self.check_blue = False
         self.check_red = False
-        communication.set_Mine()
+        communication.mode_toArduino("Battle")
 
         # self.playLabel = QLabel(self)
         # self.playLabel.resize(120, 120)
@@ -252,14 +253,14 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
-            # communication.turn_ToArduino("B")
+            communication.set_Mine()
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
             
         elif red_turn > blue_turn:
-            # communication.turn_ToArduino("R")
+            communication.set_Mine()
             self.btn_reddice.move(165, 110)
             self.btn_bluedice.hide()
             self.timer.finished.connect(partial(changeScreen, self, 15))
@@ -287,7 +288,7 @@ class BattleMode(QMainWindow):
             self.timer.start()
 
     def throwBlue(self):
-        self.th = DiceThread()
+        self.th = DiceThread(noPass=3)
         self.th.cntChanged.connect(self.setBlue)
         self.th.result.connect(self.finishBlue)
         self.btn_bluedice.setEnabled(False)
@@ -314,7 +315,7 @@ class BattleMode(QMainWindow):
             self.timer.start()
 
     def throwRed(self):
-        self.th = DiceThread()
+        self.th = DiceThread(noPass=3)
         self.th.cntChanged.connect(self.setRed)
         self.th.result.connect(self.finishRed)
         self.btn_reddice.setEnabled(False)
@@ -352,7 +353,7 @@ class Redturn(QMainWindow):
             self.filename += str(value) + '.png); border:0px;'
             self.btn_redturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino('Lock')
+                communication.turn_ToArduino("Lock")
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -380,13 +381,13 @@ class Redturn(QMainWindow):
         self.lb_redturn.setText("빨강 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino('Lock')
+            communication.turn_ToArduino("Lock")
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
-            communication.turn_ToArduino('Red_')
+            communication.turn_ToArduino("Red_")
             self.serth.start()
             
 
@@ -402,6 +403,8 @@ class Blueturn(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/blueturn.ui", self)
+
+        
 
         self.eye = 100
         self.serth = SerThread("blue")
@@ -429,7 +432,7 @@ class Blueturn(QMainWindow):
             
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino('Lock')
+                communication.turn_ToArduino("Lock")
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -457,13 +460,13 @@ class Blueturn(QMainWindow):
         self.lb_blueturn.setText("파랑 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino('Lock')
+            communication.turn_ToArduino("Lock")
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
-            communication.turn_ToArduino('Blue')
+            communication.turn_ToArduino("Blue")
             self.serth.start()
 
 
@@ -544,10 +547,12 @@ class Red_Loose(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setOverrideCursor(Qt.BlankCursor)
+    # app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
-    ex = Start()
+    # ex = Start()
+    ex = ModeSelect()
+
     ex.showFullScreen()
     # ex.show()
     sys.exit(app.exec_())

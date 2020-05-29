@@ -5,8 +5,8 @@ import time
 
 
 ser = serial.Serial(
-    port='/dev/ttyACM0',         # 라즈베리파이 포트
-    # port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
+    # port='/dev/ttyACM0',         # 라즈베리파이 포트
+    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
@@ -59,10 +59,10 @@ def click_FromArduino():
 
 
 # 어떤 플레이어 턴인지 아두이노로 전달
-def turn_ToArduino (turn) :
+def turn_ToArduino(turn) :
     TurnTrans = "Turn" + turn                       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Turn 삽입
     TurnTrans = TurnTrans.encode('utf-8')
-    #print('TurnTrans :', TurnTrans)
+    # print('TurnTrans :', TurnTrans)
 
     # 아두이노로 전달
     ser.write(TurnTrans)
