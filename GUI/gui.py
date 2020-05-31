@@ -69,7 +69,7 @@ class DiceThread(QThread):
             cnt += 1
             time.sleep(self.timing)
 
-        rand = random.randint(0,3)
+        rand = random.randint(0,2)
         self.result.emit(rand)
             
 
@@ -244,7 +244,8 @@ class BattleMode(QMainWindow):
     def compareDice(self):
         global blue_turn, red_turn
         self.timer = DiceThread(60)
-        
+        print("blue :", blue_turn)
+        print("red :", red_turn)
         if blue_turn == red_turn:
             self.check_blue = False
             self.check_red = False
@@ -268,13 +269,13 @@ class BattleMode(QMainWindow):
     
 
     def setBlue(self, value):
+        # if(value == 0):
+        #     self.btn_bluedice.setStyleSheet('image:url(res/bluedice_pass.png); border:0px;')
         if(value == 0):
-            self.btn_bluedice.setStyleSheet('image:url(res/bluedice_pass.png); border:0px;')
-        elif(value == 1):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one1.png); border:0px;')
-        elif(value == 2):
+        elif(value == 1):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_two2.png); border:0px;')
-        elif(value == 3):
+        elif(value == 2):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
             
     def finishBlue(self, value):
@@ -295,13 +296,13 @@ class BattleMode(QMainWindow):
         self.th.start()
 
     def setRed(self, value):
+        # if(value == 0):
+        #     self.btn_reddice.setStyleSheet('image:url(res/reddice_pass.png); border:0px;')
         if(value == 0):
-            self.btn_reddice.setStyleSheet('image:url(res/reddice_pass.png); border:0px;')
-        elif(value == 1):
             self.btn_reddice.setStyleSheet('image:url(res/reddice_one1.png); border:0px;')
-        elif(value == 2):
+        elif(value == 1):
             self.btn_reddice.setStyleSheet('image:url(res/reddice_two2.png); border:0px;')
-        elif(value == 3):
+        elif(value == 2):
             self.btn_reddice.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
 
     def finishRed(self, value):
