@@ -37,7 +37,7 @@ def click_FromArduino():
             LINE = ser.readline()
             code = Decode(LINE)
             # 값 확인
-            # print("code : ", code, end='\n')
+            print("code : ", code, end='\n')
             
             # 버튼패드를 클릭했다면
             if "Click" in code:
@@ -99,8 +99,8 @@ def set_Mine ():
     red_mine = str(red_mine).zfill(mineCiper)
     blue_mine = str(blue_mine).zfill(mineCiper)
     # 값 확인
-    # print('red_mine :', red_mine)
-    # print('blue_mine :', blue_mine)
+    print('red_mine :', red_mine)
+    print('blue_mine :', blue_mine)
     # print('')
 
     # 아두이노로 전달
