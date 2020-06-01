@@ -59,8 +59,6 @@ class DiceThread(QThread):
         self.limit = limit
         self.timing = timing
         self.noPass = noPass
-        # self.cntChanged = pyqtSignal(int)
-        # self.result = pyqtSignal(int)
 
     def run(self):      
         cnt = 0
@@ -99,9 +97,13 @@ class Start(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/start.ui", self)
-        self.timer = DiceThread(12, 0.6)
-        self.timer.cntChanged.connect(self.splash)
-        self.timer.finished.connect(partial(changeScreen, self, 2))
+        self.dot = DiceThread(12, 0.6)
+        self.dot.cntChanged.connect(self.splash)
+        self.dot.finished.connect(partial(changeScreen, self, 2))
+        self.dot.start()
+
+        self.timer = DiceThread(limit=25)
+        self.timer.finished.connect(partial(communication.mode_toArduino, "Loding"))
         self.timer.start()
 
         self.btn_start.setStyleSheet('image:url(res/bomb3.png); border:0px;')
@@ -551,8 +553,8 @@ if __name__ == '__main__':
     # app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
-    # ex = Start()
-    ex = ModeSelect()
+    ex = Start()
+    # ex = ModeSelect()
 
     ex.showFullScreen()
     # ex.show()

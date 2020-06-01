@@ -311,23 +311,7 @@ void setup()
 
     initButtonState();
     turn = "Lock";
-    // starting effect
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
-        trellis.show();
-        delay(30);
-    }
-
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        // activate rising edge on all keys
-        trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-
-        // all neopixels off
-        trellis.setPixelColor(i, 0x000000);
-        trellis.show();
-
-        delay(30);
-    }
+    
 }
 
 void loop() 
@@ -363,6 +347,26 @@ void loop()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
             }
+            else if(mode == "Loding") {
+              // starting effect
+              for(int i=0; i<Y_DIM*X_DIM; i++) {
+                  trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+                  trellis.show();
+                  delay(30);
+              }
+          
+              for(int i=0; i<Y_DIM*X_DIM; i++) {
+                  // activate rising edge on all keys
+                  trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+          
+                  // all neopixels off
+                  trellis.setPixelColor(i, 0x000000);
+                  trellis.show();
+          
+                  delay(30);
+              }                 
+            }
+             
         }
     }
     // 지뢰 설정 시리얼을 수신한 경우
