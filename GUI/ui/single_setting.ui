@@ -258,6 +258,22 @@ border:none;</string>
      <string>저 장</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_popup">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>46</x>
+      <y>100</y>
+      <width>388</width>
+      <height>127</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
