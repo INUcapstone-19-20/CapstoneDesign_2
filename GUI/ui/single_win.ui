@@ -17,6 +17,137 @@
    <string notr="true">background-color: rgb(217, 217, 217);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="lb_win">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>480</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>32</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>[ 지뢰 찾기 성공 ! ]</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>90</y>
+      <width>280</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>24</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>지뢰 탐색 횟수</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>160</y>
+      <width>280</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>24</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>소요 시간</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_count">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>112</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>24</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>7</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_time">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>182</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NanumSquareRound</family>
+      <pointsize>24</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>01:00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
    <widget class="QPushButton" name="btn_restart">
     <property name="geometry">
      <rect>
@@ -69,137 +200,6 @@ border:none;</string>
     </property>
     <property name="text">
      <string>처음으로</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_count">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>260</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>NanumSquareRound</family>
-      <pointsize>24</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>지뢰 탐색 횟수</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_timer">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>260</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>NanumSquareRound</family>
-      <pointsize>24</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>소요 시간</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>100</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>NanumSquareRound</family>
-      <pointsize>24</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>7</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>170</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>NanumSquareRound</family>
-      <pointsize>24</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>01:00</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_setting">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>10</y>
-      <width>480</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>NanumSquareRound</family>
-      <pointsize>32</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>[ 지뢰 찾기 성공! ]</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

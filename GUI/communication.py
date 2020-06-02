@@ -23,44 +23,42 @@ def mode_toArduino(mode):
     # 아두이노로 전달
     ser.write(ModeTrans)
 
+
 # 디코드 함수
 def Decode(x):
     result = x.decode()
     result = str(result)            # string으로 변환
     return result
 
+
 # 버튼패드 클릭 신호 전달
 def click_FromArduino():
     if ser.readable():
-        # try: 
-            global count_turn
-            LINE = ser.readline()
-            code = Decode(LINE)
-            # 값 확인
-            print("code : ", code, end='\n')
+        global count_turn
+        LINE = ser.readline()
+        code = Decode(LINE)
+        # 값 확인
+        # print("code : ", code, end='\n')
+        
+        # 버튼패드를 클릭했다면
+        if "Click" in code:
+            if count_turn > 0:
+                count_turn -= 1
+                # print("count_turn : ",count_turn)
+            return 1
+        elif "Boom" in code:
+            if "Red" in code: return 99
+            elif "Blue" in code: return -99
+            elif "Single" in code: return 99
             
-            # 버튼패드를 클릭했다면
-            if "Click" in code:
-                if count_turn > 0:
-                    count_turn -= 1
-                    # print("count_turn : ",count_turn)
-                return 1
-            elif "Boom" in code:
-                if "Red" in code: return 99
-                elif "Blue" in code: return -99
-            
-        # except serial.serialutil.SerialException:
-            
-            # time.sleep(0.01)
     else :
         print("읽기 실패 from_click_FromArduino_")
-
     return 0
 
 
 # 어떤 플레이어 턴인지 아두이노로 전달
 def turn_ToArduino(turn) :
-    TurnTrans = "Turn" + turn                       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Turn 삽입
+    TurnTrans = "Turn" + turn               # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Turn 삽입
     TurnTrans = TurnTrans.encode('utf-8')
     # print('TurnTrans :', TurnTrans)
 
@@ -98,9 +96,10 @@ def set_Mine ():
     # 문자열 변환 후 자릿수 통일
     red_mine = str(red_mine).zfill(mineCiper)
     blue_mine = str(blue_mine).zfill(mineCiper)
+
     # 값 확인
-    print('red_mine :', red_mine)
-    print('blue_mine :', blue_mine)
+    # print('red_mine :', red_mine)
+    # print('blue_mine :', blue_mine)
     # print('')
 
     # 아두이노로 전달

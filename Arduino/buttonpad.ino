@@ -203,13 +203,7 @@ void showMine(uint16_t mine_key) {
          if(s.substring(0,4) == "Mine") {
              initButtonState();
              turn = "Lock";
-//             if(mode == "Single") {
-//                 setPlayerColors(&pSingle);
-//             }
-//             else if(mode == "Battle") {
-//                 setPlayerColors(&pRed);
-//                 setPlayerColors(&pBlue);
-//             }
+             pSingle.mine = atoi(s.substring(4,7).c_str());
              break;
          }
     }
@@ -318,53 +312,49 @@ void loop()
 {
     while(Serial.available()) {
         // 시리얼 읽어서 문자열로 저장
+        Serial.setTimeout(20);
         sig = Serial.readString();
-//        Serial.println(sig);
+        // Serial.println(sig);
     }
    // 문자열 슬라이싱 (Mode or Mine or Turn)
 //    sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
    check = sig.substring(0,4);
-   
-   
+
     // 모드 설정 시리얼을 수신한 경우
     if(check == "Mode")
     {   // 의도하지않은 값 방지
         if (sig.length()==10)
         {
-            
             // 모드 저장
-            mode = sig.substring(4,10);        // modeM[1] = NULL
+            mode = sig.substring(4,10);
 
 //                // 테스트
 //                Serial.print("\t");
 //                Serial.print("mode : ");
 //                Serial.println(mode);
 
-            if(mode == "Single") {
+            if(mode == "Loding") {
                 setPlayer(&pSingle, "Single");
-            }
-            else if(mode == "Battle") {
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
-            }
-            else if(mode == "Loding") {
-              // starting effect
-              for(int i=0; i<Y_DIM*X_DIM; i++) {
-                  trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
-                  trellis.show();
-                  delay(30);
-              }
-          
-              for(int i=0; i<Y_DIM*X_DIM; i++) {
-                  // activate rising edge on all keys
-                  trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-          
-                  // all neopixels off
-                  trellis.setPixelColor(i, 0x000000);
-                  trellis.show();
-          
-                  delay(30);
-              }                 
+                
+                // starting effect
+                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                    trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+                    trellis.show();
+                    delay(25);
+                }
+            
+                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                    // activate rising edge on all keys
+                    trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+            
+                    // all neopixels off
+                    trellis.setPixelColor(i, 0x000000);
+                    trellis.show();
+            
+                    delay(25);
+                }                 
             }
              
         }
@@ -377,14 +367,13 @@ void loop()
         {
             if(mode == "Single") 
             {
-                
 //                sig.substring(4,7).toCharArray(solo,4);     // single_mine 부분 슬라이싱
                 // int로 변환
                 uint16_t single_mine = atoi(sig.substring(4,7).c_str());
 
                 // 테스트
-                //    Serial.print("single : ");
-                //    Serial.println(single_mine);
+                // Serial.print("single : ");
+                // Serial.println(single_mine);
                 
                 pSingle.mine = single_mine;
 
@@ -428,11 +417,9 @@ void loop()
         {
             // turn 부분 슬라이싱 (trunT : 'Solo' or 'Red_' or 'Blue' or 'Lock')
             turn = sig.substring(4,8);
-
-            //    // 테스트
-            //    Serial.print("\t");
-            //    Serial.print("turn : ");
-            //    Serial.println(turn);
+            // 테스트
+            // Serial.print("turn : ");
+            // Serial.println(turn);
         }
     }
     // 게임진행에 필요없는 시리얼인 경우
@@ -463,6 +450,6 @@ void loop()
         }
         trellis.read();
     }
-    
+
     delay(20);
 }
