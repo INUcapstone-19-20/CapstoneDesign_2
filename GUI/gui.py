@@ -10,8 +10,10 @@ import communication
 
 
 # Single Mode
-count = 10
-timer = 40
+set_count = 10
+set_time = 40
+current_count = 0
+current_time = 0
 
 # Battle Mode
 red_turn = 0
@@ -77,6 +79,7 @@ def changeScreen(before, screen_number):
     elif(screen_number == 2): before.main = ModeSelect()
     elif(screen_number == 3): before.main = SingleMode()
     elif(screen_number == 4): before.main = Single_Setting()
+    elif(screen_number == 6): before.main = Single_Start()
     elif(screen_number == 8): before.main = Single_Win()
     elif(screen_number == 9): before.main = Single_Loose()
     elif(screen_number == 10): before.main = Replay_Game()
@@ -84,7 +87,6 @@ def changeScreen(before, screen_number):
     elif(screen_number == 15): before.main = Redturn()
     elif(screen_number == 19): before.main = Blueturn()
     elif(screen_number == 20): before.main = Result()
-    elif(screen_number == 21): before.main = Single_Start()
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
@@ -120,6 +122,7 @@ class ModeSelect(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/modeselect.ui", self)
+        communication.set_Mine()
         # Button connect
         self.btn_single.clicked.connect(partial(changeScreen, self, 3))
         self.btn_battle.clicked.connect(partial(changeScreen, self, 11))
@@ -128,8 +131,17 @@ class SingleMode(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/singlemode.ui", self)
+        communication.mode_toArduino("Single")
+        # communication.set_Mine()
+
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(1)
+        self.qtimer.setSingleShot(True)
+        self.qtimer.timeout.connect(communication.set_Mine)
+        self.qtimer.start()
+
         
-        self.btn_singlestart.clicked.connect(partial(changeScreen, self, 21))
+        self.btn_singlestart.clicked.connect(partial(changeScreen, self, 6))
         self.btn_singlesetting.clicked.connect(partial(changeScreen, self, 4)) 
 
 
@@ -137,12 +149,12 @@ class Single_Setting(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_setting.ui", self)
-        self.temp_count = count
-        self.temp_time = timer
+        self.temp_count = set_count
+        self.temp_time = set_time
         self.setLabel()
 
         # Button Function
-        self.lb_popup.hide()
+        self.lb_popup.setVisible(False)
         self.btn_countup.clicked.connect(self.countUp)
         self.btn_countdown.clicked.connect(self.countDown)
         self.btn_timerup.clicked.connect(self.timeUp)
@@ -152,7 +164,8 @@ class Single_Setting(QMainWindow):
 
         # Popup Message
         self.save_image = QPixmap("res/saved.png").scaled(388,127)
-        self.lb_popup.setPixmap(self.save_image)
+        # self.lb_popup.setPixmap(self.save_image)
+        self.lb_popup.setStyleSheet('image:url(res/saved.png);')
 
         # Button Image
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
@@ -169,7 +182,8 @@ class Single_Setting(QMainWindow):
         opacity_effect = QGraphicsOpacityEffect(self.lb_popup)
         opacity_effect.setOpacity(opacity)
         self.lb_popup.setGraphicsEffect(opacity_effect)
-        self.lb_popup.show()
+        if value == 299: self.lb_popup.setVisible(False)
+        else: self.lb_popup.show()
 
     def setLabel(self):
         time_minute = math.floor(self.temp_time / 60)
@@ -202,38 +216,130 @@ class Single_Setting(QMainWindow):
         self.setLabel()
         
     def settingSave(self):
-        global count, timer
-        count = self.temp_count
-        timer = self.temp_time
+        global set_count, set_time
+        set_count = self.temp_count
+        set_time = self.temp_time
 
-        self.effect = DiceThread(300, 0.01, 300)
+        self.effect = DiceThread(300, 0.005, 300)
         self.effect.cntChanged.connect(self.savePopup)
         self.effect.start()
+
+class Single_Start(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("ui/single_start.ui", self)
+        communication.turn_ToArduino("Solo")
+
+        self.reset()
+        self.limit_time = set_time
+        self.limit_count = set_count
+        self.setLabel()
+        
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(1000)
+        self.qtimer.timeout.connect(self.ticktock)
+        self.qtimer.start()
+        
+        self.serth = SerThread("single")
+        self.serth.clickChanged.connect(self.buttonClicked)
+        self.serth.start()
+
+
+    def reset(self):
+        global current_count, current_time
+        current_count = 0
+        current_time = 0
+
+    def singleFail(self):
+        self.serth.stop()
+        self.serth.exit()
+        self.qtimer.stop()
+        changeScreen(self, 9)
+
+    def buttonClicked(self, value):
+        global current_count
+        current_count += 1
+        self.limit_count -= 1
+        self.setLabel()
+        
+        if value == 99:
+            self.serth.stop()
+            self.serth.exit()
+            self.qtimer.stop()
+            changeScreen(self, 8)
+        elif(self.limit_count == 0):
+            self.singleFail()
+
+
+    def setLabel(self):
+        time_minute = math.floor(self.limit_time / 60)
+        time_second = self.limit_time % 60
+        str_minute = ""
+        str_second = ""
+
+        if time_minute < 10: str_minute = "0" + str(time_minute)
+        else: str_minute = str(time_minute)
+        if time_second < 10: str_second = "0" + str(time_second)
+        else: str_second = str(time_second)
+
+        self.lb_count.setText(str(self.limit_count))
+        self.lb_time.setText(str_minute + ":" + str_second)
+
+
+    def ticktock(self):
+        if self.limit_time == 0: 
+            self.singleFail()
+
+        global current_time
+        current_time += 1
+        self.limit_time -= 1
+        self.setLabel()
+    
 
 class Single_Win(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_win.ui", self)
+        communication.turn_ToArduino("Lock")
+
+        self.lb_count.setText(str(current_count))
+        self.lb_time.setText(str(current_time))
 
         self.btn_restart.clicked.connect(partial(changeScreen, self, 10))
         self.btn_menu.clicked.connect(partial(changeScreen, self, 2))
+
 
 class Single_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_loose.ui", self)
+        communication.turn_ToArduino("Lock")
+
+        self.lb_count.setText(str(current_count))
+        self.lb_time.setText(str(current_time))
 
         self.btn_restart2.clicked.connect(partial(changeScreen, self, 10))
         self.btn_menu2.clicked.connect(partial(changeScreen, self, 2))
+        
         
 
 class Replay_Game(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/Replay_Game.ui", self)
+        communication.set_Mine()
+        
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(2000)
+        self.qtimer.timeout.connect(self.timeout)
+        self.qtimer.start()
 
         self.btn_reset.setStyleSheet('image:url(res/replay.png); border:0px;')
         self.btn_reset.clicked.connect(partial(changeScreen, self, 2))
+
+    def timeout(self):
+        self.qtimer.stop()
+        changeScreen(self, 6)
 
 
 class BattleMode(QMainWindow):
@@ -251,11 +357,13 @@ class BattleMode(QMainWindow):
         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
+    # def blueEffect(self, value):
+        
+
     def compareDice(self):
         global blue_turn, red_turn
         self.timer = DiceThread(60)
-        print("blue :", blue_turn)
-        print("red :", red_turn)
+
         if blue_turn == red_turn:
             self.check_blue = False
             self.check_red = False
@@ -267,9 +375,12 @@ class BattleMode(QMainWindow):
             communication.set_Mine()
             self.btn_bluedice.move(165, 110)
             self.btn_reddice.hide()
+            # self.effect = DiceThread(300, 0.01, 300)
+            # self.effect.cntChanged.connect(self.blueEffect)
+            # self.effect.start()
+
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
-            
         elif red_turn > blue_turn:
             communication.set_Mine()
             self.btn_reddice.move(165, 110)
@@ -277,7 +388,6 @@ class BattleMode(QMainWindow):
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
     
-
     def setBlue(self, value):
         if(value == 0):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_one1.png); border:0px;')
@@ -365,12 +475,13 @@ class Redturn(QMainWindow):
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
                 
+
     def checkBoom(self):
         self.serth.stop()
         self.serth.exit()
         changeScreen(self,19)
-
             
+
     def setRed(self, value):
         if(value == 0):
             self.btn_redturn.setStyleSheet('image:url(res/reddice_pass.png); border:0px;')
@@ -499,26 +610,6 @@ class Result(QMainWindow):
         self.btn_restart.clicked.connect(partial(changeScreen, self, 11))
         self.btn_new.clicked.connect(partial(changeScreen, self, 2))
 
-class Single_Start(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi("ui/single_start.ui", self)
-        self.setLabel()
-        
-
-    def setLabel(self):
-        time_minute = math.floor(timer / 60)
-        time_second = timer % 60
-        str_minute = ""
-        str_second = ""
-
-        if time_minute < 10: str_minute = "0" + str(time_minute)
-        else: str_minute = str(time_minute)
-        if time_second < 10: str_second = "0" + str(time_second)
-        else: str_second = str(time_second)
-
-        self.lb_count.setText(str(count))
-        self.lb_time.setText(str_minute + ":" + str_second)
 
 class Blue_Loose(QMainWindow):
     def __init__(self):
@@ -548,10 +639,6 @@ class Red_Loose(QMainWindow):
         # self.next.show()
         self.close()
 
-# def connectDice():
-#     serth = DiceThread(10)
-#     # serth.clickChanged.connect(func)
-#     serth.start()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

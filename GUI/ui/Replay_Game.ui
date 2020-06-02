@@ -13,13 +13,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(217, 217, 217);</string>
+  </property>
   <widget class="QPushButton" name="btn_reset">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>40</y>
-     <width>150</width>
-     <height>150</height>
+     <x>165</x>
+     <y>50</y>
+     <width>160</width>
+     <height>160</height>
     </rect>
    </property>
    <property name="focusPolicy">
@@ -32,9 +35,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>0</x>
      <y>220</y>
-     <width>401</width>
+     <width>480</width>
      <height>71</height>
     </rect>
    </property>
@@ -43,6 +46,9 @@
      <family>HyhwpEQ</family>
      <pointsize>28</pointsize>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(0, 0, 0);</string>
    </property>
    <property name="text">
     <string>게임을 재시작합니다.</string>
