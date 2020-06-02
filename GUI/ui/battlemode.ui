@@ -38,7 +38,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(224, 224, 224);
+     <string notr="true">background-color: rgb(174, 174, 174);
 
 border: none;</string>
     </property>

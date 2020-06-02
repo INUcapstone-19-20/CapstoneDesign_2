@@ -357,8 +357,13 @@ class BattleMode(QMainWindow):
         self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
         self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
 
-    # def blueEffect(self, value):
-        
+    def blueEffect(self, value):
+        self.btn_bluedice.move(61 + value, 110)
+        self.btn_reddice.move(270 + 2.1 * value, 110)
+
+    def redEffect(self, value):
+        self.btn_bluedice.move(61 - 2.1 * value, 110)
+        self.btn_reddice.move(270 - value, 110)
 
     def compareDice(self):
         global blue_turn, red_turn
@@ -373,18 +378,18 @@ class BattleMode(QMainWindow):
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
             communication.set_Mine()
-            self.btn_bluedice.move(165, 110)
-            self.btn_reddice.hide()
-            # self.effect = DiceThread(300, 0.01, 300)
-            # self.effect.cntChanged.connect(self.blueEffect)
-            # self.effect.start()
+            self.effect = DiceThread(105, 0.01, 105)
+            self.effect.cntChanged.connect(self.blueEffect)
+            self.effect.start()
 
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif red_turn > blue_turn:
             communication.set_Mine()
-            self.btn_reddice.move(165, 110)
-            self.btn_bluedice.hide()
+            self.effect = DiceThread(105, 0.01, 105)
+            self.effect.cntChanged.connect(self.redEffect)
+            self.effect.start()
+
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
     
