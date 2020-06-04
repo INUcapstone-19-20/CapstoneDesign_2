@@ -145,14 +145,17 @@
    <widget class="QPushButton" name="btn_countup">
     <property name="geometry">
      <rect>
-      <x>245</x>
-      <y>112</y>
-      <width>25</width>
-      <height>25</height>
+      <x>235</x>
+      <y>102</y>
+      <width>45</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -161,10 +164,10 @@
    <widget class="QPushButton" name="btn_countdown">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>112</y>
-      <width>25</width>
-      <height>25</height>
+      <x>400</x>
+      <y>102</y>
+      <width>45</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -202,10 +205,10 @@
    <widget class="QPushButton" name="btn_timerdown">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>182</y>
-      <width>25</width>
-      <height>25</height>
+      <x>400</x>
+      <y>172</y>
+      <width>45</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -218,10 +221,10 @@
    <widget class="QPushButton" name="btn_timerup">
     <property name="geometry">
      <rect>
-      <x>245</x>
-      <y>182</y>
-      <width>25</width>
-      <height>25</height>
+      <x>235</x>
+      <y>172</y>
+      <width>45</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="focusPolicy">

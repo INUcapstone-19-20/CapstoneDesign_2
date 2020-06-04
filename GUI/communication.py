@@ -5,8 +5,8 @@ import time
 
 
 ser = serial.Serial(
-    # port='/dev/ttyACM0',         # 라즈베리파이 포트
-    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
+    port='/dev/ttyACM0',         # 라즈베리파이 포트
+    # port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
@@ -50,7 +50,7 @@ def click_FromArduino():
             if "Red" in code: return 99
             elif "Blue" in code: return -99
             elif "Single" in code: return 99
-            
+
     else :
         print("읽기 실패 from_click_FromArduino_")
     return 0
