@@ -201,9 +201,10 @@ void showMine(uint16_t mine_key) {
 //        }
 
          if(s.substring(0,4) == "Mine") {
-             initButtonState();
              turn = "Lock";
              pSingle.mine = atoi(s.substring(4,7).c_str());
+             initButtonState();
+             setPlayerColors(&pSingle);
              break;
          }
     }

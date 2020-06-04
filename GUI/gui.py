@@ -16,6 +16,7 @@ current_count = 0
 current_time = 0
 
 # Battle Mode
+first_turn = True
 red_turn = 0
 blue_turn = 0
 
@@ -84,8 +85,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
-    before.main.showFullScreen()
-    # before.main.show()
+    # before.main.showFullScreen()
+    before.main.show()
     before.close()
 
 
@@ -297,11 +298,15 @@ class Single_Win(QMainWindow):
         communication.turn_ToArduino("Lock")
 
         self.setLabel()
-        # self.lb_count.setText(str(current_count))
-        # self.lb_time.setText(str(current_time))
 
-        self.btn_restart.clicked.connect(partial(changeScreen, self, 10))
+        self.btn_restart.clicked.connect(self.restartClick)
         self.btn_menu.clicked.connect(partial(changeScreen, self, 2))
+
+    def restartClick(self):
+        self.next = Replay_Game("Single")
+        self.next.showFullScreen()
+        # self.next.show()
+        self.close()
 
     def setLabel(self):
         global current_count, current_time
@@ -327,8 +332,14 @@ class Single_Loose(QMainWindow):
 
         self.setLabel()
 
-        self.btn_restart2.clicked.connect(partial(changeScreen, self, 10))
+        self.btn_restart2.clicked.connect(self.restartClick)
         self.btn_menu2.clicked.connect(partial(changeScreen, self, 2))
+
+    def restartClick(self):
+        self.next = Replay_Game("Single")
+        self.next.showFullScreen()
+        # self.next.show()
+        self.close()
 
     def setLabel(self):
         global current_count, current_time
@@ -348,14 +359,19 @@ class Single_Loose(QMainWindow):
         
 
 class Replay_Game(QMainWindow):
-    def __init__(self):
+    def __init__(self, mode):
         super().__init__()
         uic.loadUi("ui/Replay_Game.ui", self)
         communication.set_Mine()
+        self.mode = mode
         
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(2000)
-        self.qtimer.timeout.connect(self.timeout)
+        self.qtimer.setSingleShot(True)
+        if mode == "Single":
+            self.qtimer.timeout.connect(partial(changeScreen, self, 6))
+        elif mode == "Battle":
+            self.qtimer.timeout.connect(partial(changeScreen, self, 11))
         self.qtimer.start()
 
         self.btn_reset.setStyleSheet('image:url(res/replay.png); border:0px;')
@@ -371,9 +387,17 @@ class BattleMode(QMainWindow):
         super().__init__()
         uic.loadUi("ui/battlemode.ui", self)
         
+        global first_turn
+        first_turn = True
         self.check_blue = False
         self.check_red = False
         communication.mode_toArduino("Battle")
+
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(100)
+        self.qtimer.setSingleShot(True)
+        self.qtimer.timeout.connect(communication.set_Mine)
+        self.qtimer.start()
         
         self.btn_bluedice.clicked.connect(self.throwBlue)
         self.btn_reddice.clicked.connect(self.throwRed)
@@ -383,11 +407,11 @@ class BattleMode(QMainWindow):
 
     def blueEffect(self, value):
         self.btn_bluedice.move(61 + value, 110)
-        self.btn_reddice.move(270 + 2.1 * value, 110)
+        self.btn_reddice.move(271 + 2.1 * value, 110)
 
     def redEffect(self, value):
-        self.btn_bluedice.move(61 - 2.1 * value, 110)
-        self.btn_reddice.move(270 - value, 110)
+        self.btn_bluedice.move(59 - 2.1 * value, 110)
+        self.btn_reddice.move(269 - value, 110)
 
     def compareDice(self):
         global blue_turn, red_turn
@@ -401,7 +425,6 @@ class BattleMode(QMainWindow):
             self.btn_bluedice.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
             self.btn_reddice.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
         elif blue_turn > red_turn:
-            communication.set_Mine()
             self.effect = DiceThread(105, 0.01, 105)
             self.effect.cntChanged.connect(self.blueEffect)
             self.effect.start()
@@ -409,7 +432,6 @@ class BattleMode(QMainWindow):
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif red_turn > blue_turn:
-            communication.set_Mine()
             self.effect = DiceThread(105, 0.01, 105)
             self.effect.cntChanged.connect(self.redEffect)
             self.effect.start()
@@ -476,6 +498,12 @@ class Redturn(QMainWindow):
         self.eye = 100
         self.serth = SerThread("red")
         self.serth.clickChanged.connect(self.buttonClicked)
+
+        global first_turn
+        if first_turn:
+            self.lb_redturn.setText("턴 횟수 정하기")
+            first_turn = False
+        else: self.lb_redturn.setText("빨강 플레이어 턴")
 
         self.btn_redturn.clicked.connect(self.throwRed)
         self.btn_redturn.setStyleSheet('image:url(res/reddice_default.png); border:0px;')
@@ -555,6 +583,12 @@ class Blueturn(QMainWindow):
         self.serth = SerThread("blue")
         self.serth.clickChanged.connect(self.buttonClicked)
 
+        global first_turn
+        if first_turn:
+            self.lb_blueturn.setText("턴 횟수 정하기")
+            first_turn = False
+        else: self.lb_blueturn.setText("파랑 플레이어 턴")
+
         self.btn_blueturn.clicked.connect(self.throwBlue)
         self.btn_blueturn.setStyleSheet('image:url(res/bluedice_default.png); border:0px;')
 
@@ -633,11 +667,16 @@ class Result(QMainWindow):
             self.lb_winner.setText("[빨강 플레이어 승리!]")
         elif self.winner == "Blue":
             self.lb_winner.setText("[파랑 플레이어 승리!]")
-        
-        communication.mine_ToArduino("","")
 
-        self.btn_restart.clicked.connect(partial(changeScreen, self, 11))
+
+        self.btn_restart.clicked.connect(self.restartClick)
         self.btn_new.clicked.connect(partial(changeScreen, self, 2))
+
+    def restartClick(self):
+        self.next = Replay_Game("Battle")
+        self.next.showFullScreen()
+        # self.next.show()
+        self.close()
 
 
 class Blue_Loose(QMainWindow):
@@ -646,7 +685,12 @@ class Blue_Loose(QMainWindow):
         uic.loadUi("ui/blue_loose.ui", self)
 
         self.btn_bbom.setStyleSheet('image:url(res/blueexplosion.png); border:0px;')
-        self.btn_bbom.clicked.connect(self.gotoResult)
+        # self.btn_bbom.clicked.connect(self.gotoResult)
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(4000)
+        self.qtimer.setSingleShot(True)
+        self.qtimer.timeout.connect(self.gotoResult)
+        self.qtimer.start()
 
     def gotoResult(self):
         self.next = Result("Red")
@@ -660,7 +704,12 @@ class Red_Loose(QMainWindow):
         uic.loadUi("ui/red_loose.ui", self)
 
         self.btn_rbom.setStyleSheet('image:url(res/redexplosion.png); border:0px;')
-        self.btn_rbom.clicked.connect(self.gotoResult)
+        # self.btn_rbom.clicked.connect(self.gotoResult)
+        self.qtimer = QTimer(self)
+        self.qtimer.setInterval(4000)
+        self.qtimer.setSingleShot(True)
+        self.qtimer.timeout.connect(self.gotoResult)
+        self.qtimer.start()
 
     def gotoResult(self):
         self.next = Result("Blue")
@@ -671,12 +720,12 @@ class Red_Loose(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setOverrideCursor(Qt.BlankCursor)
+    # app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
     ex = Start()
     # ex = ModeSelect()
 
-    ex.showFullScreen()
-    # ex.show()
+    # ex.showFullScreen()
+    ex.show()
     sys.exit(app.exec_())

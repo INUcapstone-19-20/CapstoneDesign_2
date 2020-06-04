@@ -95,7 +95,7 @@ border: none;</string>
      <string notr="true">color:rgb(0, 0, 0)</string>
     </property>
     <property name="text">
-     <string>[ 순서 정하기 ]</string>
+     <string>순서 정하기</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
