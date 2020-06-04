@@ -19,12 +19,6 @@ current_time = 0
 red_turn = 0
 blue_turn = 0
 
-#serial port
-# ser = serial.Serial(
-#     port='/dev/ttyACM0',
-#     baudrate=115200
-# )
-
 class SerThread(QThread):
     clickChanged = pyqtSignal(int)
 
@@ -99,7 +93,7 @@ class Start(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/start.ui", self)
-        self.dot = DiceThread(12, 0.6)
+        self.dot = DiceThread(24, 0.6)
         self.dot.cntChanged.connect(self.splash)
         self.dot.finished.connect(partial(changeScreen, self, 2))
         self.dot.start()
@@ -135,7 +129,7 @@ class SingleMode(QMainWindow):
         # communication.set_Mine()
 
         self.qtimer = QTimer(self)
-        self.qtimer.setInterval(1)
+        self.qtimer.setInterval(100)
         self.qtimer.setSingleShot(True)
         self.qtimer.timeout.connect(communication.set_Mine)
         self.qtimer.start()
@@ -169,10 +163,10 @@ class Single_Setting(QMainWindow):
 
         # Button Image
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
-        self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
-        self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
-        self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
-        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
+        self.btn_countup.setStyleSheet('image:url(res/btn_up(touch).png); border:0px;')
+        self.btn_countdown.setStyleSheet('image:url(res/btn_down(touch).png); border:0px;')
+        self.btn_timerup.setStyleSheet('image:url(res/btn_up(touch).png); border:0px;')
+        self.btn_timerdown.setStyleSheet('image:url(res/btn_down(touch).png); border:0px;')
 
     def savePopup(self, value):
         if value < 100: opacity = value * 0.01
@@ -302,11 +296,27 @@ class Single_Win(QMainWindow):
         uic.loadUi("ui/single_win.ui", self)
         communication.turn_ToArduino("Lock")
 
-        self.lb_count.setText(str(current_count))
-        self.lb_time.setText(str(current_time))
+        self.setLabel()
+        # self.lb_count.setText(str(current_count))
+        # self.lb_time.setText(str(current_time))
 
         self.btn_restart.clicked.connect(partial(changeScreen, self, 10))
         self.btn_menu.clicked.connect(partial(changeScreen, self, 2))
+
+    def setLabel(self):
+        global current_count, current_time
+        time_minute = math.floor(current_time / 60)
+        time_second = current_time % 60
+        str_minute = ""
+        str_second = ""
+
+        if time_minute < 10: str_minute = "0" + str(time_minute)
+        else: str_minute = str(time_minute)
+        if time_second < 10: str_second = "0" + str(time_second)
+        else: str_second = str(time_second)
+
+        self.lb_count.setText(str(current_count))
+        self.lb_time.setText(str_minute + ":" + str_second)
 
 
 class Single_Loose(QMainWindow):
@@ -315,11 +325,25 @@ class Single_Loose(QMainWindow):
         uic.loadUi("ui/single_loose.ui", self)
         communication.turn_ToArduino("Lock")
 
-        self.lb_count.setText(str(current_count))
-        self.lb_time.setText(str(current_time))
+        self.setLabel()
 
         self.btn_restart2.clicked.connect(partial(changeScreen, self, 10))
         self.btn_menu2.clicked.connect(partial(changeScreen, self, 2))
+
+    def setLabel(self):
+        global current_count, current_time
+        time_minute = math.floor(current_time / 60)
+        time_second = current_time % 60
+        str_minute = ""
+        str_second = ""
+
+        if time_minute < 10: str_minute = "0" + str(time_minute)
+        else: str_minute = str(time_minute)
+        if time_second < 10: str_second = "0" + str(time_second)
+        else: str_second = str(time_second)
+
+        self.lb_count.setText(str(current_count))
+        self.lb_time.setText(str_minute + ":" + str_second)
         
         
 
@@ -647,7 +671,7 @@ class Red_Loose(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # app.setOverrideCursor(Qt.BlankCursor)
+    app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
     ex = Start()

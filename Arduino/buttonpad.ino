@@ -1,7 +1,7 @@
 #include "Adafruit_NeoTrellis.h"
 
-#define Y_DIM 8 // number of rows of keys
-#define X_DIM 8 // number of columns of keys
+#define Y_DIM 12 // number of rows of keys
+#define X_DIM 12 // number of columns of keys
 #define COLORS 3  // number of colors
 
 // define color
@@ -34,13 +34,13 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
     // { Adafruit_NeoTrellis(0x31) }
 
     // 8 x 8
-    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32)},
-    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E)}
+//    { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32)},
+//    { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E)}
 
     // 12 x 12
-    // { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
-    // { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
-    // { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
+     { Adafruit_NeoTrellis(0x31), Adafruit_NeoTrellis(0x32), Adafruit_NeoTrellis(0x33) },
+     { Adafruit_NeoTrellis(0x3D), Adafruit_NeoTrellis(0x3E), Adafruit_NeoTrellis(0x3F) },
+     { Adafruit_NeoTrellis(0x4A), Adafruit_NeoTrellis(0x4B), Adafruit_NeoTrellis(0x4C) }
 
 };
 
@@ -342,7 +342,7 @@ void loop()
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
                     trellis.show();
-                    delay(25);
+                    delay(20);
                 }
             
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
@@ -353,7 +353,7 @@ void loop()
                     trellis.setPixelColor(i, 0x000000);
                     trellis.show();
             
-                    delay(25);
+                    delay(20);
                 }                 
             }
              
