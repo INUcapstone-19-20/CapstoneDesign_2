@@ -164,10 +164,10 @@ class Single_Setting(QMainWindow):
 
         # Button Image
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
-        self.btn_countup.setStyleSheet('image:url(res/btn_up(touch).png); border:0px;')
-        self.btn_countdown.setStyleSheet('image:url(res/btn_down(touch).png); border:0px;')
-        self.btn_timerup.setStyleSheet('image:url(res/btn_up(touch).png); border:0px;')
-        self.btn_timerdown.setStyleSheet('image:url(res/btn_down(touch).png); border:0px;')
+        self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
+        self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
+        self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
+        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
 
     def savePopup(self, value):
         if value < 100: opacity = value * 0.01
@@ -226,14 +226,11 @@ class Single_Start(QMainWindow):
         communication.turn_ToArduino("Solo")
 
         self.reset()
-        self.limit_time = set_time
-        self.limit_count = set_count
         self.setLabel()
         
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(1000)
         self.qtimer.timeout.connect(self.ticktock)
-        self.qtimer.start()
         
         self.serth = SerThread("single")
         self.serth.clickChanged.connect(self.buttonClicked)
@@ -245,6 +242,10 @@ class Single_Start(QMainWindow):
         current_count = 0
         current_time = 0
 
+        self.limit_time = set_time
+        self.limit_count = set_count
+        self.firstClick = False
+
     def singleFail(self):
         self.serth.stop()
         self.serth.exit()
@@ -252,10 +253,15 @@ class Single_Start(QMainWindow):
         changeScreen(self, 9)
 
     def buttonClicked(self, value):
+        if not self.firstClick:
+            self.firstClick = True
+            self.qtimer.start()
+            self.ticktock()
+
         global current_count
         current_count += 1
         self.limit_count -= 1
-        self.setLabel()
+        self.setLabel() 
         
         if value == 99:
             self.serth.stop()
