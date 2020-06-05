@@ -104,3 +104,21 @@ def set_Mine ():
 
     # 아두이노로 전달
     mine_ToArduino(red_mine, blue_mine)
+
+# 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기 전달 함수
+def danger_ToArduino() :
+    Danger = "Danger"
+    DangerTrans = Danger.encode('utf-8')
+
+    # 아두이노로 전달
+    ser.write(DangerTrans)
+
+'''
+gui.py에서
+if time < 10 :
+    danger_ToArduino()
+
+if 탐색횟수 < 5 :
+    danger_ToArduino()
+식으로 가면 될 듯
+'''
