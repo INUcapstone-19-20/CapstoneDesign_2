@@ -211,6 +211,155 @@ void showMine(uint16_t mine_key) {
 
 }
 
+void communication(string sig)
+{
+    // 문자열 슬라이싱 (Mode or Mine or Turn or Dang)
+    check = sig.substring(0,4);
+
+    // 모드 설정 시리얼을 수신한 경우
+    if(check == "Mode")
+    {   // 의도하지않은 값 방지
+        if (sig.length()==10)
+        {
+            // 모드 저장
+            mode = sig.substring(4,10);
+
+//                // 테스트
+//                Serial.print("\t");
+//                Serial.print("mode : ");
+//                Serial.println(mode);
+
+            if(mode == "Loding") {
+                setPlayer(&pSingle, "Single");
+                setPlayer(&pRed, "Red");
+                setPlayer(&pBlue, "Blue");
+                
+                // starting effect
+                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                    trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+                    trellis.show();
+                    delay(20);
+                }
+            
+                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                    // activate rising edge on all keys
+                    trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
+            
+                    // all neopixels off
+                    trellis.setPixelColor(i, 0x000000);
+                    trellis.show();
+            
+                    delay(20);
+                }                 
+            }
+             
+        }
+    }
+    // register a callback for all keys
+    if(mode == "Single") {
+        for(int i=0; i<Y_DIM*X_DIM; i++) {
+            if(turn == "Solo")
+                trellis.registerCallback(i, led_ON);
+            else if(turn == "Lock")
+                trellis.registerCallback(i, lock_ON);
+        }
+        trellis.read();
+    }
+    else if(mode == "Battle") 
+    {
+        for(int i=0; i<Y_DIM*X_DIM; i++) 
+        {
+            if (turn == "Red_") 
+                trellis.registerCallback(i, red_ON);
+            else if(turn == "Blue")
+                trellis.registerCallback(i, blue_ON);
+            else if(turn == "Lock") {    // key lock
+                trellis.registerCallback(i, lock_ON);
+            }
+        }
+        trellis.read();
+    }
+    delay(20);
+
+    // 지뢰 설정 시리얼을 수신한 경우
+    else if (check == "Mine")
+    {   
+        // 의도하지않은 값 방지
+        if (sig.length()==10)
+        {
+            if(mode == "Single") 
+            {
+//                sig.substring(4,7).toCharArray(solo,4);     // single_mine 부분 슬라이싱
+                // int로 변환
+                uint16_t single_mine = atoi(sig.substring(4,7).c_str());
+
+                // 테스트
+                // Serial.print("single : ");
+                // Serial.println(single_mine);
+                
+                pSingle.mine = single_mine;
+
+                initButtonState();
+                // set color array
+                setPlayerColors(&pSingle);
+
+                // 초기화
+                sig = "";
+                check = "";
+            }
+            else if(mode == "Battle") 
+            {
+                sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
+                sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
+                // int로 변환
+                uint16_t red_mine = atoi(red);
+                uint16_t blue_mine = atoi(blue);
+                
+                // 테스트
+                //    Serial.print("red : ");
+                //    Serial.print(red_mine);
+                //    Serial.print("\t");
+                //    Serial.print("blue : ");
+                //    Serial.println(blue_mine);
+
+                pRed.mine = red_mine;
+                pBlue.mine = blue_mine;
+
+                initButtonState();
+                // set color array
+                setPlayerColors(&pRed);  // 기존 setColor()를 initButtonState()와 setPlayerColors(player) 로 변경
+                setPlayerColors(&pBlue);
+            }
+        }
+    }
+    // 턴에 대한 정보를 수신한 경우
+    else if (check == "Turn")
+    {   // 의도하지않은 값 방지
+        if (sig.length()==8)
+        {
+            // turn 부분 슬라이싱 (trunT : 'Solo' or 'Red_' or 'Blue' or 'Lock')
+            turn = sig.substring(4,8);
+            // 테스트
+            // Serial.print("turn : ");
+            // Serial.println(turn);
+        }
+    }
+    // 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기를 수신한 경우
+    else if (check == "Dang")       // Danger의 앞 부분
+    {
+        // 의도하지않은 값 방지
+        if (sig.length()==4)
+        {
+            //  깜빡깜빡 코드 넣어주세요!!
+        }
+    }
+
+    // 게임진행에 필요없는 시리얼인 경우
+    // 초기화
+    sig = "";
+    check = "";
+}
+
 // define a callback for key presses in SingleMode
 TrellisCallback led_ON(keyEvent evt) {
     if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
@@ -317,140 +466,6 @@ void loop()
         sig = Serial.readString();
         // Serial.println(sig);
     }
-   // 문자열 슬라이싱 (Mode or Mine or Turn)
-//    sig.substring(0,4).toCharArray(check,5);        // 문자열 끝은 NULL
-   check = sig.substring(0,4);
-
-    // 모드 설정 시리얼을 수신한 경우
-    if(check == "Mode")
-    {   // 의도하지않은 값 방지
-        if (sig.length()==10)
-        {
-            // 모드 저장
-            mode = sig.substring(4,10);
-
-//                // 테스트
-//                Serial.print("\t");
-//                Serial.print("mode : ");
-//                Serial.println(mode);
-
-            if(mode == "Loding") {
-                setPlayer(&pSingle, "Single");
-                setPlayer(&pRed, "Red");
-                setPlayer(&pBlue, "Blue");
-                
-                // starting effect
-                for(int i=0; i<Y_DIM*X_DIM; i++) {
-                    trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
-                    trellis.show();
-                    delay(20);
-                }
-            
-                for(int i=0; i<Y_DIM*X_DIM; i++) {
-                    // activate rising edge on all keys
-                    trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-            
-                    // all neopixels off
-                    trellis.setPixelColor(i, 0x000000);
-                    trellis.show();
-            
-                    delay(20);
-                }                 
-            }
-             
-        }
-    }
-    // 지뢰 설정 시리얼을 수신한 경우
-    else if (check == "Mine")
-    {   
-        // 의도하지않은 값 방지
-        if (sig.length()==10)
-        {
-            if(mode == "Single") 
-            {
-//                sig.substring(4,7).toCharArray(solo,4);     // single_mine 부분 슬라이싱
-                // int로 변환
-                uint16_t single_mine = atoi(sig.substring(4,7).c_str());
-
-                // 테스트
-                // Serial.print("single : ");
-                // Serial.println(single_mine);
-                
-                pSingle.mine = single_mine;
-
-                initButtonState();
-                // set color array
-                setPlayerColors(&pSingle);
-
-                // 초기화
-                sig = "";
-                check = "";
-            }
-            else if(mode == "Battle") 
-            {
-                sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
-                sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
-                // int로 변환
-                uint16_t red_mine = atoi(red);
-                uint16_t blue_mine = atoi(blue);
-                
-                // 테스트
-                //    Serial.print("red : ");
-                //    Serial.print(red_mine);
-                //    Serial.print("\t");
-                //    Serial.print("blue : ");
-                //    Serial.println(blue_mine);
-
-                pRed.mine = red_mine;
-                pBlue.mine = blue_mine;
-
-                initButtonState();
-                // set color array
-                setPlayerColors(&pRed);  // 기존 setColor()를 initButtonState()와 setPlayerColors(player) 로 변경
-                setPlayerColors(&pBlue);
-            }
-        }
-    }
-    // 턴에 대한 정보를 수신한 경우
-    else if (check == "Turn")
-    {   // 의도하지않은 값 방지
-        if (sig.length()==8)
-        {
-            // turn 부분 슬라이싱 (trunT : 'Solo' or 'Red_' or 'Blue' or 'Lock')
-            turn = sig.substring(4,8);
-            // 테스트
-            // Serial.print("turn : ");
-            // Serial.println(turn);
-        }
-    }
-    // 게임진행에 필요없는 시리얼인 경우
-    // 초기화
-    sig = "";
-    check = "";
-        
-    // register a callback for all keys
-    if(mode == "Single") {
-        for(int i=0; i<Y_DIM*X_DIM; i++) {
-            if(turn == "Solo")
-                trellis.registerCallback(i, led_ON);
-            else if(turn == "Lock")
-                trellis.registerCallback(i, lock_ON);
-        }
-        trellis.read();
-    }
-    else if(mode == "Battle") {
-        for(int i=0; i<Y_DIM*X_DIM; i++) 
-        {
-            if (turn == "Red_") 
-                trellis.registerCallback(i, red_ON);
-            else if(turn == "Blue")
-                trellis.registerCallback(i, blue_ON);
-            else if(turn == "Lock") {    // key lock
-                trellis.registerCallback(i, lock_ON);
-            }
-        }
-        trellis.read();
-    }
-
-    delay(20);
+    communication(sig);
+   
 }
