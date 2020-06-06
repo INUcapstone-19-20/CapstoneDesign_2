@@ -113,6 +113,14 @@ def danger_ToArduino() :
     # 아두이노로 전달
     ser.write(DangerTrans)
 
+# 싱글모드 게임 실패 전달 함수
+def fail_ToArduino() :
+    Fail = "Fail"
+    FailTrans = Fail.encode('utf-8')
+
+    # 아두이노로 전달
+    ser.write(FailTrans)
+
 '''
 gui.py에서
 if time < 10 :
