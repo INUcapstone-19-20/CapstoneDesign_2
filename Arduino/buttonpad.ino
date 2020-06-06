@@ -228,7 +228,7 @@ int isExist(int a[], int key){
 // 라즈베리파이와의 통신 함수
 void communication(string sig)
 {
-    // 문자열 슬라이싱 (Mode or Mine or Turn or Dang)
+    // 문자열 슬라이싱 (Mode or Mine or Turn or Dang or Fail)
     check = sig.substring(0,4);
 
     // 모드 설정 시리얼을 수신한 경우
@@ -372,6 +372,15 @@ void communication(string sig)
         if (sig.length()==4)
         {
             //  깜빡깜빡 코드 넣어주세요!!
+        }
+    }
+    // 싱글모드 게임 실패 신호를 수신한 경우
+    else if (check == "Fail")
+    {
+        // 의도하지않은 값 방지
+        if (sig.length()==4)
+        {
+            // 싱글모드 지뢰 터지는 이펙트 넣어주세요!!
         }
     }
 
