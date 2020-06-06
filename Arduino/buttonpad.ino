@@ -233,7 +233,6 @@ int isExist(int a[], int key){
 // 라즈베리파이와의 통신 함수
 void communication(string sig)
 {
-<<<<<<< HEAD
     while(Serial.available()) {
     // 시리얼 읽어서 문자열로 저장
     Serial.setTimeout(20);
@@ -242,9 +241,6 @@ void communication(string sig)
     }
 
     // 문자열 슬라이싱 (Mode or Mine or Turn or Dang or Over)
-=======
-    // 문자열 슬라이싱 (Mode or Mine or Turn or Dang or Fail)
->>>>>>> f323c540a73a9058caf6c92dd464cf728eb12816
     check = sig.substring(0,4);
 
     // 모드 설정 시리얼을 수신한 경우
@@ -348,20 +344,9 @@ void communication(string sig)
             //  깜빡깜빡 코드 넣어주세요!!
         }
     }
-<<<<<<< HEAD
-    // 싱글모드 탐색횟수, 시간초 끝남을 수신한 경우
-    else if (check == "Over") {
-        isOver = true;
-=======
     // 싱글모드 게임 실패 신호를 수신한 경우
-    else if (check == "Fail")
-    {
-        // 의도하지않은 값 방지
-        if (sig.length()==4)
-        {
-            // 싱글모드 지뢰 터지는 이펙트 넣어주세요!!
-        }
->>>>>>> f323c540a73a9058caf6c92dd464cf728eb12816
+    else if (check == "Fail") {
+        isOver = true;
     }
 
     // 게임진행에 필요없는 시리얼인 경우
