@@ -208,19 +208,31 @@ void showColors(Player p) {
 // 지뢰 효과
 void showMine(uint16_t mine_key) {
     uint8_t i = 0;
+    uint8_t interval = 1;
     String s = "";
     
     while (1)
     {
-        if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우
-            trellis.setPixelColor(mine_key, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
-            if(i > 255) i = 0;
-            else i++;
+        if(mode == "Single") {  // 싱글모드
+            if(isOver) {    // 지뢰 찾기 실패 -> 여러색으로 지뢰 표시
+                trellis.setPixelColor(mine_key, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+                if(i > X_DIM*Y_DIM) i = 0;
+                else i++;
+            }
+            else {  // 지뢰 찾기 성공 -> 초록색 안에서만 지뢰 표시
+                trellis.setPixelColor(mine_key, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
+                if(i == 255) interval = -1;
+                else if(i == 0) interval = 1;
+                i += interval;
+            }
         }
-        else {  // 싱글모드에서 탐색 실패한 경우와 배틀모드인 경우
-            trellis.setPixelColor(mine_key, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
-            if(i >= X_DIM*Y_DIM) i = 0;
-            else i++;
+        else {  // 배틀 모드
+            // 레드 -> 빨간색 안에서만 , 블루 -> 파란색 안에서만 지뢰 표시
+            trellis.setPixelColor(pRed.mine, seesaw_NeoPixel::Color(255, i, i));
+            trellis.setPixelColor(pBlue.mine, seesaw_NeoPixel::Color(i, i, 255));
+            if(i == 255) interval = -1;
+            else if(i == 0) interval = 1;
+            i += interval;
         }
         trellis.show();
         delay(30);
@@ -398,8 +410,7 @@ void communication()
         // 의도하지않은 값 방지
         if (sig.length()==7)
         {
-            warningDelay = atoi(sig.substring(4, 7));   // 딜레이 시간 저장
-            //  깜빡깜빡 코드 넣어주세요!!
+            warningDelay = atoi(sig.substring(4, 7).c_str());   // 딜레이 시간 저장
         }
     }
     // 싱글모드 게임 실패 신호를 수신한 경우
@@ -525,6 +536,20 @@ void loop()
                 trellis.registerCallback(i, led_ON);
             else if(turn == "Lock")
                 trellis.registerCallback(i, lock_ON);
+        }
+        if(warningDelay) { // -> danger 수신 했을 때 true
+            // led blink
+            for(int i=0; i<Y_DIM*X_DIM; i++) {
+                trellis.setPixelColor(i, 0x000000); // off
+            }
+            trellis.show();
+            trellis.read();
+            delay(warningDelay);
+            for(int i=0; i<Y_DIM*X_DIM; i++) {
+                if(ispressed[i]) 
+                    trellis.setPixelColor(pSingle.colors[i]); // on
+            }
+            trellis.show();
         }
         trellis.read();
     }
