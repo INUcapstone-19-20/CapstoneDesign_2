@@ -47,6 +47,20 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 // 애니메이션
 static int[] background = {0,1,2,9,10,11,12,13,22,23,24,35,86,93,99,104,108,112,113,114,115,119,120,121,130,131,132,133,134,141,142,143}
 static int[] sunglasses = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69}
+static char[Y_DIM*X_DIM] fail = {
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    'f', 'f', '0', '0', 'a', '0', '0', 'i', '0', '0', 'l', '0', 
+    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', '0', 'l', '0', 
+    'f', 'f', '0', 'a', 'a', 'a', '0', 'i', '0', '0', 'l', '0', 
+    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', '0', 'l', 'l', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
+}
 
 // 시리얼 수신 변수
 static String sig = "";
@@ -146,12 +160,14 @@ void showColors(Player p) {
             if(distance(mine_x, mine_y, x, y) < DISTANCE1) {
                 if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
                     trellis.setPixelColor(x, y, 0x00FF00);
-                else   // 싱글모드에서 탐색 실패한 경우와 배틀모드인 경우
+                }
+                else {  // 배틀 모드인 경우 & 싱글모드 실패
                     trellis.setPixelColor(x, y, p.colorcode[0]);
-                trellis.show();
+                }
             }
         }
     }
+    trellis.show();
     delay(500);
 
     // 두번째 영역 on
@@ -161,12 +177,14 @@ void showColors(Player p) {
             if(distance(mine_x, mine_y, x, y) >= DISTANCE1 && distance(mine_x, mine_y, x, y) <= DISTANCE2) {
                 if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
                     trellis.setPixelColor(x, y, 0x00FF00);
-                else   // 싱글모드에서 탐색 실패한 경우와 배틀모드인 경우
+                }
+                else {  // 배틀 모드인 경우 & 싱글모드 실패
                     trellis.setPixelColor(x, y, p.colorcode[1]);
-                trellis.show();
+                }
             }
         }
     }
+    trellis.show();
     delay(500);
 
     // 세번째 영역 on
@@ -176,12 +194,14 @@ void showColors(Player p) {
             if(distance(mine_x, mine_y, x, y) > DISTANCE2) {
                 if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
                     trellis.setPixelColor(x, y, 0x00FF00);
-                else   // 싱글모드에서 탐색 실패한 경우와 배틀모드인 경우
+                }
+                else {  // 배틀 모드인 경우 & 싱글모드 실패
                     trellis.setPixelColor(x, y, p.colorcode[2]);
-                trellis.show();
+                }            
             }            
         }
     }
+    trellis.show();
     delay(500);
 }
 
@@ -220,6 +240,44 @@ void showMine(uint16_t mine_key) {
     }
 }
 
+void showFail() {
+    // show F
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        if(fail[i] == 'f') {
+            trellis.setPixelColor(i, 0xFFFF00);
+        }
+    }
+    trellis.show();
+    delay(500);
+
+    //show A
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        if(fail[i] == 'a') {
+            trellis.setPixelColor(i, 0xFFFF00);
+        }
+    }
+    trellis.show();
+    delay(500);
+    
+    //show I
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        if(fail[i] == 'i') {
+            trellis.setPixelColor(i, 0xFFFF00);
+        }
+    }
+    trellis.show();
+    delay(500);
+
+    //show L
+    for(int i=0; i<Y_DIM*X_DIM; i++) {
+        if(fail[i] == 'l') {
+            trellis.setPixelColor(i, 0xFFFF00);
+        }
+    }
+    trellis.show();
+    delay(500);
+}
+
 // 배열 속 값 존재여부
 int isExist(int a[], int key){
     for(int i = 0, i < sizeof(a), i++){
@@ -231,7 +289,7 @@ int isExist(int a[], int key){
 }
 
 // 라즈베리파이와의 통신 함수
-void communication(string sig)
+void communication()
 {
     while(Serial.available()) {
     // 시리얼 읽어서 문자열로 저장
@@ -346,7 +404,10 @@ void communication(string sig)
     }
     // 싱글모드 게임 실패 신호를 수신한 경우
     else if (check == "Fail") {
+        turn = "Lock";
         isOver = true;
+        showFail();
+        showMine(pSingle.mine);
     }
 
     // 게임진행에 필요없는 시리얼인 경우
@@ -455,7 +516,7 @@ void setup()
 
 void loop() 
 {
-    communication(sig);
+    communication();
     
     // register a callback for all keys
     if(mode == "Single") {
