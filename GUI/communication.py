@@ -74,16 +74,6 @@ def turn_ToArduino(turn) :
 #     # 아두이노로 전달
 #     ser.write(LockTrans)
 
-# 지뢰 위치에 대한 정보를 아두이노로 전달
-def mine_ToArduino (red_mine, blue_mine) :
-    MineTrans = "Mine" + red_mine + blue_mine       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Mine 삽입
-    #print('MineTrans :', MineTrans)
-    MineTrans = MineTrans.encode('utf-8')
-    #print('MineTrans(utf-8) :', MineTrans)
-
-    # 아두이노로 전달
-    ser.write(MineTrans)
-
 # 지뢰 설정 랜덤함수
 def set_Mine ():
     # 빨강플레이어의 지뢰
@@ -105,13 +95,24 @@ def set_Mine ():
     # 아두이노로 전달
     mine_ToArduino(red_mine, blue_mine)
 
-# 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기 전달 함수
-def danger_ToArduino() :
-    Danger = "Danger"
-    DangerTrans = Danger.encode('utf-8')
+# 지뢰 위치에 대한 정보를 아두이노로 전달
+def mine_ToArduino (red_mine, blue_mine) :
+    MineTrans = "Mine" + red_mine + blue_mine       # 아두이노에서 수신할 때 식별하기 용이하도록 앞에 Mine 삽입
+    #print('MineTrans :', MineTrans)
+    MineTrans = MineTrans.encode('utf-8')
+    #print('MineTrans(utf-8) :', MineTrans)
 
     # 아두이노로 전달
-    ser.write(DangerTrans)
+    ser.write(MineTrans)
+
+# 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기 전달 함수
+def Warn_ToArduino(int delay) :
+    delay = str(delay).zfill(3)
+    Warn = "Warn" + delay
+    WarnTrans = Warn.encode('utf-8')
+
+    # 아두이노로 전달
+    ser.write(WarnTrans)
 
 # 싱글모드 게임 실패 전달 함수
 def fail_ToArduino() :
