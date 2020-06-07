@@ -7,7 +7,7 @@
 // define color
 #define SINGLE1 0x3C8300
 #define SINGLE2 0x72FA00
-#define SINGLE3 0xACE47C
+#define SINGLE3 0xFFEEFF
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
@@ -48,10 +48,10 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
 static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
 
-static int mouse[] = {86,93,99,104,108,112,113,114,115};
+static int mouse[] = {86,93,99,104,112,113,114,115};
 static int lenmouse = sizeof(mouse)/sizeof(mouse[0]);
 
-static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,119,120,121,130,131,132,133,134,141,142,143};
+static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,108, 119,120,121,130,131,132,133,134,141,142,143};
 static int lenBackground = sizeof(background)/sizeof(background[0]);
 
 static char fail[Y_DIM*X_DIM] = {
@@ -307,7 +307,7 @@ int isExist(int a[], int n, int key){
     return false;
 }
 
-void animation(int sunglassesColor){
+void animation(uint16_t sunglassesColor){
      for(int i=0; i<Y_DIM*X_DIM; i++) 
      {
         // starting effect
@@ -363,7 +363,7 @@ void communication()
                 setPlayer(&pBlue, "Blue");
 
                 animation(0xFFFFFF);
-                delay(5000);
+                delay(4000);
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -371,7 +371,7 @@ void communication()
 
                     // activate rising edge on all keys
                     trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-                    delay(20);
+                    delay(10);
                 }                 
             }  
         }
