@@ -5,9 +5,11 @@
 #define COLORS 3  // number of colors
 
 // define color
-#define SINGLE1 0x164A1B
-#define SINGLE2 0x55B95B
-#define SINGLE3 0xD2F5D5
+#define SINGLE1 0x00FF12
+#define SINGLE2 0x55FF66
+//#define SINGLE3 0x99FFCC
+//#define SINGLE3 0x94E594
+#define SINGLE3 0x557755
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
@@ -48,7 +50,7 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
 static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
 
-static int eye[] = {39,44,50,52,55,57};
+static int eye[] = {38,39,44,45,49,52,55,58};
 static int leneye = sizeof(eye)/sizeof(eye[0]);
 
 static int mouse[] = {86,93,99,104,112,113,114,115};
@@ -61,12 +63,12 @@ static char fail[Y_DIM*X_DIM] = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    'f', 'f', '0', '0', 'a', '0', '0', 'i', '0', '0', 'l', '0', 
-    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', '0', 'l', '0', 
-    'f', 'f', '0', 'a', 'a', 'a', '0', 'i', '0', '0', 'l', '0', 
-    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', '0', 'l', 'l', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+    'f', 'f', 'f', '0', 'a', '0', 'i', 'i', 'i', 'l', '0', '0', 
+    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+    'f', 'f', 'f', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+    'f', '0', '0', 'a', 'a', 'a', '0', 'i', '0', 'l', '0', '0', 
+    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+    'f', '0', '0', 'a', '0', 'a', 'i', 'i', 'i', 'l', 'l', 'l', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
@@ -228,12 +230,12 @@ void showMine(Player p) {
     {
         if(mode == "Single") {  // 싱글모드
             if(isOver) {    // 지뢰 찾기 실패 -> 여러색으로 지뢰 표시
-                trellis.setPixelColor(p.mine, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+                trellis.setPixelColor(pSingle.mine, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
                 if(i > X_DIM*Y_DIM) i = 0;
                 else i++;
             }
             else {  // 지뢰 찾기 성공 -> 초록색 안에서만 지뢰 표시
-                trellis.setPixelColor(p.mine, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
+                trellis.setPixelColor(pSingle.mine, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
                 if(i == 255) interval = -1;
                 else if(i == 0) interval = 1;
                 i += interval;
@@ -241,8 +243,8 @@ void showMine(Player p) {
         }
         else {  // 배틀 모드
             // 레드 -> 빨간색 안에서만 , 블루 -> 파란색 안에서만 지뢰 표시
-            trellis.setPixelColor(p.mine, seesaw_NeoPixel::Color(255, i, i));
-            trellis.setPixelColor(p.mine, seesaw_NeoPixel::Color(i, i, 255));
+            trellis.setPixelColor(pRed.mine, seesaw_NeoPixel::Color(255, i, i));  // 레드
+            trellis.setPixelColor(pBlue.mine, seesaw_NeoPixel::Color(i, i, 255)); // 블루
             if(i == 255) interval = -1;
             else if(i == 0) interval = 1;
             i += interval;
@@ -271,7 +273,7 @@ void showFail() {
         if(ispressed[i]) 
             trellis.setPixelColor(i, 0x000000);
         if(fail[i] == 'f') {
-            trellis.setPixelColor(i, 0xFFFF00);
+            trellis.setPixelColor(i, 0xFF0000);
         }
     }
     trellis.show();
@@ -289,7 +291,7 @@ void showFail() {
     //show I
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         if(fail[i] == 'i') {
-            trellis.setPixelColor(i, 0xFFFF00);
+            trellis.setPixelColor(i, 0x00FF00);
         }
     }
     trellis.show();
@@ -298,7 +300,7 @@ void showFail() {
     //show L
     for(int i=0; i<Y_DIM*X_DIM; i++) {
         if(fail[i] == 'l') {
-            trellis.setPixelColor(i, 0xFFFF00);
+            trellis.setPixelColor(i, 0x0000FF);
         }
     }
     trellis.show();
@@ -389,7 +391,7 @@ void communication()
                         trellis.setPixelColor(i, 0x000000);
 
                     // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, 0xFFFF00);
+                    else trellis.setPixelColor(i, 0xAAAA00);
                     
                     trellis.show();
                     delay(30);    
@@ -486,16 +488,17 @@ TrellisCallback led_ON(keyEvent evt) {
     if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
         if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
             ispressed[evt.bit.NUM] = 1;
-            cnt--;  // -> 테스트 후 삭제
+            cnt--;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
+                cnt = 10;
                 for(int i=0; i<Y_DIM*X_DIM; i++) 
                 {
                     // starting effect
                     // 선글라스 부분
                     if (isExist(sunglasses, lensunglasses, i))
             //                    if (isExist(sunglasses, i))
-                        trellis.setPixelColor(i, 0x164A1B);
+                        trellis.setPixelColor(i, 0x00FF00);
 
                     // 입 부분
                     else if (isExist(mouse, lenmouse, i))
@@ -508,7 +511,7 @@ TrellisCallback led_ON(keyEvent evt) {
                         trellis.setPixelColor(i, 0x000000);
 
                     // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, 0xFFFF00);
+                    else trellis.setPixelColor(i, 0xAAAA00);
                     
                     trellis.show();
                     delay(5); 
@@ -520,10 +523,12 @@ TrellisCallback led_ON(keyEvent evt) {
             else {
                 // 테스트 -> 테스트 후 if문 삭제, else 괄호 삭제
                 if(cnt == 0) {
+                    Serial.println("Click");
                     cnt = 10;
                     isOver = true;
                     showFail();
                     showMine(pSingle);
+                    
                 } // end 테스트
                 else {
                   trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
