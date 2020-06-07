@@ -5,9 +5,9 @@
 #define COLORS 3  // number of colors
 
 // define color
-#define SINGLE1 0x3C8300
-#define SINGLE2 0x72FA00
-#define SINGLE3 0xFFEEFF
+#define SINGLE1 0x164A1B
+#define SINGLE2 0x55B95B
+#define SINGLE3 0xD2F5D5
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
