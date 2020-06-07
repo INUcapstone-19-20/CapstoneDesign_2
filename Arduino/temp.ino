@@ -5,9 +5,9 @@
 #define COLORS 3  // number of colors
 
 // define color
-#define SINGLE1 0x3C8300
-#define SINGLE2 0x72FA00
-#define SINGLE3 0xFFEEFF
+#define SINGLE1 0x00FFFF
+#define SINGLE2 0x8AFFFF
+#define SINGLE3 0xE0FFFF
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
@@ -45,16 +45,9 @@ TrellisCallback blue_ON(keyEvent evt);
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
 // 애니메이션
-static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
-static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
-
-static int mouse[] = {86,93,99,104,112,113,114,115};
-static int lenmouse = sizeof(mouse)/sizeof(mouse[0]);
-
-static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,108, 119,120,121,130,131,132,133,134,141,142,143};
-static int lenBackground = sizeof(background)/sizeof(background[0]);
-
-static char fail[Y_DIM*X_DIM] = {
+static int[] background = {0,1,2,9,10,11,12,13,22,23,24,35,86,93,99,104,108,112,113,114,115,119,120,121,130,131,132,133,134,141,142,143}
+static int[] sunglasses = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69}
+static char[Y_DIM*X_DIM] fail = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
@@ -67,7 +60,7 @@ static char fail[Y_DIM*X_DIM] = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
-};
+}
 
 // 시리얼 수신 변수
 static String sig = "";
@@ -87,9 +80,6 @@ static String mode;
 
 static int warningDelay = 0;
 static boolean isOver = false;
-
-// 테스트용 -> 테스트 후 삭제
-int cnt = 10;
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -218,35 +208,22 @@ void showColors(Player p) {
 // 지뢰 효과
 void showMine(uint16_t mine_key) {
     uint8_t i = 0;
-    uint8_t interval = 1;
     String s = "";
-
-    Serial.print(p.ID + "Boom");
+    
     while (1)
     {
-        if(mode == "Single") {  // 싱글모드
-            if(isOver) {    // 지뢰 찾기 실패 -> 여러색으로 지뢰 표시
-                trellis.setPixelColor(mine_key, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
-                if(i > X_DIM*Y_DIM) i = 0;
-                else i++;
-            }
-            else {  // 지뢰 찾기 성공 -> 초록색 안에서만 지뢰 표시
-                trellis.setPixelColor(mine_key, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
-                if(i == 255) interval = -1;
-                else if(i == 0) interval = 1;
-                i += interval;
-            }
+        if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우
+            trellis.setPixelColor(mine_key, seesaw_NeoPixel::Color(i, 255, i)); // 초록색 사이에서 지뢰 색 변동
+            if(i > 255) i = 0;
+            else i++;
         }
-        else {  // 배틀 모드
-            // 레드 -> 빨간색 안에서만 , 블루 -> 파란색 안에서만 지뢰 표시
-            trellis.setPixelColor(pRed.mine, seesaw_NeoPixel::Color(255, i, i));
-            trellis.setPixelColor(pBlue.mine, seesaw_NeoPixel::Color(i, i, 255));
-            if(i == 255) interval = -1;
-            else if(i == 0) interval = 1;
-            i += interval;
+        else {  // 싱글모드에서 탐색 실패한 경우와 배틀모드인 경우
+            trellis.setPixelColor(mine_key, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255)));
+            if(i >= X_DIM*Y_DIM) i = 0;
+            else i++;
         }
         trellis.show();
-        delay(15);
+        delay(30);
 
         while(Serial.available()) {
           // 시리얼 읽어서 문자열로 저장
@@ -266,8 +243,6 @@ void showMine(uint16_t mine_key) {
 void showFail() {
     // show F
     for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(ispressed[i]) 
-            trellis.setPixelColor(i, 0x000000);
         if(fail[i] == 'f') {
             trellis.setPixelColor(i, 0xFFFF00);
         }
@@ -304,47 +279,14 @@ void showFail() {
 }
 
 // 배열 속 값 존재여부
-int isExist(int a[], int n, int key){
-    for(int i = 0; i < n; i++){
+int isExist(int a[], int key){
+    for(int i = 0, i < sizeof(a), i++){
         if(a[i]==key){
             return true;
         }
     }
     return false;
 }
-
-<<<<<<< HEAD
-void animation(uint32_t sunglassesColor){
-=======
-void animation(uint16_t sunglassesColor){
->>>>>>> 511356108e7f7f6489fcad01f4c633a39e52edae
-     for(int i=0; i<Y_DIM*X_DIM; i++) 
-     {
-        // starting effect
-        // 선글라스 부분
-        if (isExist(sunglasses, lensunglasses, i))
-//                    if (isExist(sunglasses, i))
-            trellis.setPixelColor(i, sunglassesColor);
-
-        // 입 부분
-        else if (isExist(mouse, lenmouse, i))
-//                    if (isExist(mouse, i))
-            trellis.setPixelColor(i, 0xFFFFFF);
-
-        // 배경 부분
-        else if (isExist(background, lenBackground, i))
-//                    else if (isExist(background, i))
-            trellis.setPixelColor(i, 0x000000);
-
-        // 이모티콘 얼굴 부분
-        else trellis.setPixelColor(i, 0xFFFF00);
-        
-        trellis.show();
-        delay(30);    
-    }   
-}
-
-
 
 // 라즈베리파이와의 통신 함수
 void communication()
@@ -372,8 +314,21 @@ void communication()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
-                animation(0xFFFFFF);
-                delay(4000);
+                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                    // starting effect
+                    // 선글라스 부분
+                    if (isExist(sunglasses,i))
+                        trellis.setPixelColor(i, 0x0085FF);
+                    // 배경 부분
+                    else if (isExist(background,i))
+                        trellis.setPixelColor(i, 0xE3E3E3);
+                    // 이모티콘 얼굴 부분
+                    else trellis.setPixelColor(i, 0xFFFF00);
+                    
+                    trellis.show();
+                    delay(20);
+                }
+            
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -443,7 +398,8 @@ void communication()
         // 의도하지않은 값 방지
         if (sig.length()==7)
         {
-            warningDelay = atoi(sig.substring(4, 7).c_str());   // 딜레이 시간 저장
+            warningDelay = atoi(sig.substring(4, 7));   // 딜레이 시간 저장
+            //  깜빡깜빡 코드 넣어주세요!!
         }
     }
     // 싱글모드 게임 실패 신호를 수신한 경우
@@ -465,27 +421,17 @@ TrellisCallback led_ON(keyEvent evt) {
     if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
         if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
             ispressed[evt.bit.NUM] = 1;
-            cnt--;  // -> 테스트 후 삭제
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
-                animation(0x18651F);
+                showColors(pSingle);
                 showMine(pSingle.mine);
                 // 파이썬에 '게임 종료' 전송
             } 
             // 누른 버튼이 지뢰가 아닐 경우
             else {
-                // 테스트 -> 테스트 후 if문 삭제, else 괄호 삭제
-                if(cnt == 0) {
-                    cnt = 10;
-                    isOver = true;
-                    showFail();
-                    showMine(pSingle.mine);
-                } // end 테스트
-                else {
-                  trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
-                  trellis.show();
-                  Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
-                }
+                    trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
+                    trellis.show();
+                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }                
         }
     }
@@ -580,20 +526,6 @@ void loop()
             else if(turn == "Lock")
                 trellis.registerCallback(i, lock_ON);
         }
-        if(warningDelay) { // -> danger 수신 했을 때 true
-            // led blink
-            for(int i=0; i<Y_DIM*X_DIM; i++) {
-                trellis.setPixelColor(i, 0x000000); // off
-            }
-            trellis.show();
-            trellis.read();
-            delay(warningDelay);
-            for(int i=0; i<Y_DIM*X_DIM; i++) {
-                if(ispressed[i]) 
-                    trellis.setPixelColor(i, pSingle.colors[i]); // on
-            }
-            trellis.show();
-        }
         trellis.read();
     }
     else if(mode == "Battle") 
@@ -611,6 +543,4 @@ void loop()
         trellis.read();
     }
     delay(20);
-
-    
 }
