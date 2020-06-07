@@ -5,9 +5,9 @@
 #define COLORS 3  // number of colors
 
 // define color
-#define SINGLE1 0x00FFFF
-#define SINGLE2 0x8AFFFF
-#define SINGLE3 0xE0FFFF
+#define SINGLE1 0x3C8300
+#define SINGLE2 0x72FA00
+#define SINGLE3 0xACE47C
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
@@ -45,8 +45,15 @@ TrellisCallback blue_ON(keyEvent evt);
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
 // 애니메이션
-static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,86,93,99,104,108,112,113,114,115,119,120,121,130,131,132,133,134,141,142,143};
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
+static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
+
+static int mouse[] = {86,93,99,104,108,112,113,114,115};
+static int lenmouse = sizeof(mouse)/sizeof(mouse[0]);
+
+static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,119,120,121,130,131,132,133,134,141,142,143};
+static int lenBackground = sizeof(background)/sizeof(background[0]);
+
 static char fail[Y_DIM*X_DIM] = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
@@ -235,7 +242,7 @@ void showMine(uint16_t mine_key) {
             i += interval;
         }
         trellis.show();
-//        delay(30);
+        delay(15);
 
         while(Serial.available()) {
           // 시리얼 읽어서 문자열로 저장
@@ -300,6 +307,35 @@ int isExist(int a[], int n, int key){
     return false;
 }
 
+void animation(int sunglassesColor){
+     for(int i=0; i<Y_DIM*X_DIM; i++) 
+     {
+        // starting effect
+        // 선글라스 부분
+        if (isExist(sunglasses, lensunglasses i))
+//                    if (isExist(sunglasses, i))
+            trellis.setPixelColor(i, sunglassesColor);
+
+        // 입 부분
+        if (isExist(mouse, lenmouse, i))
+//                    if (isExist(mouse, i))
+            trellis.setPixelColor(i, 0xFFFFFF);
+
+        // 배경 부분
+        else if (isExist(background, lenBackground, i))
+//                    else if (isExist(background, i))
+            trellis.setPixelColor(i, 0x000000);
+
+        // 이모티콘 얼굴 부분
+        else trellis.setPixelColor(i, 0xFFFF00);
+        
+        trellis.show();
+        delay(30);    
+    }   
+}
+
+
+
 // 라즈베리파이와의 통신 함수
 void communication()
 {
@@ -326,24 +362,8 @@ void communication()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
-                for(int i=0; i<Y_DIM*X_DIM; i++) {
-                    // starting effect
-                    // 선글라스 부분
-                    if (isExist(sunglasses, 24, i))
-//                    if (isExist(sunglasses, i))
-                        trellis.setPixelColor(i, 0x0085FF);
-                    // 배경 부분
-                    else if (isExist(background, 32, i))
-//                    else if (isExist(background, i))
-                        trellis.setPixelColor(i, 0xE3E3E3);
-                    // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, 0xFFFF00);
-                    
-                    trellis.show();
-                    delay(30);    
-
-                }
-                delay(2000);
+                animation(0xFFFFFF);
+                delay(5000);
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -351,7 +371,7 @@ void communication()
 
                     // activate rising edge on all keys
                     trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-                    delay(30);
+                    delay(20);
                 }                 
             }  
         }
@@ -437,7 +457,7 @@ TrellisCallback led_ON(keyEvent evt) {
             ispressed[evt.bit.NUM] = 1;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
-                showColors(pSingle);
+                animation(0x18651F);
                 showMine(pSingle.mine);
                 // 파이썬에 '게임 종료' 전송
             } 
