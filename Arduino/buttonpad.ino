@@ -45,9 +45,9 @@ TrellisCallback blue_ON(keyEvent evt);
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
 // 애니메이션
-static int[] background = {0,1,2,9,10,11,12,13,22,23,24,35,86,93,99,104,108,112,113,114,115,119,120,121,130,131,132,133,134,141,142,143}
-static int[] sunglasses = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69}
-static char[Y_DIM*X_DIM] fail = {
+static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,86,93,99,104,108,112,113,114,115,119,120,121,130,131,132,133,134,141,142,143};
+static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
+static char fail[Y_DIM*X_DIM] = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
@@ -60,7 +60,7 @@ static char[Y_DIM*X_DIM] fail = {
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
-}
+};
 
 // 시리얼 수신 변수
 static String sig = "";
@@ -235,7 +235,7 @@ void showMine(uint16_t mine_key) {
             i += interval;
         }
         trellis.show();
-        delay(30);
+//        delay(30);
 
         while(Serial.available()) {
           // 시리얼 읽어서 문자열로 저장
@@ -291,8 +291,8 @@ void showFail() {
 }
 
 // 배열 속 값 존재여부
-int isExist(int a[], int key){
-    for(int i = 0, i < sizeof(a), i++){
+int isExist(int a[], int n, int key){
+    for(int i = 0; i < n; i++){
         if(a[i]==key){
             return true;
         }
@@ -329,18 +329,21 @@ void communication()
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // starting effect
                     // 선글라스 부분
-                    if (isExist(sunglasses,i))
+                    if (isExist(sunglasses, 24, i))
+//                    if (isExist(sunglasses, i))
                         trellis.setPixelColor(i, 0x0085FF);
                     // 배경 부분
-                    else if (isExist(background,i))
+                    else if (isExist(background, 32, i))
+//                    else if (isExist(background, i))
                         trellis.setPixelColor(i, 0xE3E3E3);
                     // 이모티콘 얼굴 부분
                     else trellis.setPixelColor(i, 0xFFFF00);
                     
                     trellis.show();
-                    delay(20);
+                    delay(30);    
+
                 }
-            
+                delay(2000);
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -348,7 +351,7 @@ void communication()
 
                     // activate rising edge on all keys
                     trellis.activateKey(i, SEESAW_KEYPAD_EDGE_RISING, true);
-                    delay(10);
+                    delay(30);
                 }                 
             }  
         }
@@ -547,7 +550,7 @@ void loop()
             delay(warningDelay);
             for(int i=0; i<Y_DIM*X_DIM; i++) {
                 if(ispressed[i]) 
-                    trellis.setPixelColor(pSingle.colors[i]); // on
+                    trellis.setPixelColor(i, pSingle.colors[i]); // on
             }
             trellis.show();
         }
