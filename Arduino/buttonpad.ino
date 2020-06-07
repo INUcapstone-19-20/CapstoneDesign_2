@@ -5,9 +5,9 @@
 #define COLORS 3  // number of colors
 
 // define color
-#define SINGLE1 0x3C8300
-#define SINGLE2 0x72FA00
-#define SINGLE3 0xFFEEFF
+#define SINGLE1 0x164A1B
+#define SINGLE2 0x55B95B
+#define SINGLE3 0xD2F5D5
 #define RED1 0x990000
 #define RED2 0xDD1111
 #define RED3 0x772222
@@ -47,6 +47,9 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 // 애니메이션
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
 static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
+
+static int eye[] = {39,44,50,52,55,57};
+static int leneye = sizeof(eye)/sizeof(eye[0]);
 
 static int mouse[] = {86,93,99,104,112,113,114,115};
 static int lenmouse = sizeof(mouse)/sizeof(mouse[0]);
@@ -307,32 +310,32 @@ int isExist(int a[], int n, int key){
     return false;
 }
 
-void animation(uint16_t sunglassesColor){
-     for(int i=0; i<Y_DIM*X_DIM; i++) 
-     {
-        // starting effect
-        // 선글라스 부분
-        if (isExist(sunglasses, lensunglasses i))
-//                    if (isExist(sunglasses, i))
-            trellis.setPixelColor(i, sunglassesColor);
+// void animation(int sunglassesColor){
+//      for(int i=0; i<Y_DIM*X_DIM; i++) 
+//      {
+//         // starting effect
+//         // 선글라스 부분
+//         if (isExist(sunglasses, lensunglasses, i))
+// //                    if (isExist(sunglasses, i))
+//             trellis.setPixelColor(i, sunglassesColor);
 
-        // 입 부분
-        if (isExist(mouse, lenmouse, i))
-//                    if (isExist(mouse, i))
-            trellis.setPixelColor(i, 0xFFFFFF);
+//         // 입 부분
+//         else if (isExist(mouse, lenmouse, i))
+// //                    if (isExist(mouse, i))
+//             trellis.setPixelColor(i, 0xFFFFFF);
 
-        // 배경 부분
-        else if (isExist(background, lenBackground, i))
-//                    else if (isExist(background, i))
-            trellis.setPixelColor(i, 0x000000);
+//         // 배경 부분
+//         else if (isExist(background, lenBackground, i))
+// //                    else if (isExist(background, i))
+//             trellis.setPixelColor(i, 0x000000);
 
-        // 이모티콘 얼굴 부분
-        else trellis.setPixelColor(i, 0xFFFF00);
+//         // 이모티콘 얼굴 부분
+//         else trellis.setPixelColor(i, 0xFFFF00);
         
-        trellis.show();
-        delay(30);    
-    }   
-}
+//         trellis.show();
+//         delay(20);    
+//     }   
+// }
 
 
 
@@ -362,8 +365,31 @@ void communication()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
-                animation(0xFFFFFF);
-                delay(4000);
+                for(int i=0; i<Y_DIM*X_DIM; i++) 
+                {
+                    // starting effect
+                    // 눈 부분
+                    if (isExist(eye, leneye, i))
+            //                    if (isExist(sunglasses, i))
+                        trellis.setPixelColor(i, 0xFFFFFF);
+
+                    // 입 부분
+                    else if (isExist(mouse, lenmouse, i))
+            //                    if (isExist(mouse, i))
+                        trellis.setPixelColor(i, 0xFFFFFF);
+
+                    // 배경 부분
+                    else if (isExist(background, lenBackground, i))
+            //                    else if (isExist(background, i))
+                        trellis.setPixelColor(i, 0x000000);
+
+                    // 이모티콘 얼굴 부분
+                    else trellis.setPixelColor(i, 0xFFFF00);
+                    
+                    trellis.show();
+                    delay(30);    
+                }   
+                delay(3000);
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -457,7 +483,30 @@ TrellisCallback led_ON(keyEvent evt) {
             ispressed[evt.bit.NUM] = 1;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
-                animation(0x18651F);
+                for(int i=0; i<Y_DIM*X_DIM; i++) 
+                {
+                    // starting effect
+                    // 선글라스 부분
+                    if (isExist(sunglasses), lensunglasses, i))
+            //                    if (isExist(sunglasses, i))
+                        trellis.setPixelColor(i, 0x164A1B);
+
+                    // 입 부분
+                    else if (isExist(mouse, lenmouse, i))
+            //                    if (isExist(mouse, i))
+                        trellis.setPixelColor(i, 0xFFFFFF);
+
+                    // 배경 부분
+                    else if (isExist(background, lenBackground, i))
+            //                    else if (isExist(background, i))
+                        trellis.setPixelColor(i, 0x000000);
+
+                    // 이모티콘 얼굴 부분
+                    else trellis.setPixelColor(i, 0xFFFF00);
+                    
+                    trellis.show();
+                    delay(5); 
+                }
                 showMine(pSingle.mine);
                 // 파이썬에 '게임 종료' 전송
             } 
