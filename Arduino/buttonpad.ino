@@ -316,8 +316,8 @@ int isExist(int a[], int n, int key){
     return false;
 }
 
-<<<<<<< HEAD
-// void animation(int sunglassesColor){
+// 애니메이션
+// void animation(uint32_t sunglassesColor){
 //      for(int i=0; i<Y_DIM*X_DIM; i++) 
 //      {
 //         // starting effect
@@ -338,40 +338,11 @@ int isExist(int a[], int n, int key){
 
 //         // 이모티콘 얼굴 부분
 //         else trellis.setPixelColor(i, 0xFFFF00);
-=======
-<<<<<<< HEAD
-void animation(uint32_t sunglassesColor){
-=======
-void animation(uint16_t sunglassesColor){
->>>>>>> 511356108e7f7f6489fcad01f4c633a39e52edae
-     for(int i=0; i<Y_DIM*X_DIM; i++) 
-     {
-        // starting effect
-        // 선글라스 부분
-        if (isExist(sunglasses, lensunglasses, i))
-//                    if (isExist(sunglasses, i))
-            trellis.setPixelColor(i, sunglassesColor);
-
-        // 입 부분
-        else if (isExist(mouse, lenmouse, i))
-//                    if (isExist(mouse, i))
-            trellis.setPixelColor(i, 0xFFFFFF);
-
-        // 배경 부분
-        else if (isExist(background, lenBackground, i))
-//                    else if (isExist(background, i))
-            trellis.setPixelColor(i, 0x000000);
-
-        // 이모티콘 얼굴 부분
-        else trellis.setPixelColor(i, 0xFFFF00);
->>>>>>> 8861cd3986f07d54b8f59167b84de5e4aa3d6bdd
         
 //         trellis.show();
 //         delay(20);    
 //     }   
 // }
-
-
 
 // 라즈베리파이와의 통신 함수
 void communication()
