@@ -91,6 +91,9 @@ static String mode;
 static int warningDelay = 0;
 static boolean isOver = false;
 
+// 테스트용 -> 테스트 후 삭제
+int cnt = 10;
+
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
     if(WheelPos < 85) {
@@ -220,7 +223,8 @@ void showMine(uint16_t mine_key) {
     uint8_t i = 0;
     uint8_t interval = 1;
     String s = "";
-    
+
+    Serial.print(p.ID + "Boom");
     while (1)
     {
         if(mode == "Single") {  // 싱글모드
@@ -265,6 +269,8 @@ void showMine(uint16_t mine_key) {
 void showFail() {
     // show F
     for(int i=0; i<Y_DIM*X_DIM; i++) {
+        if(ispressed[i]) 
+            trellis.setPixelColor(i, 0x000000);
         if(fail[i] == 'f') {
             trellis.setPixelColor(i, 0xFFFF00);
         }
@@ -310,6 +316,7 @@ int isExist(int a[], int n, int key){
     return false;
 }
 
+<<<<<<< HEAD
 // void animation(int sunglassesColor){
 //      for(int i=0; i<Y_DIM*X_DIM; i++) 
 //      {
@@ -331,6 +338,33 @@ int isExist(int a[], int n, int key){
 
 //         // 이모티콘 얼굴 부분
 //         else trellis.setPixelColor(i, 0xFFFF00);
+=======
+<<<<<<< HEAD
+void animation(uint32_t sunglassesColor){
+=======
+void animation(uint16_t sunglassesColor){
+>>>>>>> 511356108e7f7f6489fcad01f4c633a39e52edae
+     for(int i=0; i<Y_DIM*X_DIM; i++) 
+     {
+        // starting effect
+        // 선글라스 부분
+        if (isExist(sunglasses, lensunglasses, i))
+//                    if (isExist(sunglasses, i))
+            trellis.setPixelColor(i, sunglassesColor);
+
+        // 입 부분
+        else if (isExist(mouse, lenmouse, i))
+//                    if (isExist(mouse, i))
+            trellis.setPixelColor(i, 0xFFFFFF);
+
+        // 배경 부분
+        else if (isExist(background, lenBackground, i))
+//                    else if (isExist(background, i))
+            trellis.setPixelColor(i, 0x000000);
+
+        // 이모티콘 얼굴 부분
+        else trellis.setPixelColor(i, 0xFFFF00);
+>>>>>>> 8861cd3986f07d54b8f59167b84de5e4aa3d6bdd
         
 //         trellis.show();
 //         delay(20);    
@@ -481,6 +515,7 @@ TrellisCallback led_ON(keyEvent evt) {
     if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
         if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
             ispressed[evt.bit.NUM] = 1;
+            cnt--;  // -> 테스트 후 삭제
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
                 for(int i=0; i<Y_DIM*X_DIM; i++) 
@@ -512,9 +547,18 @@ TrellisCallback led_ON(keyEvent evt) {
             } 
             // 누른 버튼이 지뢰가 아닐 경우
             else {
-                    trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
-                    trellis.show();
-                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                // 테스트 -> 테스트 후 if문 삭제, else 괄호 삭제
+                if(cnt == 0) {
+                    cnt = 10;
+                    isOver = true;
+                    showFail();
+                    showMine(pSingle.mine);
+                } // end 테스트
+                else {
+                  trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
+                  trellis.show();
+                  Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                }
             }                
         }
     }
@@ -640,4 +684,6 @@ void loop()
         trellis.read();
     }
     delay(20);
+
+    
 }
