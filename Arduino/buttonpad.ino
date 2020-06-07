@@ -50,29 +50,29 @@ static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not p
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
 static int lensunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
 
-static int eye[] = {38,39,44,45,49,52,55,58};
+static int eye[] = {38,40,43,45,51,56,62,64,67,69};
 static int leneye = sizeof(eye)/sizeof(eye[0]);
 
-static int mouse[] = {86,93,99,104,112,113,114,115};
+static int mouse[] = {88,89,90,91,99,104,110,117};
 static int lenmouse = sizeof(mouse)/sizeof(mouse[0]);
 
 static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,108, 119,120,121,130,131,132,133,134,141,142,143};
 static int lenBackground = sizeof(background)/sizeof(background[0]);
 
-static char fail[Y_DIM*X_DIM] = {
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    'f', 'f', 'f', '0', 'a', '0', 'i', 'i', 'i', 'l', '0', '0', 
-    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-    'f', 'f', 'f', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-    'f', '0', '0', 'a', 'a', 'a', '0', 'i', '0', 'l', '0', '0', 
-    'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-    'f', '0', '0', 'a', '0', 'a', 'i', 'i', 'i', 'l', 'l', 'l', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
-};
+// static char fail[Y_DIM*X_DIM] = {
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+//     'f', 'f', 'f', '0', 'a', '0', 'i', 'i', 'i', 'l', '0', '0', 
+//     'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+//     'f', 'f', 'f', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+//     'f', '0', '0', 'a', 'a', 'a', '0', 'i', '0', 'l', '0', '0', 
+//     'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
+//     'f', '0', '0', 'a', '0', 'a', 'i', 'i', 'i', 'l', 'l', 'l', 
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
+//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
+// };
 
 // 시리얼 수신 변수
 static String sig = "";
@@ -268,43 +268,29 @@ void showMine(Player p) {
 }
 
 void showFail() {
-    // show F
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(ispressed[i]) 
+   for(int i=0; i<Y_DIM*X_DIM; i++){
+        // starting effect
+        // 눈 부분
+        if (isExist(eye), leneye, i))
+    //                    if (isExist(sunglasses, i))
+            trellis.setPixelColor(i, 0x9B00F7);
+
+        // 입 부분
+        else if (isExist(mouse, lenmouse, i))
+    //                    if (isExist(mouse, i))
+            trellis.setPixelColor(i, 0x9B00F7);
+
+        // 배경 부분
+        else if (isExist(background, lenBackground, i))
+    //                    else if (isExist(background, i))
             trellis.setPixelColor(i, 0x000000);
-        if(fail[i] == 'f') {
-            trellis.setPixelColor(i, 0xFF0000);
-        }
-    }
-    trellis.show();
-    delay(500);
 
-    //show A
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(fail[i] == 'a') {
-            trellis.setPixelColor(i, 0xFFFF00);
-        }
+        // 이모티콘 얼굴 부분
+        else trellis.setPixelColor(i, 0xAAAA00);
+        
+        trellis.show();
+        delay(5); 
     }
-    trellis.show();
-    delay(500);
-    
-    //show I
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(fail[i] == 'i') {
-            trellis.setPixelColor(i, 0x00FF00);
-        }
-    }
-    trellis.show();
-    delay(500);
-
-    //show L
-    for(int i=0; i<Y_DIM*X_DIM; i++) {
-        if(fail[i] == 'l') {
-            trellis.setPixelColor(i, 0x0000FF);
-        }
-    }
-    trellis.show();
-    delay(500);
 }
 
 // 배열 속 값 존재여부
@@ -375,15 +361,15 @@ void communication()
                 for(int i=0; i<Y_DIM*X_DIM; i++) 
                 {
                     // starting effect
-                    // 눈 부분
-                    if (isExist(eye, leneye, i))
+                    // 선글라스 부분
+                    if (isExist(sunglasses, lensunglasses, i))
             //                    if (isExist(sunglasses, i))
-                        trellis.setPixelColor(i, 0xFFFFFF);
+                        trellis.setPixelColor(i, 0x0085FF);
 
                     // 입 부분
                     else if (isExist(mouse, lenmouse, i))
             //                    if (isExist(mouse, i))
-                        trellis.setPixelColor(i, 0xFFFFFF);
+                        trellis.setPixelColor(i, 0x0085FF);
 
                     // 배경 부분
                     else if (isExist(background, lenBackground, i))
@@ -396,7 +382,7 @@ void communication()
                     trellis.show();
                     delay(30);    
                 }   
-                delay(3000);
+                delay(2500);
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -492,30 +478,6 @@ TrellisCallback led_ON(keyEvent evt) {
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
                 cnt = 10;
-                for(int i=0; i<Y_DIM*X_DIM; i++) 
-                {
-                    // starting effect
-                    // 선글라스 부분
-                    if (isExist(sunglasses, lensunglasses, i))
-            //                    if (isExist(sunglasses, i))
-                        trellis.setPixelColor(i, 0x00FF00);
-
-                    // 입 부분
-                    else if (isExist(mouse, lenmouse, i))
-            //                    if (isExist(mouse, i))
-                        trellis.setPixelColor(i, 0xFFFFFF);
-
-                    // 배경 부분
-                    else if (isExist(background, lenBackground, i))
-            //                    else if (isExist(background, i))
-                        trellis.setPixelColor(i, 0x000000);
-
-                    // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, 0xAAAA00);
-                    
-                    trellis.show();
-                    delay(5); 
-                }
                 showMine(pSingle);
                 // 파이썬에 '게임 종료' 전송
             } 
