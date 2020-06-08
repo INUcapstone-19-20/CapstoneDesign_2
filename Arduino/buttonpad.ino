@@ -42,7 +42,6 @@ Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
 
 // pass this matrix to the multitrellis constructor
 Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
-TrellisCallback blue_ON(keyEvent evt);
 
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
@@ -95,9 +94,6 @@ static String mode;
 
 static int warningDelay = 0;
 static boolean isOver = false;
-
-// 테스트용 -> 테스트 후 삭제
-int cnt = 10;
 
 //  Input a value 0 to 255 to get a color value
 uint32_t Wheel(byte WheelPos) {
@@ -175,12 +171,7 @@ void showColors(Player p) {
         for(uint8_t x=0; x<X_DIM; x++) {
             if(x == mine_x && y == mine_y) continue;                    
             if(distance(mine_x, mine_y, x, y) < DISTANCE1) {
-                if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
-                    trellis.setPixelColor(x, y, 0x00FF00);
-                }
-                else {  // 배틀 모드인 경우 & 싱글모드 실패
-                    trellis.setPixelColor(x, y, p.colorcode[0]);
-                }
+                trellis.setPixelColor(x, y, p.colorcode[0]);
             }
         }
     }
@@ -192,12 +183,7 @@ void showColors(Player p) {
         for(uint8_t x=0; x<X_DIM; x++) {
             if(x == mine_x && y == mine_y) continue;
             if(distance(mine_x, mine_y, x, y) >= DISTANCE1 && distance(mine_x, mine_y, x, y) <= DISTANCE2) {
-                if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
-                    trellis.setPixelColor(x, y, 0x00FF00);
-                }
-                else {  // 배틀 모드인 경우 & 싱글모드 실패
-                    trellis.setPixelColor(x, y, p.colorcode[1]);
-                }
+                trellis.setPixelColor(x, y, p.colorcode[1]);
             }
         }
     }
@@ -209,12 +195,7 @@ void showColors(Player p) {
         for(uint8_t x=0; x<X_DIM; x++) {
             if(x == mine_x && y == mine_y) continue;
             if(distance(mine_x, mine_y, x, y) > DISTANCE2) {
-                if(mode == "Single" && !isOver) {   // 싱글모드에서 지뢰탐색에 성공한 경우 초록색으로 
-                    trellis.setPixelColor(x, y, 0x00FF00);
-                }
-                else {  // 배틀 모드인 경우 & 싱글모드 실패
-                    trellis.setPixelColor(x, y, p.colorcode[2]);
-                }            
+                trellis.setPixelColor(x, y, p.colorcode[2]);           
             }            
         }
     }
@@ -273,20 +254,16 @@ void showMine(Player p) {
 void showFail() {
    for(int i=0; i<Y_DIM*X_DIM; i++)
    {
-        // starting effect
         // 눈 부분
         if (isExist(eye, lenEye, i))
-    //                    if (isExist(sunglasses, i))
             trellis.setPixelColor(i, 0x9B00F7);
 
         // 입 부분
         else if (isExist(mouseDepressed, lenMouseDepressed, i))
-    //                    if (isExist(mouse, i))
             trellis.setPixelColor(i, 0x9B00F7);
 
         // 배경 부분
         else if (isExist(background, lenBackground, i))
-    //                    else if (isExist(background, i))
             trellis.setPixelColor(i, 0x000000);
 
         // 이모티콘 얼굴 부분
@@ -362,24 +339,18 @@ void communication()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
+                // starting effect
                 for(int i=0; i<Y_DIM*X_DIM; i++) 
                 {
-                    // starting effect
                     // 선글라스 부분
                     if (isExist(sunglasses, lenSunglasses, i))
-            //                    if (isExist(sunglasses, i))
                         trellis.setPixelColor(i, 0x0085FF);
-
                     // 입 부분
                     else if (isExist(mouseHappy, lenMouseHappy, i))
-            //                    if (isExist(mouse, i))
                         trellis.setPixelColor(i, 0x0085FF);
-
                     // 배경 부분
                     else if (isExist(background, lenBackground, i))
-            //                    else if (isExist(background, i))
                         trellis.setPixelColor(i, 0x000000);
-
                     // 이모티콘 얼굴 부분
                     else trellis.setPixelColor(i, 0xAAAA00);
                     
@@ -387,6 +358,7 @@ void communication()
                     delay(30);    
                 }   
                 delay(2500);
+
                 for(int i=0; i<Y_DIM*X_DIM; i++) {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
@@ -407,8 +379,6 @@ void communication()
         {
             if(mode == "Single") 
             {
-//                sig.substring(4,7).toCharArray(solo,4);     // single_mine 부분 슬라이싱
-                // int로 변환
                 uint16_t single_mine = atoi(sig.substring(4,7).c_str());
 
                 pSingle.mine = single_mine;
@@ -452,7 +422,7 @@ void communication()
     else if (check == "Warn")
     {
         // 딜레이 시간 같이 보내주세요
-        // ex) delay(100) -> Dang100, delay(40) -> Dang040
+        // ex) delay(250) -> Warn250, delay(100) -> Warn100
         // 의도하지않은 값 방지
         if (sig.length()==7)
         {
@@ -478,30 +448,17 @@ TrellisCallback led_ON(keyEvent evt) {
     if(evt.bit.EDGE == SEESAW_KEYPAD_EDGE_RISING) {
         if(ispressed[evt.bit.NUM] == 0) { // 눌리지 않은 버튼일 때
             ispressed[evt.bit.NUM] = 1;
-            cnt--;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
-                cnt = 10;
                 showColors(pSingle);
                 showMine(pSingle);
                 // 파이썬에 '게임 종료' 전송
             } 
             // 누른 버튼이 지뢰가 아닐 경우
             else {
-                // 테스트 -> 테스트 후 if문 삭제, else 괄호 삭제
-                if(cnt == 0) {
-                    Serial.println("Click");
-                    cnt = 10;
-                    isOver = true;
-                    showFail();
-                    showMine(pSingle);
-                    
-                } // end 테스트
-                else {
-                  trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
-                  trellis.show();
-                  Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
-                }
+                trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
+                trellis.show();
+                Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }                
         }
     }
@@ -596,7 +553,7 @@ void loop()
             else if(turn == "Lock")
                 trellis.registerCallback(i, lock_ON);
         }
-        if(warningDelay) { // -> danger 수신 했을 때 true
+        if(warningDelay) { // -> warn 수신 했을 때 true
             // led blink
             for(int i=0; i<Y_DIM*X_DIM; i++) {
                 trellis.setPixelColor(i, 0x000000); // off
