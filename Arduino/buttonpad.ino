@@ -482,6 +482,7 @@ TrellisCallback led_ON(keyEvent evt) {
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
                 cnt = 10;
+                showColors(pSingle);
                 showMine(pSingle);
                 // 파이썬에 '게임 종료' 전송
             } 
@@ -492,7 +493,6 @@ TrellisCallback led_ON(keyEvent evt) {
                     Serial.println("Click");
                     cnt = 10;
                     isOver = true;
-                    showColors(pSingle);
                     showFail();
                     showMine(pSingle);
                     
