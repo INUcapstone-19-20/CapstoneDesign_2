@@ -106,7 +106,7 @@ def mine_ToArduino (red_mine, blue_mine) :
     ser.write(MineTrans)
 
 # 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기 전달 함수
-def Warn_ToArduino(int delay) :
+def Warn_ToArduino(delay) :
     delay = str(delay).zfill(3)
     Warn = "Warn" + delay
     WarnTrans = Warn.encode('utf-8')

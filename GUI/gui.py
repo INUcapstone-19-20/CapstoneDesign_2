@@ -51,7 +51,7 @@ class DiceThread(QThread):
     cntChanged = pyqtSignal(int)
     result = pyqtSignal(int)
 
-    def __init__(self, limit = 30, timing = 0.03, noPass = 4):
+    def __init__(self, limit = 30, timing = 0.03, noPass = 10):
         QThread.__init__(self)
         self.limit = limit
         self.timing = timing
@@ -60,11 +60,18 @@ class DiceThread(QThread):
     def run(self):      
         cnt = 0
         while cnt < self.limit:
-            self.cntChanged.emit(cnt % self.noPass)
+            if self.noPass == 10:
+                self.cntChanged.emit(cnt % 4)
+            else:
+                self.cntChanged.emit(cnt % self.noPass)
             cnt += 1
             time.sleep(self.timing)
 
         rand = random.randint(0, self.noPass - 1)
+        if self.noPass == 10:
+            if rand >= 7: rand = 3
+            elif rand >= 4: rand = 2
+            elif rand >= 1: rand = 1
         self.result.emit(rand)
             
 
@@ -99,7 +106,7 @@ class Start(QMainWindow):
         self.dot.finished.connect(partial(changeScreen, self, 2))
         self.dot.start()
 
-        self.timer = DiceThread(limit=25)
+        self.timer = DiceThread(limit=25, noPass=4)
         self.timer.finished.connect(partial(communication.mode_toArduino, "Loding"))
         self.timer.start()
 
@@ -693,7 +700,7 @@ class Blue_Loose(QMainWindow):
         self.btn_bbom.setStyleSheet('image:url(res/blueexplosion.png); border:0px;')
         # self.btn_bbom.clicked.connect(self.gotoResult)
         self.qtimer = QTimer(self)
-        self.qtimer.setInterval(4000)
+        self.qtimer.setInterval(5000)
         self.qtimer.setSingleShot(True)
         self.qtimer.timeout.connect(self.gotoResult)
         self.qtimer.start()
@@ -712,7 +719,7 @@ class Red_Loose(QMainWindow):
         self.btn_rbom.setStyleSheet('image:url(res/redexplosion.png); border:0px;')
         # self.btn_rbom.clicked.connect(self.gotoResult)
         self.qtimer = QTimer(self)
-        self.qtimer.setInterval(4000)
+        self.qtimer.setInterval(5000)
         self.qtimer.setSingleShot(True)
         self.qtimer.timeout.connect(self.gotoResult)
         self.qtimer.start()
