@@ -53,8 +53,11 @@ static int lenSunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
 static int eye[] = {38,40,43,45,51,56,62,64,67,69};
 static int lenEye = sizeof(eye)/sizeof(eye[0]);
 
-static int mouse[] = {88,89,90,91,99,104,110,117};
-static int lenMouse = sizeof(mouse)/sizeof(mouse[0]);
+static int mouseHappy[] = {86,93,99,104,112,113,114,115};
+static int lenMouseHappy = sizeof(mouseHappy)/sizeof(mouseHappy[0]);
+
+static int mouseDepressed[] = {88,89,90,91,99,104,110,117};
+static int lenMousDepressede = sizeof(mouseDepressed)/sizeof(mouseDepressed[0]);
 
 static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,108, 119,120,121,130,131,132,133,134,141,142,143};
 static int lenBackground = sizeof(background)/sizeof(background[0]);
@@ -277,7 +280,7 @@ void showFail() {
             trellis.setPixelColor(i, 0x9B00F7);
 
         // 입 부분
-        else if (isExist(mouse, lenMouse, i))
+        else if (isExist(mouseDepressed, lenMouseDepressed, i))
     //                    if (isExist(mouse, i))
             trellis.setPixelColor(i, 0x9B00F7);
 
@@ -368,7 +371,7 @@ void communication()
                         trellis.setPixelColor(i, 0x0085FF);
 
                     // 입 부분
-                    else if (isExist(mouse, lenMouse, i))
+                    else if (isExist(mouseHappy, lenMouseHappy, i))
             //                    if (isExist(mouse, i))
                         trellis.setPixelColor(i, 0x0085FF);
 
