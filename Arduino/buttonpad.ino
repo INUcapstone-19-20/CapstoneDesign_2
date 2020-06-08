@@ -117,9 +117,9 @@ void initButtonState() {
         for(int i=0; i<Y_DIM*X_DIM; i++) {
         // all neopixels off
         trellis.setPixelColor(i, 0x000000);
-        trellis.show();
         ispressed[i] = 0;
     }
+    trellis.show();
 }
 
 void setPlayer(Player *p, String id) {
@@ -208,8 +208,8 @@ void showMine(Player p) {
     uint8_t i = 0;
     uint8_t interval = 1;
     String s = "";
-
-    Serial.print(p.ID + "Boom");
+//    if(!isOver) Serial.println(p.ID + "Boom");
+    
     while (1)
     {
         if(mode == "Single") {  // 싱글모드
@@ -234,7 +234,7 @@ void showMine(Player p) {
             i += interval;
         }
         trellis.show();
-        delay(5);
+//        delay(5);
 
         while(Serial.available()) {
           // 시리얼 읽어서 문자열로 저장
@@ -242,7 +242,9 @@ void showMine(Player p) {
         }
 
          if(s.substring(0,4) == "Mine") {
+             warningDelay = 0;
              turn = "Lock";
+             isOver = false;
              pSingle.mine = atoi(s.substring(4,7).c_str());
              initButtonState();
              setPlayerColors(&pSingle);
@@ -355,7 +357,7 @@ void communication()
                     else trellis.setPixelColor(i, 0xAAAA00);
                     
                     trellis.show();
-                    delay(30);    
+                    delay(20);    
                 }   
                 delay(2500);
 
@@ -431,6 +433,7 @@ void communication()
     }
     // 싱글모드 게임 실패 신호를 수신한 경우
     else if (check == "Fail") {
+        warningDelay = 0;
         turn = "Lock";
         isOver = true;
         showFail();
@@ -450,6 +453,7 @@ TrellisCallback led_ON(keyEvent evt) {
             ispressed[evt.bit.NUM] = 1;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
+                Serial.println("SingleBoom");
                 showColors(pSingle);
                 showMine(pSingle);
                 // 파이썬에 '게임 종료' 전송
@@ -472,11 +476,13 @@ TrellisCallback red_ON(keyEvent evt) {
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == pRed.mine) { // 빨간 플레이어 패배
+                    Serial.println("RedBoom");
                     showColors(pRed);
                     showMine(pRed);
                     // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == pBlue.mine) { // 빨간 플레이어 승리
+                    Serial.println("BlueBoom");
                     showColors(pBlue);
                     showMine(pBlue);
                     // 파이썬에 '게임 종료' 전송 
@@ -500,11 +506,13 @@ TrellisCallback blue_ON(keyEvent evt) {
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == pRed.mine) { // 파란 플레이어 승리
+                    Serial.println("RedBoom");
                     showColors(pRed);
                     showMine(pRed);
                     // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == pBlue.mine) { // 파란 플레이어 패배
+                    Serial.println("BlueBoom");
                     showColors(pBlue);
                     showMine(pBlue);
                     // 파이썬에 '게임 종료' 전송

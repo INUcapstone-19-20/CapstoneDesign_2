@@ -74,16 +74,16 @@ border:none;</string>
    <widget class="QLabel" name="lb_winner">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>25</x>
       <y>110</y>
-      <width>480</width>
+      <width>291</width>
       <height>70</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>NanumSquareRound</family>
-      <pointsize>36</pointsize>
+      <pointsize>32</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -98,6 +98,23 @@ border:none;</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_image">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>40</y>
+      <width>134</width>
+      <height>180</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>lb_winner</zorder>
+   <zorder>lb_image</zorder>
+   <zorder>btn_restart</zorder>
+   <zorder>btn_new</zorder>
   </widget>
  </widget>
  <resources/>

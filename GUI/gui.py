@@ -92,8 +92,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
-    # before.main.showFullScreen()
-    before.main.show()
+    before.main.showFullScreen()
+    # before.main.show()
     before.close()
 
 
@@ -254,6 +254,7 @@ class Single_Start(QMainWindow):
         self.firstClick = False
 
     def singleFail(self):
+        communication.fail_ToArduino()
         self.serth.stop()
         self.serth.exit()
         self.qtimer.stop()
@@ -297,6 +298,10 @@ class Single_Start(QMainWindow):
     def ticktock(self):
         if self.limit_time == 0: 
             self.singleFail()
+        elif self.limit_time <= 6:
+            communication.Warn_ToArduino(150)
+        elif self.limit_time <= 11:
+            communication.Warn_ToArduino(300)
 
         global current_time
         current_time += 1
@@ -677,9 +682,12 @@ class Result(QMainWindow):
 
         self.winner = winner
         if self.winner == "Red":
-            self.lb_winner.setText("[빨강 플레이어 승리!]")
+            # self.lb_winner.setText("[빨강 플레이어 승리!]")
+            self.lb_winner.setText("빨강 플레이어 승리!")
+            self.lb_image.setStyleSheet('image:url(res/win_red.png); border:0px;')
         elif self.winner == "Blue":
-            self.lb_winner.setText("[파랑 플레이어 승리!]")
+            self.lb_winner.setText("파랑 플레이어 승리!")
+            self.lb_image.setStyleSheet('image:url(res/win_blue.png); border:0px;')
 
 
         self.btn_restart.clicked.connect(self.restartClick)
@@ -698,7 +706,7 @@ class Blue_Loose(QMainWindow):
         uic.loadUi("ui/blue_loose.ui", self)
 
         self.btn_bbom.setStyleSheet('image:url(res/blueexplosion.png); border:0px;')
-        # self.btn_bbom.clicked.connect(self.gotoResult)
+        # self.btn_bbom.clicked.connect(self.gotoResult)ㅎ
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(5000)
         self.qtimer.setSingleShot(True)
@@ -737,8 +745,8 @@ if __name__ == '__main__':
 
     # GUI 시작
     ex = Start()
-    # ex = ModeSelect()
+    # ex = Result("Blue")
 
-    # ex.showFullScreen()
-    ex.show()
+    ex.showFullScreen()
+    # ex.show()
     sys.exit(app.exec_())
