@@ -492,6 +492,7 @@ TrellisCallback led_ON(keyEvent evt) {
                     Serial.println("Click");
                     cnt = 10;
                     isOver = true;
+                    showColors(pSingle);
                     showFail();
                     showMine(pSingle);
                     
