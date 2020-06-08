@@ -92,8 +92,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
-    before.main.showFullScreen()
-    # before.main.show()
+    # before.main.showFullScreen()
+    before.main.show()
     before.close()
 
 
@@ -156,7 +156,6 @@ class Single_Setting(QMainWindow):
         self.setLabel()
 
         # Button Function
-        self.lb_popup.setVisible(False)
         self.btn_countup.clicked.connect(self.countUp)
         self.btn_countdown.clicked.connect(self.countDown)
         self.btn_timerup.clicked.connect(self.timeUp)
@@ -165,9 +164,10 @@ class Single_Setting(QMainWindow):
         self.btn_settingback.clicked.connect(partial(changeScreen, self, 3))
 
         # Popup Message
-        self.save_image = QPixmap("res/saved.png").scaled(388,127)
-        # self.lb_popup.setPixmap(self.save_image)
         self.lb_popup.setStyleSheet('image:url(res/saved.png);')
+        self.lb_popup.setVisible(False)
+        self.effect = DiceThread(300, 0.005, 300)
+        self.effect.cntChanged.connect(self.savePopup)
 
         # Button Image
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
@@ -221,9 +221,6 @@ class Single_Setting(QMainWindow):
         global set_count, set_time
         set_count = self.temp_count
         set_time = self.temp_time
-
-        self.effect = DiceThread(300, 0.005, 300)
-        self.effect.cntChanged.connect(self.savePopup)
         self.effect.start()
 
 class Single_Start(QMainWindow):
@@ -238,11 +235,29 @@ class Single_Start(QMainWindow):
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(1000)
         self.qtimer.timeout.connect(self.ticktock)
-        
+
         self.serth = SerThread("single")
         self.serth.clickChanged.connect(self.buttonClicked)
         self.serth.start()
 
+        # Popup Message
+        self.lb_popup.setStyleSheet('image:url(res/warning.png);')
+        self.lb_popup.setVisible(False)
+        self.effect = DiceThread(2000, 0.005, 2000)
+        self.effect.cntChanged.connect(self.warnPopup)
+        
+
+    def warnPopup(self, value):
+        level = value % 250
+        if level < 100: opacity = level * 0.01
+        elif level < 200: opacity = 0.99 - (level - 100) * 0.01
+        else: opacity = 0.0
+
+        opacity_effect = QGraphicsOpacityEffect(self.lb_popup)
+        opacity_effect.setOpacity(opacity)
+        self.lb_popup.setGraphicsEffect(opacity_effect)
+        if value == 1999: self.lb_popup.setVisible(False)
+        else: self.lb_popup.show()
 
     def reset(self):
         global current_count, current_time
@@ -252,6 +267,7 @@ class Single_Start(QMainWindow):
         self.limit_time = set_time
         self.limit_count = set_count
         self.firstClick = False
+        self.warning = 0
 
     def singleFail(self):
         communication.fail_ToArduino()
@@ -278,6 +294,9 @@ class Single_Start(QMainWindow):
             changeScreen(self, 8)
         elif(self.limit_count == 0):
             self.singleFail()
+        elif(self.limit_count <= 3):
+            self.lb_count.setStyleSheet('color: rgb(255, 0, 0);')
+            self.lb_counttext.setStyleSheet('color: rgb(255, 0, 0);')
 
 
     def setLabel(self):
@@ -298,9 +317,14 @@ class Single_Start(QMainWindow):
     def ticktock(self):
         if self.limit_time == 0: 
             self.singleFail()
-        elif self.limit_time <= 6:
+        elif self.warning != 2 & (self.limit_time <= 6):
+            self.warning = 2
             communication.Warn_ToArduino(150)
-        elif self.limit_time <= 11:
+        elif self.warning != 1 & (self.limit_time <= 11):
+            self.warning = 1
+            self.effect.start()
+            self.lb_time.setStyleSheet('color: rgb(255, 0, 0);')
+            self.lb_timetext.setStyleSheet('color: rgb(255, 0, 0);')
             communication.Warn_ToArduino(300)
 
         global current_time
@@ -322,8 +346,8 @@ class Single_Win(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Single")
-        self.next.showFullScreen()
-        # self.next.show()
+        # self.next.showFullScreen()
+        self.next.show()
         self.close()
 
     def setLabel(self):
@@ -355,8 +379,8 @@ class Single_Loose(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Single")
-        self.next.showFullScreen()
-        # self.next.show()
+        # self.next.showFullScreen()
+        self.next.show()
         self.close()
 
     def setLabel(self):
@@ -695,8 +719,8 @@ class Result(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Battle")
-        self.next.showFullScreen()
-        # self.next.show()
+        # self.next.showFullScreen()
+        self.next.show()
         self.close()
 
 
@@ -715,8 +739,8 @@ class Blue_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Red")
-        self.next.showFullScreen()
-        # self.next.show()
+        # self.next.showFullScreen()
+        self.next.show()
         self.close()
 
 class Red_Loose(QMainWindow):
@@ -734,8 +758,8 @@ class Red_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Blue")
-        self.next.showFullScreen()
-        # self.next.show()
+        # self.next.showFullScreen()
+        self.next.show()
         self.close()
 
 
@@ -747,6 +771,6 @@ if __name__ == '__main__':
     ex = Start()
     # ex = Result("Blue")
 
-    ex.showFullScreen()
-    # ex.show()
+    # ex.showFullScreen()
+    ex.show()
     sys.exit(app.exec_())

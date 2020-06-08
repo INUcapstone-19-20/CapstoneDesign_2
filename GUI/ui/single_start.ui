@@ -17,10 +17,10 @@
    <string notr="true">background-color: rgb(217, 217, 217);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="lb_counttext">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>90</y>
       <width>260</width>
       <height>71</height>
@@ -44,10 +44,10 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="lb_timetext">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>160</y>
       <width>260</width>
       <height>71</height>
@@ -119,6 +119,22 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_popup">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>46</x>
+      <y>100</y>
+      <width>388</width>
+      <height>127</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
