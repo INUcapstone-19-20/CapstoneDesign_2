@@ -267,6 +267,29 @@ void showMine(Player p) {
     }
 }
 
+// 로딩시 출력하는 애니메이션
+void showRoadingAnimation()
+{
+    for(int i=0; i<Y_DIM*X_DIM; i++) 
+    {
+        // 선글라스 부분
+        if (isExist(sunglasses, lenSunglasses, i))
+            trellis.setPixelColor(i, sunglassesColor);
+        // 입 부분
+        else if (isExist(mouseHappy, lenMouseHappy, i))
+            trellis.setPixelColor(i, mouseHappyColor);
+        // 배경 부분
+        else if (isExist(background, lenBackground, i))
+            trellis.setPixelColor(i, backgroundColor);
+        // 이모티콘 얼굴 부분
+        else trellis.setPixelColor(i, faceColor);
+        
+        trellis.show();
+        delay(20);    
+    }   
+}
+
+// 싱글모드 실패시 출력하는 애니메이션
 void showFailAnimation() 
 {
    for(int i=0; i<Y_DIM*X_DIM; i++)
@@ -274,15 +297,12 @@ void showFailAnimation()
         // 눈 부분
         if (isExist(xEye, lenXEye, i))
             trellis.setPixelColor(i, xEyeColor);
-
         // 입 부분
         else if (isExist(mouseDepressed, lenMouseDepressed, i))
             trellis.setPixelColor(i, mouseDepressedColor);
-
         // 배경 부분
         else if (isExist(background, lenBackground, i))
             trellis.setPixelColor(i, backgroundColor);
-
         // 이모티콘 얼굴 부분
         else trellis.setPixelColor(i, faceColor);
         
@@ -332,24 +352,9 @@ void communication()
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
-                // 선글라스 이모티콘 애니메이션
-                for(int i=0; i<Y_DIM*X_DIM; i++) 
-                {
-                    // 선글라스 부분
-                    if (isExist(sunglasses, lenSunglasses, i))
-                        trellis.setPixelColor(i, sunglassesColor);
-                    // 입 부분
-                    else if (isExist(mouseHappy, lenMouseHappy, i))
-                        trellis.setPixelColor(i, mouseHappyColor);
-                    // 배경 부분
-                    else if (isExist(background, lenBackground, i))
-                        trellis.setPixelColor(i, backgroundColor);
-                    // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, faceColor);
-                    
-                    trellis.show();
-                    delay(20);    
-                }   
+                // 선글라스 낀 이모티콘 애니메이션 출력
+                showRoadingAnimation();
+
                 delay(2500);
 
                 // LED 소등 및 버튼 activate
