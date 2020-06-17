@@ -46,20 +46,33 @@ Adafruit_MultiTrellis trellis((Adafruit_NeoTrellis *)t_array, Y_DIM/4, X_DIM/4);
 static uint8_t ispressed[Y_DIM*X_DIM]; // button state. 1 is pressed, 0 is not pressed
 
 // 애니메이션
+// 선글라스(로딩시)
 static int sunglasses[] = {38,39,40,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59,62,63,64,67,68,69};
 static int lenSunglasses = sizeof(sunglasses)/sizeof(sunglasses[0]);
+#define sunglassesColor 0x0085FF
 
-static int eye[] = {38,40,43,45,51,56,62,64,67,69};
-static int lenEye = sizeof(eye)/sizeof(eye[0]);
+// X 모양 눈(싱글모드 실패시)
+static int xEye[] = {38,40,43,45,51,56,62,64,67,69};
+static int lenXEye = sizeof(xEye)/sizeof(xEye[0]);
+#define xEyeColor 0x9B00F7
 
+// 웃는 입(로딩시)
 static int mouseHappy[] = {86,93,99,104,112,113,114,115};
 static int lenMouseHappy = sizeof(mouseHappy)/sizeof(mouseHappy[0]);
+#define mouseHappyColor 0x0085FF
 
+// 우울한 입(싱글모드 실패시)
 static int mouseDepressed[] = {88,89,90,91,99,104,110,117};
 static int lenMouseDepressed = sizeof(mouseDepressed)/sizeof(mouseDepressed[0]);
+#define mouseDepressedColor 0x9B00F7
 
+// 배경
 static int background[] = {0,1,2,9,10,11,12,13,22,23,24,35,108, 119,120,121,130,131,132,133,134,141,142,143};
 static int lenBackground = sizeof(background)/sizeof(background[0]);
+#define backgroundColor 0x000000
+
+// 이모티콘 얼굴 부분
+#define faceColor 0xAAAA00
 
 // static char fail[Y_DIM*X_DIM] = {
 //     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
@@ -89,6 +102,7 @@ static char modeM[2];   // 모드
 
 // 턴 저장 변수
 static String turn;
+
 // 모드 저장 변수
 static String mode;
 
@@ -253,79 +267,74 @@ void showMine(Player p) {
     }
 }
 
-void showFail() {
+// 로딩시 출력하는 애니메이션
+void showRoadingAnimation()
+{
+    for(int i=0; i<Y_DIM*X_DIM; i++) 
+    {
+        // 선글라스 부분
+        if (isExist(sunglasses, lenSunglasses, i))
+            trellis.setPixelColor(i, sunglassesColor);
+        // 입 부분
+        else if (isExist(mouseHappy, lenMouseHappy, i))
+            trellis.setPixelColor(i, mouseHappyColor);
+        // 배경 부분
+        else if (isExist(background, lenBackground, i))
+            trellis.setPixelColor(i, backgroundColor);
+        // 이모티콘 얼굴 부분
+        else trellis.setPixelColor(i, faceColor);
+        
+        trellis.show();
+        delay(20);    
+    }   
+}
+
+// 싱글모드 실패시 출력하는 애니메이션
+void showFailAnimation() 
+{
    for(int i=0; i<Y_DIM*X_DIM; i++)
    {
         // 눈 부분
-        if (isExist(eye, lenEye, i))
-            trellis.setPixelColor(i, 0x9B00F7);
-
+        if (isExist(xEye, lenXEye, i))
+            trellis.setPixelColor(i, xEyeColor);
         // 입 부분
         else if (isExist(mouseDepressed, lenMouseDepressed, i))
-            trellis.setPixelColor(i, 0x9B00F7);
-
+            trellis.setPixelColor(i, mouseDepressedColor);
         // 배경 부분
         else if (isExist(background, lenBackground, i))
-            trellis.setPixelColor(i, 0x000000);
-
+            trellis.setPixelColor(i, backgroundColor);
         // 이모티콘 얼굴 부분
-        else trellis.setPixelColor(i, 0xAAAA00);
+        else trellis.setPixelColor(i, faceColor);
         
         trellis.show();
         delay(10);
     }
 }
 
-// 배열 속 값 존재여부
-int isExist(int a[], int n, int key){
-    for(int i = 0; i < n; i++){
-        if(a[i]==key){
+// 배열 속 값 존재 여부 판단 함수
+int isExist(int a[], int n, int key)        // a[] : 대상 배열, n : 배열 길이, key : 찾고자하는 값
+{           
+    for(int i = 0; i < n; i++)
+    {
+        if(a[i]==key)
+        {
             return true;
         }
     }
     return false;
 }
 
-//void animation(uint32_t sunglassesColor){
-//     for(int i=0; i<Y_DIM*X_DIM; i++) 
-//     {
-//        // starting effect
-//        // 선글라스 부분
-//        if (isExist(sunglasses, lensunglasses, i))
-////                    if (isExist(sunglasses, i))
-//            trellis.setPixelColor(i, sunglassesColor);
-//
-//        // 입 부분
-//        else if (isExist(mouse, lenmouse, i))
-////                    if (isExist(mouse, i))
-//            trellis.setPixelColor(i, 0xFFFFFF);
-//
-//        // 배경 부분
-//        else if (isExist(background, lenBackground, i))
-////                    else if (isExist(background, i))
-//            trellis.setPixelColor(i, 0x000000);
-//
-//        // 이모티콘 얼굴 부분
-//        else trellis.setPixelColor(i, 0xFFFF00);
-//        
-//        trellis.show();
-//        delay(30);    
-//    }   
-//}
-
-
-
 // 라즈베리파이와의 통신 함수
 void communication()
 {
-    while(Serial.available()) {
+    while(Serial.available()) 
+    {
     // 시리얼 읽어서 문자열로 저장
     Serial.setTimeout(20);
     sig = Serial.readString();
-    // Serial.println(sig);
     }
 
-    // 문자열 슬라이싱 (Mode or Mine or Turn or Dang or Over)
+    // 문자열 슬라이싱 (Mode or Mine or Turn or Warn or Fail)
     check = sig.substring(0,4);
 
     // 모드 설정 시리얼을 수신한 경우
@@ -336,32 +345,21 @@ void communication()
             // 모드 저장
             mode = sig.substring(4,10);
 
-            if(mode == "Loding") {
+            // 로딩하는 동안 세팅 및 애니메이션 출력
+            if(mode == "Loding") 
+            {
                 setPlayer(&pSingle, "Single");
                 setPlayer(&pRed, "Red");
                 setPlayer(&pBlue, "Blue");
 
-                // starting effect
-                for(int i=0; i<Y_DIM*X_DIM; i++) 
-                {
-                    // 선글라스 부분
-                    if (isExist(sunglasses, lenSunglasses, i))
-                        trellis.setPixelColor(i, 0x0085FF);
-                    // 입 부분
-                    else if (isExist(mouseHappy, lenMouseHappy, i))
-                        trellis.setPixelColor(i, 0x0085FF);
-                    // 배경 부분
-                    else if (isExist(background, lenBackground, i))
-                        trellis.setPixelColor(i, 0x000000);
-                    // 이모티콘 얼굴 부분
-                    else trellis.setPixelColor(i, 0xAAAA00);
-                    
-                    trellis.show();
-                    delay(20);    
-                }   
+                // 선글라스 낀 이모티콘 애니메이션 출력
+                showRoadingAnimation();
+
                 delay(2500);
 
-                for(int i=0; i<Y_DIM*X_DIM; i++) {
+                // LED 소등 및 버튼 activate
+                for(int i=0; i<Y_DIM*X_DIM; i++) 
+                {
                     // all neopixels off
                     trellis.setPixelColor(i, 0x000000);
                     trellis.show();
@@ -379,13 +377,15 @@ void communication()
         // 의도하지않은 값 방지
         if (sig.length()==10)
         {
+            // 싱글모드
             if(mode == "Single") 
             {
+                // single_mine 부분 슬라이싱 및 저장
                 uint16_t single_mine = atoi(sig.substring(4,7).c_str());
-
                 pSingle.mine = single_mine;
 
                 initButtonState();
+
                 // set color array
                 setPlayerColors(&pSingle);
 
@@ -393,18 +393,22 @@ void communication()
                 sig = "";
                 check = "";
             }
+            // 배틀모드
             else if(mode == "Battle") 
             {
                 sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
                 sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
+
                 // int로 변환
                 uint16_t red_mine = atoi(red);
                 uint16_t blue_mine = atoi(blue);
                 
+                // 지뢰 저장
                 pRed.mine = red_mine;
                 pBlue.mine = blue_mine;
 
                 initButtonState();
+
                 // set color array
                 setPlayerColors(&pRed);
                 setPlayerColors(&pBlue);
@@ -423,8 +427,6 @@ void communication()
     // 싱글모드 지뢰탐색횟수, 탐색시간 초과 위기를 수신한 경우
     else if (check == "Warn")
     {
-        // 딜레이 시간 같이 보내주세요
-        // ex) delay(250) -> Warn250, delay(100) -> Warn100
         // 의도하지않은 값 방지
         if (sig.length()==7)
         {
@@ -432,12 +434,13 @@ void communication()
         }
     }
     // 싱글모드 게임 실패 신호를 수신한 경우
-    else if (check == "Fail") {
-        warningDelay = 0;
-        turn = "Lock";
+    else if (check == "Fail") 
+    {
+        warningDelay = 0;               // 딜레이 초기화
+        turn = "Lock";                  // 버튼 클릭 방지
         isOver = true;
-        showFail();
-        showMine(pSingle);
+        showFailAnimation();            // 실패 애니메이션 출력
+        showMine(pSingle);              // 지뢰 위치 출력
     }
 
     // 게임진행에 필요없는 시리얼인 경우

@@ -36,7 +36,7 @@ class SerThread(QThread):
         while True:
             if self.stop_flag: break
 
-            self.onClick = communication.click_FromArduino()
+            self.onClick = communication.click_fromArduino()
             if self.onClick == 1:
                 self.clickChanged.emit(communication.count_turn)
             elif self.onClick == 99:
@@ -124,7 +124,7 @@ class ModeSelect(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/modeselect.ui", self)
-        communication.set_Mine()
+        communication.set_mine()
         # Button connect
         self.btn_single.clicked.connect(partial(changeScreen, self, 3))
         self.btn_battle.clicked.connect(partial(changeScreen, self, 11))
@@ -134,12 +134,12 @@ class SingleMode(QMainWindow):
         super().__init__()
         uic.loadUi("ui/singlemode.ui", self)
         communication.mode_toArduino("Single")
-        # communication.set_Mine()
+        # communication.set_mine()
 
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(100)
         self.qtimer.setSingleShot(True)
-        self.qtimer.timeout.connect(communication.set_Mine)
+        self.qtimer.timeout.connect(communication.set_mine)
         self.qtimer.start()
 
         
@@ -227,7 +227,7 @@ class Single_Start(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_start.ui", self)
-        communication.turn_ToArduino("Solo")
+        communication.turn_toArduino("Solo")
 
         self.reset()
         self.setLabel()
@@ -270,7 +270,7 @@ class Single_Start(QMainWindow):
         self.warning = 0
 
     def singleFail(self):
-        communication.fail_ToArduino()
+        communication.fail_toArduino()
         self.serth.stop()
         self.serth.exit()
         self.qtimer.stop()
@@ -318,7 +318,7 @@ class Single_Start(QMainWindow):
             self.singleFail()
         elif self.warning != 2 & (self.limit_time <= 6):
             self.warning = 2
-            communication.Warn_ToArduino(150)
+            communication.warn_toArduino(150)
         elif self.warning != 1 & (self.limit_time <= 11):
             self.warning = 1
             self.effect.start()
@@ -335,7 +335,7 @@ class Single_Win(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_win.ui", self)
-        communication.turn_ToArduino("Lock")
+        communication.turn_toArduino("Lock")
 
         self.setLabel()
 
@@ -368,7 +368,7 @@ class Single_Loose(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("ui/single_loose.ui", self)
-        communication.turn_ToArduino("Lock")
+        communication.turn_toArduino("Lock")
 
         self.setLabel()
 
@@ -402,7 +402,7 @@ class Replay_Game(QMainWindow):
     def __init__(self, mode):
         super().__init__()
         uic.loadUi("ui/Replay_Game.ui", self)
-        communication.set_Mine()
+        communication.set_mine()
         self.mode = mode
         
         self.qtimer = QTimer(self)
@@ -436,7 +436,7 @@ class BattleMode(QMainWindow):
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(100)
         self.qtimer.setSingleShot(True)
-        self.qtimer.timeout.connect(communication.set_Mine)
+        self.qtimer.timeout.connect(communication.set_mine)
         self.qtimer.start()
         
         self.btn_bluedice.clicked.connect(self.throwBlue)
@@ -567,7 +567,7 @@ class Redturn(QMainWindow):
             self.filename += str(value) + '.png); border:0px;'
             self.btn_redturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino("Lock")
+                communication.turn_toArduino("Lock")
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -596,13 +596,13 @@ class Redturn(QMainWindow):
         self.lb_redturn.setText("빨강 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino("Lock")
+            communication.turn_toArduino("Lock")
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 19))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
-            communication.turn_ToArduino("Red_")
+            communication.turn_toArduino("Red_")
             self.serth.start()
             
 
@@ -651,7 +651,7 @@ class Blueturn(QMainWindow):
             
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
-                communication.turn_ToArduino("Lock")
+                communication.turn_toArduino("Lock")
                 self.timer = DiceThread(60)
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
@@ -679,13 +679,13 @@ class Blueturn(QMainWindow):
         self.lb_blueturn.setText("파랑 플레이어 턴")
         
         if self.eye == 0:
-            communication.turn_ToArduino("Lock")
+            communication.turn_toArduino("Lock")
             self.timer = DiceThread(60)
             self.timer.finished.connect(partial(changeScreen, self, 15))
             self.timer.start()
         elif self.eye > 0:
             communication.count_turn = self.eye
-            communication.turn_ToArduino("Blue")
+            communication.turn_toArduino("Blue")
             self.serth.start()
 
 
