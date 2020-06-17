@@ -5,8 +5,8 @@ import time
 
 # 시리얼 포트 설정
 ser = serial.Serial(
-    # port='/dev/ttyACM0',          # 라즈베리파이 포트
-    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
+    port='/dev/ttyACM0',          # 라즈베리파이 포트
+    # port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
     baudrate=115200,
     timeout = 1
 )
