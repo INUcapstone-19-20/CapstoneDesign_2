@@ -7,8 +7,6 @@
 // define color
 #define SINGLE1 0x00FF12
 #define SINGLE2 0x55FF66
-//#define SINGLE3 0x99FFCC
-//#define SINGLE3 0x94E594
 #define SINGLE3 0x557755
 #define RED1 0x990000
 #define RED2 0xDD1111
@@ -74,38 +72,11 @@ static int lenBackground = sizeof(background)/sizeof(background[0]);
 // 이모티콘 얼굴 부분
 #define faceColor 0xAAAA00
 
-// static char fail[Y_DIM*X_DIM] = {
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-//     'f', 'f', 'f', '0', 'a', '0', 'i', 'i', 'i', 'l', '0', '0', 
-//     'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-//     'f', 'f', 'f', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-//     'f', '0', '0', 'a', 'a', 'a', '0', 'i', '0', 'l', '0', '0', 
-//     'f', '0', '0', 'a', '0', 'a', '0', 'i', '0', 'l', '0', '0', 
-//     'f', '0', '0', 'a', '0', 'a', 'i', 'i', 'i', 'l', 'l', 'l', 
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-//     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
-// };
-
 // 시리얼 수신 변수
 static String sig = "";
-
-// 시리얼 수신 시 문자열 슬라이싱 용 변수_문자열의 끝은 NULL
-static String check;
-static char red[4];
-static char blue[4];
-static char mine[4];    // 싱글모드 지뢰
-static char turnT[2];
-static char modeM[2];   // 모드
-
-// 턴 저장 변수
-static String turn;
-
-// 모드 저장 변수
-static String mode;
-
+static String check; // Mode or Mine or Turn or Warn or Fail
+static String turn; // Solo or Red_ or Blue or Lock
+static String mode; // Loding or Single or Battle
 static int warningDelay = 0;
 static boolean isOver = false;
 
@@ -129,9 +100,8 @@ double distance(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 
 void initButtonState() {
         for(int i=0; i<Y_DIM*X_DIM; i++) {
-        // all neopixels off
-        trellis.setPixelColor(i, 0x000000);
-        ispressed[i] = 0;
+        trellis.setPixelColor(i, 0x000000); // all leds off
+        ispressed[i] = 0; // init button pressed state
     }
     trellis.show();
 }
@@ -222,7 +192,6 @@ void showMine(Player p) {
     uint8_t i = 0;
     uint8_t interval = 1;
     String s = "";
-//    if(!isOver) Serial.println(p.ID + "Boom");
     
     while (1)
     {
@@ -248,7 +217,6 @@ void showMine(Player p) {
             i += interval;
         }
         trellis.show();
-//        delay(5);
 
         while(Serial.available()) {
           // 시리얼 읽어서 문자열로 저장
@@ -290,7 +258,7 @@ void showRoadingAnimation()
 }
 
 // 싱글모드 실패시 출력하는 애니메이션
-void showFailAnimation() 
+void showFailAnimation()
 {
    for(int i=0; i<Y_DIM*X_DIM; i++)
    {
@@ -342,7 +310,7 @@ void communication()
     {   // 의도하지않은 값 방지
         if (sig.length()==10)
         {
-            // 모드 저장
+            // 모드 저장 (Loding or Single or Battle)
             mode = sig.substring(4,10);
 
             // 로딩하는 동안 세팅 및 애니메이션 출력
@@ -381,8 +349,7 @@ void communication()
             if(mode == "Single") 
             {
                 // single_mine 부분 슬라이싱 및 저장
-                uint16_t single_mine = atoi(sig.substring(4,7).c_str());
-                pSingle.mine = single_mine;
+                pSingle.mine = atoi(sig.substring(4,7).c_str());
 
                 initButtonState();
 
@@ -396,16 +363,8 @@ void communication()
             // 배틀모드
             else if(mode == "Battle") 
             {
-                sig.substring(4,7).toCharArray(red,4);          // red_mine 부분 슬라이싱
-                sig.substring(7,10).toCharArray(blue,4);        // blue_mine 부분 슬라이싱
-
-                // int로 변환
-                uint16_t red_mine = atoi(red);
-                uint16_t blue_mine = atoi(blue);
-                
-                // 지뢰 저장
-                pRed.mine = red_mine;
-                pBlue.mine = blue_mine;
+                pRed.mine = atoi(sig.substring(4,7).c_str());          // red_mine 부분 슬라이싱 및 저장
+                pBlue.mine = atoi(sig.substring(7,10).c_str());        // blue_mine 부분 슬라이싱 및 저장
 
                 initButtonState();
 
@@ -420,7 +379,7 @@ void communication()
     {   // 의도하지않은 값 방지
         if (sig.length()==8)
         {
-            // turn 부분 슬라이싱 (trunT : 'Solo' or 'Red_' or 'Blue' or 'Lock')
+            // turn 부분 슬라이싱 (Solo or Red_ or Blue or Lock)
             turn = sig.substring(4,8);
         }
     }
@@ -456,7 +415,7 @@ TrellisCallback led_ON(keyEvent evt) {
             ispressed[evt.bit.NUM] = 1;
             // 누른 버튼이 지뢰일 경우
             if(evt.bit.NUM == pSingle.mine) { // 지뢰 탐색 성공
-                Serial.println("SingleBoom");
+                Serial.println("SingleBoom"); // 파이썬에 '게임 종료' 전송
                 showColors(pSingle);
                 showMine(pSingle);
                 // 파이썬에 '게임 종료' 전송
@@ -465,7 +424,7 @@ TrellisCallback led_ON(keyEvent evt) {
             else {
                 trellis.setPixelColor(evt.bit.NUM, pSingle.colors[evt.bit.NUM]);
                 trellis.show();
-                Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                Serial.println("Click"); // 파이썬에 '버튼 클릭 이벤트 발생' 전송
             }                
         }
     }
@@ -479,22 +438,20 @@ TrellisCallback red_ON(keyEvent evt) {
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == pRed.mine) { // 빨간 플레이어 패배
-                    Serial.println("RedBoom");
+                    Serial.println("RedBoom"); // 파이썬에 '게임 종료' 전송
                     showColors(pRed);
                     showMine(pRed);
-                    // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == pBlue.mine) { // 빨간 플레이어 승리
-                    Serial.println("BlueBoom");
+                    Serial.println("BlueBoom"); // 파이썬에 '게임 종료' 전송
                     showColors(pBlue);
                     showMine(pBlue);
-                    // 파이썬에 '게임 종료' 전송 
                 }
                 // 누른 버튼이 지뢰가 아닐 경우
                 else {
                     trellis.setPixelColor(evt.bit.NUM, pRed.colors[evt.bit.NUM]);
                     trellis.show();
-                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                    Serial.println("Click"); // 파이썬에 '버튼 클릭 이벤트 발생' 전송
                 }                
             }
         }
@@ -509,22 +466,20 @@ TrellisCallback blue_ON(keyEvent evt) {
                 ispressed[evt.bit.NUM] = 1;
                 // 누른 버튼이 지뢰일 경우
                 if(evt.bit.NUM == pRed.mine) { // 파란 플레이어 승리
-                    Serial.println("RedBoom");
+                    Serial.println("RedBoom"); // 파이썬에 '게임 종료' 전송
                     showColors(pRed);
                     showMine(pRed);
-                    // 파이썬에 '게임 종료' 전송
                 } 
                 else if(evt.bit.NUM == pBlue.mine) { // 파란 플레이어 패배
-                    Serial.println("BlueBoom");
+                    Serial.println("BlueBoom"); // 파이썬에 '게임 종료' 전송
                     showColors(pBlue);
                     showMine(pBlue);
-                    // 파이썬에 '게임 종료' 전송
                 }
                 // 누른 버튼이 지뢰가 아닐 경우
                 else {
                     trellis.setPixelColor(evt.bit.NUM, pBlue.colors[evt.bit.NUM]);
                     trellis.show();
-                    Serial.println("Click"); // 버튼 클릭시 파이썬에 '버튼 클릭 이벤트 발생' 전송
+                    Serial.println("Click"); // 파이썬에 '버튼 클릭 이벤트 발생' 전송
                 }
             }
         }
