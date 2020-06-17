@@ -20,7 +20,7 @@
    <widget class="QLabel" name="lb_counttext">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>90</y>
       <width>260</width>
       <height>71</height>
@@ -47,7 +47,7 @@
    <widget class="QLabel" name="lb_timetext">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>160</y>
       <width>260</width>
       <height>71</height>

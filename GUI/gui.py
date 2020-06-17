@@ -92,8 +92,8 @@ def changeScreen(before, screen_number):
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
-    # before.main.showFullScreen()
-    before.main.show()
+    before.main.showFullScreen()
+    # before.main.show()
     before.close()
 
 
@@ -296,7 +296,6 @@ class Single_Start(QMainWindow):
             self.singleFail()
         elif(self.limit_count <= 3):
             self.lb_count.setStyleSheet('color: rgb(255, 0, 0);')
-            self.lb_counttext.setStyleSheet('color: rgb(255, 0, 0);')
 
 
     def setLabel(self):
@@ -324,7 +323,6 @@ class Single_Start(QMainWindow):
             self.warning = 1
             self.effect.start()
             self.lb_time.setStyleSheet('color: rgb(255, 0, 0);')
-            self.lb_timetext.setStyleSheet('color: rgb(255, 0, 0);')
             communication.Warn_ToArduino(300)
 
         global current_time
@@ -346,8 +344,8 @@ class Single_Win(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Single")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
     def setLabel(self):
@@ -379,8 +377,8 @@ class Single_Loose(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Single")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
     def setLabel(self):
@@ -719,8 +717,8 @@ class Result(QMainWindow):
 
     def restartClick(self):
         self.next = Replay_Game("Battle")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
 
@@ -739,8 +737,8 @@ class Blue_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Red")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
 class Red_Loose(QMainWindow):
@@ -758,19 +756,19 @@ class Red_Loose(QMainWindow):
 
     def gotoResult(self):
         self.next = Result("Blue")
-        # self.next.showFullScreen()
-        self.next.show()
+        self.next.showFullScreen()
+        # self.next.show()
         self.close()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # app.setOverrideCursor(Qt.BlankCursor)
+    app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
     ex = Start()
     # ex = Result("Blue")
 
-    # ex.showFullScreen()
-    ex.show()
+    ex.showFullScreen()
+    # ex.show()
     sys.exit(app.exec_())

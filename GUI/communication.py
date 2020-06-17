@@ -3,17 +3,15 @@ from PyQt5.QtCore import pyqtSignal
 import random
 import time
 
-
-ser = serial.Serial(
-    # port='/dev/ttyACM0',         # 라즈베리파이 포트
-    port='/dev/cu.usbmodem14201',   # 테스트용 노트북 포트
-    baudrate=115200,
-    timeout = 1
-)
-
 BUTTONPAD_NUM = 12 * 12        # 총 버튼 갯수
 mineCiper = 3             # 지뢰 자릿수
 count_turn = 0            # 턴 수
+
+ser = serial.Serial(
+    port='/dev/ttyACM0',         # 라즈베리파이 포트
+    baudrate=115200,
+    timeout = 1
+)
 
 # 모드 설정 전달
 def mode_toArduino(mode):
