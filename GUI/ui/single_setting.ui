@@ -142,41 +142,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_countup">
-    <property name="geometry">
-     <rect>
-      <x>245</x>
-      <y>102</y>
-      <width>45</width>
-      <height>45</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_countdown">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>102</y>
-      <width>45</width>
-      <height>45</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_time">
     <property name="geometry">
      <rect>
@@ -200,38 +165,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_timerdown">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>172</y>
-      <width>45</width>
-      <height>45</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_timerup">
-    <property name="geometry">
-     <rect>
-      <x>245</x>
-      <y>172</y>
-      <width>45</width>
-      <height>45</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_settingsave">
