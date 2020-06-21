@@ -76,23 +76,19 @@ class DiceThread(QThread):
             
 # Screen change
 def changeScreen(before, screen_number):
-    if(screen_number == 1): before.main = Start()
-    elif(screen_number == 2): before.main = ModeSelect()
+    if(screen_number == 2): before.main = ModeSelect()
     elif(screen_number == 3): before.main = SingleMode()
     elif(screen_number == 4): before.main = Single_Setting()
     elif(screen_number == 6): before.main = Single_Start()
     elif(screen_number == 8): before.main = Single_Win()
     elif(screen_number == 9): before.main = Single_Loose()
-    elif(screen_number == 10): before.main = Replay_Game()
     elif(screen_number == 11): before.main = BattleMode()
     elif(screen_number == 15): before.main = Redturn()
     elif(screen_number == 19): before.main = Blueturn()
-    elif(screen_number == 20): before.main = Result()
     elif(screen_number == 23): before.main = Blue_Loose()
     elif(screen_number == 24): before.main = Red_Loose()
     
     before.main.showFullScreen()
-    # before.main.show()
     before.close()
 
 
@@ -134,7 +130,6 @@ class SingleMode(QMainWindow):
         super().__init__()
         uic.loadUi("ui/singlemode.ui", self)
         communication.mode_toArduino("Single")
-        # communication.set_mine()
 
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(100)
@@ -201,7 +196,6 @@ class Single_Setting(QMainWindow):
         self.lb_count.setText(str(self.temp_count))
         self.lb_time.setText(str_minute + ":" + str_second)
 
-
     def countUp(self):
         if self.temp_count < 143: self.temp_count += 1
         self.setLabel()
@@ -210,11 +204,9 @@ class Single_Setting(QMainWindow):
         if self.temp_count > 1: self.temp_count -= 1
         self.setLabel()
 
-
     def timeUp(self):
         if self.temp_time < 3600: self.temp_time += 5
         self.setLabel()
-
 
     def timeDown(self):
         if self.temp_time > 5: self.temp_time -= 5
@@ -225,6 +217,7 @@ class Single_Setting(QMainWindow):
         set_count = self.temp_count
         set_time = self.temp_time
         self.effect.start()
+
 
 class Single_Start(QMainWindow):
     def __init__(self):
@@ -273,7 +266,7 @@ class Single_Start(QMainWindow):
         self.warning = 0
 
     def singleFail(self):
-        communication.fail_ToArduino()
+        communication.fail_toArduino()
         self.serth.stop()
         self.serth.exit()
         self.qtimer.stop()
@@ -300,7 +293,6 @@ class Single_Start(QMainWindow):
         elif(self.limit_count <= 3):
             self.lb_count.setStyleSheet('color: rgb(255, 0, 0);')
 
-
     def setLabel(self):
         time_minute = math.floor(self.limit_time / 60)
         time_second = self.limit_time % 60
@@ -314,7 +306,6 @@ class Single_Start(QMainWindow):
 
         self.lb_count.setText(str(self.limit_count))
         self.lb_time.setText(str_minute + ":" + str_second)
-
 
     def ticktock(self):
         if self.limit_time == 0: 
@@ -339,7 +330,6 @@ class Single_Win(QMainWindow):
         super().__init__()
         uic.loadUi("ui/single_win.ui", self)
         communication.turn_toArduino("Lock")
-
         self.setLabel()
 
         self.btn_restart.clicked.connect(self.restartClick)
@@ -348,7 +338,6 @@ class Single_Win(QMainWindow):
     def restartClick(self):
         self.next = Replay_Game("Single")
         self.next.showFullScreen()
-        # self.next.show()
         self.close()
 
     def setLabel(self):
@@ -372,7 +361,6 @@ class Single_Loose(QMainWindow):
         super().__init__()
         uic.loadUi("ui/single_loose.ui", self)
         communication.turn_toArduino("Lock")
-
         self.setLabel()
 
         self.btn_restart2.clicked.connect(self.restartClick)
@@ -381,7 +369,6 @@ class Single_Loose(QMainWindow):
     def restartClick(self):
         self.next = Replay_Game("Single")
         self.next.showFullScreen()
-        # self.next.show()
         self.close()
 
     def setLabel(self):
@@ -400,7 +387,6 @@ class Single_Loose(QMainWindow):
         self.lb_time.setText(str_minute + ":" + str_second)
         
         
-
 class Replay_Game(QMainWindow):
     def __init__(self, mode):
         super().__init__()
@@ -575,12 +561,10 @@ class Redturn(QMainWindow):
                 self.timer.finished.connect(self.checkBoom)
                 self.timer.start()
                 
-
     def checkBoom(self):
         self.serth.stop()
         self.serth.exit()
         changeScreen(self,19)
-            
 
     def setRed(self, value):
         if(value == 0):
@@ -591,7 +575,6 @@ class Redturn(QMainWindow):
             self.btn_redturn.setStyleSheet('image:url(res/reddice_two2.png); border:0px;')
         elif(value == 3):
             self.btn_redturn.setStyleSheet('image:url(res/reddice_three3.png); border:0px;')
-
 
     def finishRed(self, value):
         self.setRed(value)
@@ -607,7 +590,6 @@ class Redturn(QMainWindow):
             communication.count_turn = self.eye
             communication.turn_toArduino("Red_")
             self.serth.start()
-            
 
     def throwRed(self):
         self.th = DiceThread()
@@ -651,7 +633,6 @@ class Blueturn(QMainWindow):
             changeScreen(self,23)
         else:
             self.filename += str(value) + '.png); border:0px;'
-            
             self.btn_blueturn.setStyleSheet(self.filename)
             if value == 0:
                 communication.turn_toArduino("Lock")
@@ -664,7 +645,6 @@ class Blueturn(QMainWindow):
         self.serth.exit()
         changeScreen(self,15)
 
-
     def setBlue(self, value):
         if(value == 0):
             self.btn_blueturn.setStyleSheet('image:url(res/bluedice_pass.png); border:0px;')
@@ -674,7 +654,6 @@ class Blueturn(QMainWindow):
             self.btn_blueturn.setStyleSheet('image:url(res/bluedice_two2.png); border:0px;')
         elif(value == 3):
             self.btn_blueturn.setStyleSheet('image:url(res/bluedice_three3.png); border:0px;')
-            
 
     def finishBlue(self, value):
         self.setBlue(value)
@@ -691,7 +670,6 @@ class Blueturn(QMainWindow):
             communication.turn_toArduino("Blue")
             self.serth.start()
 
-
     def throwBlue(self):
         self.th = DiceThread()
         self.th.cntChanged.connect(self.setBlue)
@@ -707,13 +685,11 @@ class Result(QMainWindow):
 
         self.winner = winner
         if self.winner == "Red":
-            # self.lb_winner.setText("[빨강 플레이어 승리!]")
             self.lb_winner.setText("빨강 플레이어 승리!")
             self.lb_image.setStyleSheet('image:url(res/win_red.png); border:0px;')
         elif self.winner == "Blue":
             self.lb_winner.setText("파랑 플레이어 승리!")
             self.lb_image.setStyleSheet('image:url(res/win_blue.png); border:0px;')
-
 
         self.btn_restart.clicked.connect(self.restartClick)
         self.btn_new.clicked.connect(partial(changeScreen, self, 2))
@@ -721,7 +697,6 @@ class Result(QMainWindow):
     def restartClick(self):
         self.next = Replay_Game("Battle")
         self.next.showFullScreen()
-        # self.next.show()
         self.close()
 
 
@@ -731,7 +706,6 @@ class Blue_Loose(QMainWindow):
         uic.loadUi("ui/blue_loose.ui", self)
 
         self.btn_bbom.setStyleSheet('image:url(res/blueexplosion.png); border:0px;')
-        # self.btn_bbom.clicked.connect(self.gotoResult)ㅎ
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(5000)
         self.qtimer.setSingleShot(True)
@@ -741,7 +715,6 @@ class Blue_Loose(QMainWindow):
     def gotoResult(self):
         self.next = Result("Red")
         self.next.showFullScreen()
-        # self.next.show()
         self.close()
 
 class Red_Loose(QMainWindow):
@@ -750,7 +723,6 @@ class Red_Loose(QMainWindow):
         uic.loadUi("ui/red_loose.ui", self)
 
         self.btn_rbom.setStyleSheet('image:url(res/redexplosion.png); border:0px;')
-        # self.btn_rbom.clicked.connect(self.gotoResult)
         self.qtimer = QTimer(self)
         self.qtimer.setInterval(5000)
         self.qtimer.setSingleShot(True)
@@ -760,7 +732,6 @@ class Red_Loose(QMainWindow):
     def gotoResult(self):
         self.next = Result("Blue")
         self.next.showFullScreen()
-        # self.next.show()
         self.close()
 
 
@@ -768,10 +739,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setOverrideCursor(Qt.BlankCursor)
 
-    # GUI 시작
-    # ex = Start()
-    ex = ModeSelect()
+    ex = Start()
 
     ex.showFullScreen()
-    # ex.show()
     sys.exit(app.exec_())
