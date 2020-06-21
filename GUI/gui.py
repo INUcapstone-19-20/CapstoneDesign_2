@@ -105,7 +105,7 @@ class Start(QMainWindow):
         self.timer.finished.connect(partial(communication.mode_toArduino, "Loding"))
         self.timer.start()
 
-        self.btn_start.setStyleSheet('image:url(res/bomb3.png); border:0px;')
+        self.btn_start.setStyleSheet('image:url(res/startbomb.png); border:0px;')
 
     def splash(self, value):
         self.text = "loading"
@@ -168,7 +168,7 @@ class Single_Setting(QMainWindow):
         self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px; outline:none;')
         self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px; outline: none;')
         self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px; outline:none;')
-        self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
+        self.btn_settingback.setStyleSheet('image:url(res/btn_back.png); border:0px;')
         
 
     def savePopup(self, value):
