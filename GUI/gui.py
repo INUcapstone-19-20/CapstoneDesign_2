@@ -74,26 +74,6 @@ class DiceThread(QThread):
             elif rand >= 1: rand = 1
         self.result.emit(rand)
             
-
-class LongButton(QPushButton):
-    def __init__(self, *args, **kwargs):
-        QPushButton.__init__(self, *args, **kwargs)
-        self.setAutoRepeat(True)
-        self.setAutoRepeatDelay(500)
-        self.setAutoRepeatInterval(1000)
-        self.clicked.connect(self.handleClicked)
-        self._state = 0
-
-    def handleClicked(self):
-        if self.isDown():
-            if self._state == 0:
-                self._state = 1
-                self.setAutoRepeatInterval(50)
-        elif self._state == 1:
-            self._state = 0
-            self.setAutoRepeatInterval(1000)
-
-
 # Screen change
 def changeScreen(before, screen_number):
     if(screen_number == 1): before.main = Start()
@@ -144,6 +124,7 @@ class ModeSelect(QMainWindow):
         super().__init__()
         uic.loadUi("ui/modeselect.ui", self)
         communication.set_mine()
+
         # Button connect
         self.btn_single.clicked.connect(partial(changeScreen, self, 3))
         self.btn_battle.clicked.connect(partial(changeScreen, self, 11))
@@ -160,7 +141,6 @@ class SingleMode(QMainWindow):
         self.qtimer.setSingleShot(True)
         self.qtimer.timeout.connect(communication.set_mine)
         self.qtimer.start()
-
         
         self.btn_singlestart.clicked.connect(partial(changeScreen, self, 6))
         self.btn_singlesetting.clicked.connect(partial(changeScreen, self, 4)) 
@@ -175,23 +155,6 @@ class Single_Setting(QMainWindow):
         self.setLabel()
 
         # Button Function
-        self.btn_countup = LongButton(self)
-        self.btn_countup.resize(45,45)
-        self.btn_countup.move(245,102)
-        self.btn_countup.show()
-        self.btn_countdown = LongButton(self)
-        self.btn_countdown.resize(45,45)
-        self.btn_countdown.move(410,102)
-        self.btn_countdown.show()
-        self.btn_timerup = LongButton(self)
-        self.btn_timerup.resize(45,45)
-        self.btn_timerup.move(245,172)
-        self.btn_timerup.show()
-        self.btn_timerdown = LongButton(self)
-        self.btn_timerdown.resize(45,45)
-        self.btn_timerdown.move(410,172)
-        self.btn_timerdown.show()
-
         self.btn_countup.clicked.connect(self.countUp)
         self.btn_countdown.clicked.connect(self.countDown)
         self.btn_timerup.clicked.connect(self.timeUp)
@@ -206,11 +169,12 @@ class Single_Setting(QMainWindow):
         self.effect.cntChanged.connect(self.savePopup)
 
         # Button Image
+        self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px; outline: none;')
+        self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px; outline:none;')
+        self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px; outline: none;')
+        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px; outline:none;')
         self.btn_settingback.setStyleSheet('image:url(res/btn_back1.png); border:0px;')
-        self.btn_countup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
-        self.btn_countdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
-        self.btn_timerup.setStyleSheet('image:url(res/btn_up.png); border:0px;')
-        self.btn_timerdown.setStyleSheet('image:url(res/btn_down.png); border:0px;')
+        
 
     def savePopup(self, value):
         if value < 100: opacity = value * 0.01
@@ -237,6 +201,7 @@ class Single_Setting(QMainWindow):
         self.lb_count.setText(str(self.temp_count))
         self.lb_time.setText(str_minute + ":" + str_second)
 
+
     def countUp(self):
         if self.temp_count < 143: self.temp_count += 1
         self.setLabel()
@@ -245,14 +210,16 @@ class Single_Setting(QMainWindow):
         if self.temp_count > 1: self.temp_count -= 1
         self.setLabel()
 
+
     def timeUp(self):
         if self.temp_time < 3600: self.temp_time += 5
         self.setLabel()
 
+
     def timeDown(self):
         if self.temp_time > 5: self.temp_time -= 5
         self.setLabel()
-        
+
     def settingSave(self):
         global set_count, set_time
         set_count = self.temp_count
@@ -802,8 +769,8 @@ if __name__ == '__main__':
     app.setOverrideCursor(Qt.BlankCursor)
 
     # GUI 시작
-    ex = Start()
-    # ex = Single_Setting()
+    # ex = Start()
+    ex = ModeSelect()
 
     ex.showFullScreen()
     # ex.show()

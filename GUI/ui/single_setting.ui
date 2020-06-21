@@ -210,8 +210,71 @@ border:none;</string>
      <string/>
     </property>
    </widget>
+   <widget class="LongButton" name="btn_countup" native="true">
+    <property name="geometry">
+     <rect>
+      <x>245</x>
+      <y>102</y>
+      <width>45</width>
+      <height>45</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="LongButton" name="btn_countdown" native="true">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>102</y>
+      <width>45</width>
+      <height>45</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="LongButton" name="btn_timerdown" native="true">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>172</y>
+      <width>45</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border:none;</string>
+    </property>
+   </widget>
+   <widget class="LongButton" name="btn_timerup" native="true">
+    <property name="geometry">
+     <rect>
+      <x>245</x>
+      <y>172</y>
+      <width>45</width>
+      <height>45</height>
+     </rect>
+    </property>
+   </widget>
+   <zorder>lb_setting</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+   <zorder>btn_settingback</zorder>
+   <zorder>lb_count</zorder>
+   <zorder>lb_time</zorder>
+   <zorder>btn_settingsave</zorder>
+   <zorder>btn_countup</zorder>
+   <zorder>btn_countdown</zorder>
+   <zorder>btn_timerdown</zorder>
+   <zorder>btn_timerup</zorder>
+   <zorder>lb_popup</zorder>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LongButton</class>
+   <extends>QWidget</extends>
+   <header>longbutton.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
