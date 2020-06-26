@@ -1,3 +1,6 @@
+### Test Case 결과, Use Case 수정본 -> Documents 폴더에 있습니다!
+
+***
 
 # 회의록
 ### 20.06.02
