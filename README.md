@@ -1,6 +1,10 @@
+[![Watch the video](https://user-images.githubusercontent.com/48705652/104693999-e3bf5e80-574d-11eb-8590-20882a256b9a.png)](https://youtu.be/heKlfEPI5kA)
+
+<br><br>
+![minefind_poster](https://user-images.githubusercontent.com/48705652/104692809-ede05d80-574b-11eb-82ed-996515b91be3.jpg)
+
 # 회의록
 ### Test Case 결과, Use Case 수정본 -> Document 폴더에 있습니다!
-
 
 ***
 
